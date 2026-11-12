@@ -1,5 +1,5 @@
-export const API = "http://localhost:8001/api";
-export const ADMIN_API = "http://localhost:8001/api/admin";
+export const API = (import.meta.env.VITE_API_URL as string | undefined) ?? "http://localhost:8002/api";
+export const ADMIN_API = `${API}/admin`;
 
 export const EGP_RATE = 50;
 export const fmtEGP = (usd: number): string =>
