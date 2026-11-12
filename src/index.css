@@ -1,0 +1,60 @@
+@import "@fontsource/barlow-condensed/400.css";
+@import "@fontsource/barlow-condensed/600.css";
+@import "@fontsource/barlow-condensed/700.css";
+@import "@fontsource/dm-sans/400.css";
+@import "@fontsource/dm-sans/500.css";
+@import "@fontsource/dm-sans/700.css";
+@import "tailwindcss";
+
+@theme {
+  /* fonts */
+  --font-display: "Barlow Condensed", sans-serif;
+  --font-sans:    "DM Sans", system-ui, sans-serif;
+
+  /* brand palette */
+  --color-bg:        #0a0a0a;
+  --color-surface:   #111111;
+  --color-surface-2: #1a1a1a;
+  --color-border:    rgba(255,255,255,0.1);
+  --color-accent:    #8b5cf6;
+  --color-accent-2:  #7c3aed;
+  --color-sale:      #ef4444;
+  --color-success:   #22c55e;
+  --color-muted:     rgba(255,255,255,0.45);
+
+  /* radii */
+  --radius-card: 0.875rem;
+  --radius-btn:  9999px;
+
+  /* shadows */
+  --shadow-card: 0 8px 40px rgba(0,0,0,0.6);
+  --shadow-glow: 0 0 24px rgba(139,92,246,0.35);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: #fff;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* focus ring */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+
+/* selection */
+::selection { background: rgba(139,92,246,0.4); }
