@@ -154,7 +154,12 @@ export default function Cart() {
       const payMethod = payType === "vodafone" ? "vodafone_cash" : payType;
       const res = await createOrder(
         delivery.name, delivery.email, delivery.phone, address,
-        lines.map((l) => ({ product_id: l.product.id, qty: l.qty, size_ml: l.size_ml })),
+        lines.map((l) => ({
+          product_id: l.product.id,
+          qty: l.qty,
+          size_ml: l.size_ml,
+          variant_id: l.variant_id ?? undefined,
+        })),
         coupon?.code,
         payMethod,
       );
@@ -254,7 +259,7 @@ export default function Cart() {
                   <>
                     <div className="space-y-3">
                       {lines.map((l) => (
-                        <div key={`${l.product.id}-${l.size_ml}`} className="flex gap-3 rounded-xl bg-zinc-900 p-3">
+                        <div key={`${l.product.id}-${l.size_ml}-${l.variant_id ?? ""}`} className="flex gap-3 rounded-xl bg-zinc-900 p-3">
                           <div className="relative h-20 w-16 shrink-0 overflow-hidden rounded-lg bg-zinc-800">
                             {l.product.images?.[0] ? (
                               <img src={l.product.images[0]} alt={l.product.name} className="h-full w-full object-cover" />
@@ -265,22 +270,26 @@ export default function Cart() {
                           <div className="flex flex-1 min-w-0 flex-col gap-1">
                             <p className="line-clamp-1 text-sm font-semibold leading-tight text-white">{l.product.name}</p>
                             <p className="text-xs text-zinc-500">{l.product.brand}</p>
-                            {l.size_ml > 0 && (
+                            {l.variant_label ? (
+                              <span className="inline-block w-fit rounded border border-zinc-700 px-1.5 py-0.5 text-[10px] text-zinc-400">
+                                {l.variant_label}
+                              </span>
+                            ) : l.size_ml > 0 ? (
                               <span className="inline-block w-fit rounded border border-zinc-700 px-1.5 py-0.5 text-[10px] text-zinc-400">
                                 {l.size_ml} ml
                               </span>
-                            )}
+                            ) : null}
                             <div className="mt-auto flex items-center justify-between">
                               <div className="flex items-center gap-1 rounded-lg border border-zinc-800">
                                 <button
-                                  onClick={() => setQty(l.product.id, l.size_ml, l.qty - 1)}
+                                  onClick={() => setQty(l.product.id, l.size_ml, l.qty - 1, l.variant_id)}
                                   className="flex h-7 w-7 items-center justify-center text-zinc-500 transition-colors hover:text-white"
                                 >
                                   <Minus size={11} />
                                 </button>
                                 <span className="w-6 text-center text-xs font-semibold text-white">{l.qty}</span>
                                 <button
-                                  onClick={() => setQty(l.product.id, l.size_ml, l.qty + 1)}
+                                  onClick={() => setQty(l.product.id, l.size_ml, l.qty + 1, l.variant_id)}
                                   className="flex h-7 w-7 items-center justify-center text-zinc-500 transition-colors hover:text-white"
                                 >
                                   <Plus size={11} />
@@ -290,7 +299,7 @@ export default function Cart() {
                                 <span className="text-sm font-bold text-white">
                                   {fmtEGP(linePrice(l.product, l.size_ml) * l.qty)}
                                 </span>
-                                <button onClick={() => remove(l.product.id, l.size_ml)} className="text-zinc-600 transition-colors hover:text-sale">
+                                <button onClick={() => remove(l.product.id, l.size_ml, l.variant_id)} className="text-zinc-600 transition-colors hover:text-sale">
                                   <X size={14} />
                                 </button>
                               </div>

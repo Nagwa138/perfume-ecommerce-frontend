@@ -86,6 +86,19 @@ export type Review = {
   date: string;
 };
 
+export type ProductVariant = {
+  id: number;
+  product_id: number;
+  kind: string;      // shade | size | bundle
+  label: string;     // display name e.g. "Rose Petal"
+  shade_hex: string; // #RRGGBB
+  undertone: string; // warm | cool | neutral
+  price: number;
+  stock: number;
+  sku: string;
+  image: string;
+};
+
 export type OrderSummary = { order_id: number; total: number; discount: number };
 
 export type OrderItem = {
@@ -199,11 +212,16 @@ export const getRelated = (slug: string): Promise<Product[]> =>
     .then((r) => (r.ok ? r.json() : []))
     .catch(() => []);
 
+export const getProductVariants = (slug: string): Promise<ProductVariant[]> =>
+  fetch(`${API}/products/${slug}/variants`)
+    .then((r) => (r.ok ? r.json() : []))
+    .catch(() => []);
+
 // ── Orders ────────────────────────────────────────────────────────────────────
 
 export const createOrder = (
   name: string, email: string, phone: string, address: string,
-  items: { product_id: number; qty: number; size_ml: number }[],
+  items: { product_id: number; qty: number; size_ml: number; variant_id?: number | null }[],
   coupon_code?: string,
   payment_method?: string,
 ): Promise<OrderSummary> =>

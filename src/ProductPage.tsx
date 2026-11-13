@@ -6,7 +6,7 @@ import {
   Heart, Minus, Package, Plus, Star,
   Droplets, Wind, Flame,
 } from "lucide-react";
-import { getProduct, getRelated, getReviews, fmtEGP, FREE_SHIPPING_USD, type Product, type Review } from "./api";
+import { getProduct, getRelated, getReviews, getProductVariants, fmtEGP, FREE_SHIPPING_USD, type Product, type ProductVariant, type Review } from "./api";
 import { useCart, useWishlist, useRecentlyViewed } from "./store";
 import { useTitle } from "./hooks/useTitle";
 
@@ -141,6 +141,7 @@ export default function ProductPage() {
   const [p,          setP]          = useState<Product | null | undefined>(undefined);
   const [related,    setRelated]    = useState<Product[]>([]);
   const [reviews,    setReviews]    = useState<Review[]>([]);
+  const [dbVariants, setDbVariants] = useState<ProductVariant[]>([]);
   const [mediaTab,   setMediaTab]   = useState<"photo" | "3d">("photo");
   const [activeTab,  setActiveTab]  = useState<TabName>("Description");
   const [selSize,    setSelSize]    = useState<number | null>(null);
@@ -157,13 +158,18 @@ export default function ProductPage() {
   useEffect(() => {
     if (!id) return;
     window.scrollTo(0, 0);
-    setP(undefined); setMediaTab("photo"); setSelSize(null); setQty(1); setRelated([]); setReviews([]);
+    setP(undefined); setMediaTab("photo"); setSelSize(null); setQty(1);
+    setRelated([]); setReviews([]); setDbVariants([]);
     getProduct(id).then((product) => {
       setP(product);
       if (!product) return;
       track(product);
-      getRelated(product.slug || String(product.id)).then(setRelated);
-      getReviews(product.slug || String(product.id)).then(setReviews);
+      const slugOrId = product.slug || String(product.id);
+      getRelated(slugOrId).then(setRelated);
+      getReviews(slugOrId).then(setReviews);
+      if (product.product_type === "makeup") {
+        getProductVariants(slugOrId).then(setDbVariants);
+      }
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
@@ -217,19 +223,23 @@ export default function ProductPage() {
   const variants    = p.variants ?? [];
 
   // For makeup, pick first available shade; for others pick first size
-  const chosenSize  = selSize ?? (sizes.find((s) => s.stock > 0)?.ml ?? sizes[0]?.ml ?? 0);
+  const chosenSize    = selSize ?? (sizes.find((s) => s.stock > 0)?.ml ?? sizes[0]?.ml ?? 0);
   const chosenSizeObj = sizes.find((s) => s.ml === chosenSize);
-  const displayPrice  = p.sale_price ?? chosenSizeObj?.price ?? 0;
-  const origPriceVal  = chosenSizeObj?.price ?? 0;
+  // Prefer relational variant data when available (populated after seed)
+  const chosenDbVariant = isMakeup ? (dbVariants[selShade] ?? null) : null;
+  const displayPrice  = p.sale_price ?? chosenDbVariant?.price ?? chosenSizeObj?.price ?? 0;
+  const origPriceVal  = chosenDbVariant?.price ?? chosenSizeObj?.price ?? 0;
   const hasDiscount   = p.sale_price != null && p.sale_price < origPriceVal;
   const discountPct   = hasDiscount ? Math.round((1 - displayPrice / origPriceVal) * 100) : 0;
   const chosenStock   = isMakeup
-    ? (variants[selShade]?.stock ?? 0)
+    ? (chosenDbVariant?.stock ?? variants[selShade]?.stock ?? 0)
     : (chosenSizeObj?.stock ?? 0);
   const isWished = has(p.id);
 
   const handleAdd = () => {
-    for (let i = 0; i < qty; i++) add(p, chosenSize);
+    const variantId    = isMakeup ? (chosenDbVariant?.id ?? null) : null;
+    const variantLabel = isMakeup ? (chosenDbVariant?.label ?? variants[selShade]?.name ?? "") : "";
+    for (let i = 0; i < qty; i++) add(p, chosenSize, variantId, variantLabel);
   };
 
   const TABS: TabName[] = [

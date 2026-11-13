@@ -23,50 +23,53 @@ export const useRecentlyViewed = create<RecentState>()(
 export type Line = {
   product: Product;
   qty: number;
-  size_ml: number;      // chosen size in ml
+  size_ml: number;          // chosen size in ml (0 for shade variants)
+  variant_id: number | null; // ProductVariant.id for makeup shade orders
+  variant_label: string;    // shade display name, empty when not a shade variant
 };
 
 type CartState = {
   lines: Line[];
   open: boolean;
-  add: (p: Product, size_ml: number) => void;
-  remove: (productId: number, size_ml: number) => void;
-  setQty: (productId: number, size_ml: number, qty: number) => void;
+  add: (p: Product, size_ml: number, variant_id?: number | null, variant_label?: string) => void;
+  remove: (productId: number, size_ml: number, variant_id?: number | null) => void;
+  setQty: (productId: number, size_ml: number, qty: number, variant_id?: number | null) => void;
   toggle: () => void;
   clear: () => void;
 };
 
-const sameKey = (a: Line, productId: number, size_ml: number) =>
-  a.product.id === productId && a.size_ml === size_ml;
+// variant_id ?? null normalises old persisted entries that have variant_id: undefined
+const sameKey = (a: Line, productId: number, size_ml: number, variant_id: number | null = null) =>
+  a.product.id === productId && a.size_ml === size_ml && (a.variant_id ?? null) === variant_id;
 
 export const useCart = create<CartState>()(
   persist(
     (set) => ({
       lines: [],
       open: false,
-      add: (p, size_ml) =>
+      add: (p, size_ml, variant_id = null, variant_label = "") =>
         set((s) => {
-          const ex = s.lines.find((l) => sameKey(l, p.id, size_ml));
+          const ex = s.lines.find((l) => sameKey(l, p.id, size_ml, variant_id));
           return {
             open: true,
             lines: ex
               ? s.lines.map((l) =>
-                  sameKey(l, p.id, size_ml) ? { ...l, qty: l.qty + 1 } : l
+                  sameKey(l, p.id, size_ml, variant_id) ? { ...l, qty: l.qty + 1 } : l
                 )
-              : [...s.lines, { product: p, qty: 1, size_ml }],
+              : [...s.lines, { product: p, qty: 1, size_ml, variant_id: variant_id ?? null, variant_label }],
           };
         }),
-      remove: (productId, size_ml) =>
+      remove: (productId, size_ml, variant_id = null) =>
         set((s) => ({
-          lines: s.lines.filter((l) => !sameKey(l, productId, size_ml)),
+          lines: s.lines.filter((l) => !sameKey(l, productId, size_ml, variant_id)),
         })),
-      setQty: (productId, size_ml, qty) =>
+      setQty: (productId, size_ml, qty, variant_id = null) =>
         set((s) => ({
           lines:
             qty <= 0
-              ? s.lines.filter((l) => !sameKey(l, productId, size_ml))
+              ? s.lines.filter((l) => !sameKey(l, productId, size_ml, variant_id))
               : s.lines.map((l) =>
-                  sameKey(l, productId, size_ml) ? { ...l, qty } : l
+                  sameKey(l, productId, size_ml, variant_id) ? { ...l, qty } : l
                 ),
         })),
       toggle: () => set((s) => ({ open: !s.open })),
