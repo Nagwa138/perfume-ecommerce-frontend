@@ -1,6 +1,7 @@
-@import "@fontsource/barlow-condensed/400.css";
-@import "@fontsource/barlow-condensed/600.css";
-@import "@fontsource/barlow-condensed/700.css";
+@import "@fontsource/cormorant-garamond/400.css";
+@import "@fontsource/cormorant-garamond/500.css";
+@import "@fontsource/cormorant-garamond/600.css";
+@import "@fontsource/cormorant-garamond/700.css";
 @import "@fontsource/dm-sans/400.css";
 @import "@fontsource/dm-sans/500.css";
 @import "@fontsource/dm-sans/700.css";
@@ -8,27 +9,27 @@
 
 @theme {
   /* fonts */
-  --font-display: "Barlow Condensed", sans-serif;
+  --font-display: "Cormorant Garamond", Georgia, serif;
   --font-sans:    "DM Sans", system-ui, sans-serif;
 
-  /* brand palette */
-  --color-bg:        #0a0a0a;
-  --color-surface:   #111111;
-  --color-surface-2: #1a1a1a;
-  --color-border:    rgba(255,255,255,0.1);
-  --color-accent:    #8b5cf6;
-  --color-accent-2:  #7c3aed;
-  --color-sale:      #ef4444;
-  --color-success:   #22c55e;
-  --color-muted:     rgba(255,255,255,0.45);
+  /* luxury dark palette */
+  --color-bg:        #060607;
+  --color-surface:   #0e0e10;
+  --color-surface-2: #18181c;
+  --color-border:    rgba(200,169,81,0.12);
+  --color-accent:    #C8A951;
+  --color-accent-2:  #a88b3a;
+  --color-sale:      #d4a0a0;
+  --color-success:   #7ec8a0;
+  --color-muted:     rgba(255,255,255,0.4);
 
   /* radii */
-  --radius-card: 0.875rem;
+  --radius-card: 0.5rem;
   --radius-btn:  9999px;
 
   /* shadows */
-  --shadow-card: 0 8px 40px rgba(0,0,0,0.6);
-  --shadow-glow: 0 0 24px rgba(139,92,246,0.35);
+  --shadow-card: 0 8px 48px rgba(0,0,0,0.75);
+  --shadow-gold: 0 0 32px rgba(200,169,81,0.22);
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -43,18 +44,54 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* focus ring */
+/* Serif display text */
+.font-display { font-family: var(--font-display); letter-spacing: 0.04em; }
+
+/* Gold selection */
+::selection { background: rgba(200,169,81,0.28); }
+
+/* Focus ring */
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 3px;
   border-radius: 4px;
 }
 
-/* scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 9999px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+::-webkit-scrollbar-thumb { background: rgba(200,169,81,0.2); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(200,169,81,0.4); }
 
-/* selection */
-::selection { background: rgba(139,92,246,0.4); }
+/* Gold divider utility */
+.gold-divider {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(200,169,81,0.5), transparent);
+}
+
+/* Note chip */
+.note-chip {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(200,169,81,0.3);
+  color: rgba(200,169,81,0.9);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+}
+
+/* Longevity / sillage bar */
+.meter-bar {
+  height: 3px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+.meter-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #C8A951, #fff4c2);
+  border-radius: 9999px;
+  transition: width 0.6s ease;
+}

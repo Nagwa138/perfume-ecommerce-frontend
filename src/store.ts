@@ -16,65 +16,63 @@ export const useRecentlyViewed = create<RecentState>()(
           products: [p, ...s.products.filter((x) => x.id !== p.id)].slice(0, 8),
         })),
     }),
-    { name: "nova-recent", partialize: (s) => ({ products: s.products }) }
+    { name: "aura-recent", partialize: (s) => ({ products: s.products }) }
   )
 );
 
 export type Line = {
   product: Product;
   qty: number;
-  size?: string;
-  colorName?: string;
-  colorHex?: string;
+  size_ml: number;      // chosen size in ml
 };
 
 type CartState = {
   lines: Line[];
   open: boolean;
-  add: (p: Product, size?: string, colorName?: string, colorHex?: string) => void;
-  remove: (productId: number, size?: string, colorHex?: string) => void;
-  setQty: (productId: number, qty: number, size?: string, colorHex?: string) => void;
+  add: (p: Product, size_ml: number) => void;
+  remove: (productId: number, size_ml: number) => void;
+  setQty: (productId: number, size_ml: number, qty: number) => void;
   toggle: () => void;
   clear: () => void;
 };
 
-const sameKey = (a: Line, productId: number, size?: string, colorHex?: string) =>
-  a.product.id === productId && a.size === size && a.colorHex === colorHex;
+const sameKey = (a: Line, productId: number, size_ml: number) =>
+  a.product.id === productId && a.size_ml === size_ml;
 
 export const useCart = create<CartState>()(
   persist(
     (set) => ({
       lines: [],
       open: false,
-      add: (p, size, colorName, colorHex) =>
+      add: (p, size_ml) =>
         set((s) => {
-          const ex = s.lines.find((l) => sameKey(l, p.id, size, colorHex));
+          const ex = s.lines.find((l) => sameKey(l, p.id, size_ml));
           return {
             open: true,
             lines: ex
               ? s.lines.map((l) =>
-                  sameKey(l, p.id, size, colorHex) ? { ...l, qty: l.qty + 1 } : l
+                  sameKey(l, p.id, size_ml) ? { ...l, qty: l.qty + 1 } : l
                 )
-              : [...s.lines, { product: p, qty: 1, size, colorName, colorHex }],
+              : [...s.lines, { product: p, qty: 1, size_ml }],
           };
         }),
-      remove: (productId, size, colorHex) =>
+      remove: (productId, size_ml) =>
         set((s) => ({
-          lines: s.lines.filter((l) => !sameKey(l, productId, size, colorHex)),
+          lines: s.lines.filter((l) => !sameKey(l, productId, size_ml)),
         })),
-      setQty: (productId, qty, size, colorHex) =>
+      setQty: (productId, size_ml, qty) =>
         set((s) => ({
           lines:
             qty <= 0
-              ? s.lines.filter((l) => !sameKey(l, productId, size, colorHex))
+              ? s.lines.filter((l) => !sameKey(l, productId, size_ml))
               : s.lines.map((l) =>
-                  sameKey(l, productId, size, colorHex) ? { ...l, qty } : l
+                  sameKey(l, productId, size_ml) ? { ...l, qty } : l
                 ),
         })),
       toggle: () => set((s) => ({ open: !s.open })),
       clear: () => set({ lines: [], open: false }),
     }),
-    { name: "nova-cart", partialize: (s) => ({ lines: s.lines }) }
+    { name: "aura-cart", partialize: (s) => ({ lines: s.lines }) }
   )
 );
 
@@ -94,6 +92,6 @@ export const useWishlist = create<WishlistState>()(
         })),
       has: (id) => get().ids.includes(id),
     }),
-    { name: "nova-wishlist" }
+    { name: "aura-wishlist" }
   )
 );

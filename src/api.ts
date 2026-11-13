@@ -7,109 +7,161 @@ export const fmtEGP = (usd: number): string =>
 export const FREE_SHIPPING_USD = 50;
 export const SHIPPING_USD = 1.5;
 
+// ── Perfume-specific types ─────────────────────────────────────────────────────
+
+export type PerfumeSize = { ml: number; price: number; stock: number };
+
 export type Product = {
-  id: number; slug: string; name: string; brand: string;
-  department: string; category: string; subcategory: string;
-  price: number; sale_price: number | null;
-  stock: number; description: string; details: string[] | null;
-  fit: string; fabric: string; materials: string;
-  season: string; collection: string; care_instructions: string;
-  sizes: string[] | null;
-  colors: { name: string; hex: string }[] | null;
-  images: string[] | null; tags: string[] | null;
-  rating: number; review_count: number;
-  is_new: boolean; is_featured: boolean; is_active: boolean;
-  image: string; color: string;
+  id: number;
+  slug: string;
+  name: string;
+  brand: string;
+  gender: string;           // Women | Men | Unisex
+  family: string;           // Floral | Woody | Oriental/Amber | …
+  concentration: string;    // Parfum | Eau de Parfum | Eau de Toilette | Eau de Cologne
+  top_notes: string[] | null;
+  heart_notes: string[] | null;
+  base_notes: string[] | null;
+  sizes: PerfumeSize[] | null;
+  longevity: number;        // 1–10
+  sillage: number;          // 1–10
+  season: string[] | null;
+  occasion: string[] | null;
+  perfumer: string;
+  year: number | null;
+  description: string;
+  collection: string;
+  bottle_color: string;     // hex colour for liquid mesh
+  cap_style: string;        // round | square | tall
+  images: string[] | null;
+  tags: string[] | null;
+  sale_price: number | null;
+  rating: number;
+  review_count: number;
+  is_new: boolean;
+  is_featured: boolean;
+  is_active: boolean;
 };
 
 export type Facets = {
-  departments:   Record<string, number>;
-  categories:    Record<string, number>;
-  subcategories: Record<string, number>;
-  fits:          Record<string, number>;
-  collections:   Record<string, number>;
-  sizes:         Record<string, number>;
-  price_range:   { min: number; max: number };
+  genders:        Record<string, number>;
+  families:       Record<string, number>;
+  concentrations: Record<string, number>;
+  collections:    Record<string, number>;
+  notes:          Record<string, number>;
+  sizes:          Record<string, number>;
+  seasons:        Record<string, number>;
+  occasions:      Record<string, number>;
+  price_range:    { min: number; max: number };
 };
 
 export type ProductsPage = {
-  items: Product[]; total: number; pages: number; facets: Facets;
+  items: Product[];
+  total: number;
+  pages: number;
+  facets: Facets;
 };
 
 export type Review = {
-  id: number; product_id: number; author: string;
-  rating: number; title: string; body: string; date: string;
+  id: number;
+  product_id: number;
+  author: string;
+  rating: number;
+  title: string;
+  body: string;
+  date: string;
 };
 
-export type OrderSummary = {
-  order_id: number; total: number; discount: number;
-};
+export type OrderSummary = { order_id: number; total: number; discount: number };
 
 export type OrderItem = {
-  id: number; order_id: number; product_id: number;
-  product_name: string; size: string; color: string;
-  qty: number; price: number;
+  id: number;
+  order_id: number;
+  product_id: number;
+  product_name: string;
+  size_ml: number;
+  qty: number;
+  price: number;
 };
 
 export type AdminOrder = {
-  id: number; status: string; customer_name: string;
-  customer_email: string; customer_phone: string; customer_address: string;
-  subtotal: number; shipping: number; discount: number; total: number;
-  coupon_code: string; payment_method: string; created_at: string;
+  id: number;
+  status: string;
+  customer_name: string;
+  customer_email: string;
+  customer_phone: string;
+  customer_address: string;
+  subtotal: number;
+  shipping: number;
+  discount: number;
+  total: number;
+  coupon_code: string;
+  payment_method: string;
+  created_at: string;
   items: OrderItem[];
 };
 
-export type AdminUser = {
-  username: string; role: string; last_login: string | null;
-};
+export type AdminUser = { username: string; role: string; last_login: string | null };
 
-// ── taxonomy ──────────────────────────────────────────────────────────────────
+// ── Taxonomy ──────────────────────────────────────────────────────────────────
+
 export const getTaxonomy = (): Promise<Record<string, Record<string, string[]>>> =>
   fetch(`${API}/taxonomy`)
     .then((r) => (r.ok ? r.json() : {}))
     .catch(() => ({}));
 
-// ── products ──────────────────────────────────────────────────────────────────
-const EMPTY_PAGE: ProductsPage = {
-  items: [], total: 0, pages: 0,
-  facets: { departments: {}, categories: {}, subcategories: {}, fits: {},
-            collections: {}, sizes: {}, price_range: { min: 0, max: 0 } },
+// ── Products ──────────────────────────────────────────────────────────────────
+
+const EMPTY_FACETS: Facets = {
+  genders: {}, families: {}, concentrations: {}, collections: {},
+  notes: {}, sizes: {}, seasons: {}, occasions: {},
+  price_range: { min: 0, max: 0 },
 };
 
-export const getProducts = (params?: {
-  department?: string; category?: string; subcategory?: string;
-  fit?: string; collection?: string; size?: string; color?: string;
-  q?: string; page?: number; page_size?: number;
-  sort?: string; on_sale?: boolean; in_stock?: boolean;
-  min_price?: number; max_price?: number;
-}): Promise<ProductsPage> => {
+const EMPTY_PAGE: ProductsPage = { items: [], total: 0, pages: 0, facets: EMPTY_FACETS };
+
+export type ProductsParams = {
+  q?: string;
+  gender?: string;
+  family?: string;
+  concentration?: string;
+  collection?: string;
+  note?: string;
+  size_ml?: number;
+  season?: string;
+  occasion?: string;
+  min_price?: number;
+  max_price?: number;
+  in_stock?: boolean;
+  on_sale?: boolean;
+  sort?: string;
+  page?: number;
+  page_size?: number;
+};
+
+export const getProducts = (params?: ProductsParams): Promise<ProductsPage> => {
   const qs = new URLSearchParams();
-  if (params?.department)  qs.set("department",  params.department);
-  if (params?.category)    qs.set("category",    params.category);
-  if (params?.subcategory) qs.set("subcategory", params.subcategory);
-  if (params?.fit)         qs.set("fit",          params.fit);
-  if (params?.collection)  qs.set("collection",  params.collection);
-  if (params?.size)        qs.set("size",         params.size);
-  if (params?.color)       qs.set("color",        params.color);
-  if (params?.q)           qs.set("q",            params.q);
-  if (params?.page)        qs.set("page",         String(params.page));
-  if (params?.page_size)   qs.set("page_size",    String(params.page_size));
-  if (params?.sort)        qs.set("sort",         params.sort);
-  if (params?.on_sale)     qs.set("on_sale",      "true");
-  if (params?.in_stock)    qs.set("in_stock",     "true");
+  if (params?.q)             qs.set("q",             params.q);
+  if (params?.gender)        qs.set("gender",        params.gender);
+  if (params?.family)        qs.set("family",        params.family);
+  if (params?.concentration) qs.set("concentration", params.concentration);
+  if (params?.collection)    qs.set("collection",    params.collection);
+  if (params?.note)          qs.set("note",          params.note);
+  if (params?.size_ml != null) qs.set("size_ml",     String(params.size_ml));
+  if (params?.season)        qs.set("season",        params.season);
+  if (params?.occasion)      qs.set("occasion",      params.occasion);
   if (params?.min_price != null) qs.set("min_price", String(params.min_price));
   if (params?.max_price != null) qs.set("max_price", String(params.max_price));
+  if (params?.in_stock)      qs.set("in_stock",      "true");
+  if (params?.on_sale)       qs.set("on_sale",       "true");
+  if (params?.sort)          qs.set("sort",          params.sort);
+  if (params?.page)          qs.set("page",          String(params.page));
+  if (params?.page_size)     qs.set("page_size",     String(params.page_size));
   const url = `${API}/products${qs.size ? `?${qs}` : ""}`;
   return fetch(url)
     .then((r) => (r.ok ? r.json() : EMPTY_PAGE))
     .catch(() => EMPTY_PAGE);
 };
-
-export const getCategories = (): Promise<string[]> =>
-  fetch(`${API}/categories`)
-    .then((r) => (r.ok ? r.json() : []))
-    .then((d) => (Array.isArray(d) ? d : []))
-    .catch(() => []);
 
 export const getProduct = (slugOrId: string): Promise<Product | null> =>
   fetch(`${API}/products/${slugOrId}`)
@@ -126,10 +178,11 @@ export const getRelated = (slug: string): Promise<Product[]> =>
     .then((r) => (r.ok ? r.json() : []))
     .catch(() => []);
 
-// ── orders ────────────────────────────────────────────────────────────────────
+// ── Orders ────────────────────────────────────────────────────────────────────
+
 export const createOrder = (
   name: string, email: string, phone: string, address: string,
-  items: { product_id: number; qty: number; size?: string; color?: string }[],
+  items: { product_id: number; qty: number; size_ml: number }[],
   coupon_code?: string,
   payment_method?: string,
 ): Promise<OrderSummary> =>
@@ -148,11 +201,22 @@ export const getOrder = (id: number, email: string) =>
     .then((r) => (r.ok ? r.json() : null))
     .catch(() => null);
 
-// ── admin auth helpers ────────────────────────────────────────────────────────
-const TOKEN_KEY = "nw_admin_token";
+// ── Coupons ───────────────────────────────────────────────────────────────────
 
-export const saveToken = (token: string) => sessionStorage.setItem(TOKEN_KEY, token);
-export const loadToken = () => sessionStorage.getItem(TOKEN_KEY);
+export const validateCoupon = (code: string): Promise<{ code: string; percent: number } | null> =>
+  fetch(`${API}/coupons/validate`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ code }),
+  })
+    .then((r) => (r.ok ? r.json() : null))
+    .catch(() => null);
+
+// ── Admin auth helpers ────────────────────────────────────────────────────────
+
+const TOKEN_KEY = "aura_admin_token";
+export const saveToken  = (t: string) => sessionStorage.setItem(TOKEN_KEY, t);
+export const loadToken  = () => sessionStorage.getItem(TOKEN_KEY);
 export const clearToken = () => sessionStorage.removeItem(TOKEN_KEY);
 
 const adminHeaders = (): Record<string, string> => {
@@ -163,7 +227,8 @@ const adminHeaders = (): Record<string, string> => {
   };
 };
 
-// ── admin auth API ────────────────────────────────────────────────────────────
+// ── Admin auth API ────────────────────────────────────────────────────────────
+
 export const adminLogin = (
   username: string, password: string
 ): Promise<{ access_token: string; role: string; username: string } | null> =>
@@ -180,7 +245,8 @@ export const adminGetMe = (): Promise<AdminUser | null> =>
     .then((r) => (r.ok ? r.json() : null))
     .catch(() => null);
 
-// ── admin orders ─────────────────────────────────────────────────────────────
+// ── Admin orders ──────────────────────────────────────────────────────────────
+
 export const getAdminOrders = (): Promise<AdminOrder[]> =>
   fetch(`${ADMIN_API}/orders`, { headers: adminHeaders() })
     .then((r) => (r.ok ? r.json() : []))
@@ -192,13 +258,3 @@ export const updateOrderStatus = (id: number, status: string): Promise<void> =>
     headers: adminHeaders(),
     body: JSON.stringify({ status }),
   }).then(() => undefined);
-
-// ── coupons ───────────────────────────────────────────────────────────────────
-export const validateCoupon = (code: string): Promise<{ code: string; percent: number } | null> =>
-  fetch(`${API}/coupons/validate`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ code }),
-  })
-    .then((r) => (r.ok ? r.json() : null))
-    .catch(() => null);
