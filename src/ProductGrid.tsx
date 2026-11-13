@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, X, ChevronDown, SlidersHorizontal } from "lucide-react";
-import { getProducts, getCategories, type Product } from "./api";
+import { getProducts, type Product } from "./api";
 import ProductCard from "./ProductCard";
 import QuickView from "./QuickView";
 
@@ -60,8 +60,7 @@ export default function ProductGrid() {
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  // Fetch categories once
-  useEffect(() => { getCategories().then(setCats); }, []);
+  useEffect(() => { setCats([]); }, []);
 
   // Sync debounced search input → URL
   useEffect(() => {
@@ -79,7 +78,7 @@ export default function ProductGrid() {
   useEffect(() => {
     setPage(1);
     setLoading(true);
-    getProducts({ category: cat || undefined, q: q || undefined, sort, page: 1, page_size: PAGE_SIZE })
+    getProducts({ q: q || undefined, sort, page: 1, page_size: PAGE_SIZE })
       .then((data) => {
         setItems(data.items);
         setTotal(data.total);
@@ -93,7 +92,7 @@ export default function ProductGrid() {
     const next = page + 1;
     setPage(next);
     setLoading(true);
-    getProducts({ category: cat || undefined, q: q || undefined, sort, page: next, page_size: PAGE_SIZE })
+    getProducts({ q: q || undefined, sort, page: next, page_size: PAGE_SIZE })
       .then((data) => {
         setItems((prev) => [...prev, ...data.items]);
         setTotal(data.total);

@@ -7,15 +7,17 @@ export const fmtEGP = (usd: number): string =>
 export const FREE_SHIPPING_USD = 50;
 export const SHIPPING_USD = 1.5;
 
-// ── Perfume-specific types ─────────────────────────────────────────────────────
+// ── Beauty product types ───────────────────────────────────────────────────────
 
-export type PerfumeSize = { ml: number; price: number; stock: number };
+export type PerfumeSize   = { ml: number; price: number; stock: number };
+export type ShadeVariant  = { name: string; shade_hex: string; stock: number };
 
 export type Product = {
   id: number;
   slug: string;
   name: string;
   brand: string;
+  // ── Fragrance taxonomy ──────────────────────────────────────────────────────
   gender: string;           // Women | Men | Unisex
   family: string;           // Floral | Woody | Oriental/Amber | …
   concentration: string;    // Parfum | Eau de Parfum | Eau de Toilette | Eau de Cologne
@@ -33,6 +35,15 @@ export type Product = {
   collection: string;
   bottle_color: string;     // hex colour for liquid mesh
   cap_style: string;        // round | square | tall
+  // ── Product classification ──────────────────────────────────────────────────
+  product_type: string;     // perfume | skincare | makeup | haircare | body
+  subcategory: string;      // Serum / Foundation / Shampoo / Body Cream / …
+  // ── Cosmetic fields ─────────────────────────────────────────────────────────
+  variants: ShadeVariant[] | null;   // makeup shade variants
+  skin_type: string[] | null;        // dry | oily | combination | sensitive | normal | all
+  ingredients: string;
+  how_to_use: string;
+  // ── Media / pricing / flags ─────────────────────────────────────────────────
   images: string[] | null;
   tags: string[] | null;
   sale_price: number | null;
@@ -44,6 +55,8 @@ export type Product = {
 };
 
 export type Facets = {
+  product_types:  Record<string, number>;
+  subcategories:  Record<string, number>;
   genders:        Record<string, number>;
   families:       Record<string, number>;
   concentrations: Record<string, number>;
@@ -52,6 +65,7 @@ export type Facets = {
   sizes:          Record<string, number>;
   seasons:        Record<string, number>;
   occasions:      Record<string, number>;
+  skin_types:     Record<string, number>;
   price_range:    { min: number; max: number };
 };
 
@@ -113,8 +127,9 @@ export const getTaxonomy = (): Promise<Record<string, Record<string, string[]>>>
 // ── Products ──────────────────────────────────────────────────────────────────
 
 const EMPTY_FACETS: Facets = {
+  product_types: {}, subcategories: {},
   genders: {}, families: {}, concentrations: {}, collections: {},
-  notes: {}, sizes: {}, seasons: {}, occasions: {},
+  notes: {}, sizes: {}, seasons: {}, occasions: {}, skin_types: {},
   price_range: { min: 0, max: 0 },
 };
 
@@ -122,6 +137,8 @@ const EMPTY_PAGE: ProductsPage = { items: [], total: 0, pages: 0, facets: EMPTY_
 
 export type ProductsParams = {
   q?: string;
+  product_type?: string;
+  subcategory?: string;
   gender?: string;
   family?: string;
   concentration?: string;
@@ -130,6 +147,7 @@ export type ProductsParams = {
   size_ml?: number;
   season?: string;
   occasion?: string;
+  skin_type?: string;
   min_price?: number;
   max_price?: number;
   in_stock?: boolean;
@@ -142,6 +160,8 @@ export type ProductsParams = {
 export const getProducts = (params?: ProductsParams): Promise<ProductsPage> => {
   const qs = new URLSearchParams();
   if (params?.q)             qs.set("q",             params.q);
+  if (params?.product_type)  qs.set("product_type",  params.product_type);
+  if (params?.subcategory)   qs.set("subcategory",   params.subcategory);
   if (params?.gender)        qs.set("gender",        params.gender);
   if (params?.family)        qs.set("family",        params.family);
   if (params?.concentration) qs.set("concentration", params.concentration);
@@ -150,6 +170,7 @@ export const getProducts = (params?: ProductsParams): Promise<ProductsPage> => {
   if (params?.size_ml != null) qs.set("size_ml",     String(params.size_ml));
   if (params?.season)        qs.set("season",        params.season);
   if (params?.occasion)      qs.set("occasion",      params.occasion);
+  if (params?.skin_type)     qs.set("skin_type",     params.skin_type);
   if (params?.min_price != null) qs.set("min_price", String(params.min_price));
   if (params?.max_price != null) qs.set("max_price", String(params.max_price));
   if (params?.in_stock)      qs.set("in_stock",      "true");

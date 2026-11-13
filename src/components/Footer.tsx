@@ -19,33 +19,33 @@ function TwitterIcon({ size = 20 }: { size?: number }) {
   );
 }
 
-function YoutubeIcon({ size = 20 }: { size?: number }) {
+function PinterestIcon({ size = 20 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+      <path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/>
     </svg>
   );
 }
 
 const LINKS = {
-  Shop: [
-    { label: "All Products", to: "/shop" },
-    { label: "New Arrivals", to: "/shop?sort=newest" },
-    { label: "Sale", to: "/shop?on_sale=true" },
-    { label: "Hoodies", to: "/shop?category=Hoodies" },
-    { label: "Sneakers", to: "/shop?category=Sneakers" },
+  "Beauty": [
+    { label: "Fragrance",  to: "/shop?product_type=perfume" },
+    { label: "Skincare",   to: "/shop?product_type=skincare" },
+    { label: "Makeup",     to: "/shop?product_type=makeup" },
+    { label: "Hair",       to: "/shop?product_type=haircare" },
+    { label: "Body",       to: "/shop?product_type=body" },
   ],
-  Company: [
-    { label: "About Us", to: "/about" },
-    { label: "Careers", to: "/careers" },
-    { label: "Blog", to: "/blog" },
-    { label: "Press", to: "/press" },
+  "Discover": [
+    { label: "New Arrivals",  to: "/shop?sort=newest" },
+    { label: "Best Sellers",  to: "/shop?sort=popular" },
+    { label: "On Sale",       to: "/shop?on_sale=true" },
+    { label: "Gift Sets",     to: "/shop?collection=Gift+Sets" },
   ],
-  Support: [
-    { label: "FAQ", to: "/faq" },
+  "Support": [
+    { label: "FAQ",               to: "/faq" },
     { label: "Shipping & Returns", to: "/shipping" },
-    { label: "Track Order", to: "/orders" },
-    { label: "Contact", to: "/contact" },
+    { label: "Track Order",       to: "/orders" },
+    { label: "Contact",           to: "/contact" },
   ],
 };
 
@@ -63,26 +63,26 @@ export default function Footer() {
   return (
     <footer className="border-t border-border bg-surface">
       <div className="mx-auto max-w-7xl px-6 py-16">
-        {/* Main grid */}
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-5">
+
           {/* Brand column */}
           <div className="lg:col-span-2">
-            <Link to="/" className="font-display text-2xl font-bold tracking-widest">
-              NOVA WEAR
+            <Link to="/" className="font-display text-2xl font-bold tracking-[0.25em]">
+              AURA
             </Link>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted">
-              Premium streetwear designed for those who push limits.
-              Crafted with intent, worn with purpose.
+              Luxury beauty curated for those who appreciate the art of scent and skincare.
+              Refined rituals, extraordinary results.
             </p>
             <div className="mt-6 flex gap-5">
               <a href="#" aria-label="Instagram" className="text-muted transition-colors hover:text-white">
                 <InstagramIcon size={20} />
               </a>
-              <a href="#" aria-label="Twitter" className="text-muted transition-colors hover:text-white">
+              <a href="#" aria-label="Twitter / X" className="text-muted transition-colors hover:text-white">
                 <TwitterIcon size={20} />
               </a>
-              <a href="#" aria-label="YouTube" className="text-muted transition-colors hover:text-white">
-                <YoutubeIcon size={20} />
+              <a href="#" aria-label="Pinterest" className="text-muted transition-colors hover:text-white">
+                <PinterestIcon size={20} />
               </a>
             </div>
           </div>
@@ -96,10 +96,7 @@ export default function Footer() {
               <ul className="space-y-2.5">
                 {links.map((l) => (
                   <li key={l.to}>
-                    <Link
-                      to={l.to}
-                      className="text-sm text-muted transition-colors hover:text-white"
-                    >
+                    <Link to={l.to} className="text-sm text-muted transition-colors hover:text-white">
                       {l.label}
                     </Link>
                   </li>
@@ -114,16 +111,14 @@ export default function Footer() {
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               <h4 className="font-display text-xl font-bold tracking-wide">
-                Stay in the loop
+                The Inner Circle
               </h4>
               <p className="mt-1 text-sm text-muted">
-                New drops, exclusive deals &amp; early access.
+                New launches, exclusive edits &amp; members-only offers.
               </p>
             </div>
             {submitted ? (
-              <p className="text-sm font-medium text-success">
-                You&apos;re in! Check your inbox.
-              </p>
+              <p className="text-sm font-medium text-success">Welcome to AURA. Luxury awaits.</p>
             ) : (
               <form onSubmit={handleSubscribe} className="flex w-full gap-2 sm:w-auto">
                 <input
@@ -138,7 +133,7 @@ export default function Footer() {
                   type="submit"
                   className="rounded-full bg-accent px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-2"
                 >
-                  Subscribe
+                  Join
                 </button>
               </form>
             )}
@@ -147,27 +142,17 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 text-xs text-muted md:flex-row">
-          <p>© {new Date().getFullYear()} NOVA WEAR. All rights reserved.</p>
-
+          <p>© {new Date().getFullYear()} AURA Beauty. All rights reserved.</p>
           <div className="flex gap-5">
             {["Privacy", "Terms", "Cookies"].map((l) => (
-              <Link
-                key={l}
-                to={`/${l.toLowerCase()}`}
-                className="transition-colors hover:text-white"
-              >
+              <Link key={l} to={`/${l.toLowerCase()}`} className="transition-colors hover:text-white">
                 {l}
               </Link>
             ))}
           </div>
-
-          {/* Payment icons */}
           <div className="flex flex-wrap items-center gap-1.5">
             {PAYMENT.map((p) => (
-              <span
-                key={p}
-                className="rounded border border-white/10 px-1.5 py-0.5 font-mono text-[10px] text-muted/70"
-              >
+              <span key={p} className="rounded border border-white/10 px-1.5 py-0.5 font-mono text-[10px] text-muted/70">
                 {p}
               </span>
             ))}

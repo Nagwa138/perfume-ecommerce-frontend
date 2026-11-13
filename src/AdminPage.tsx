@@ -106,7 +106,7 @@ function OrderModal({
                   <div className="min-w-0">
                     <p className="text-sm font-semibold text-white truncate">{item.product_name}</p>
                     <p className="text-xs text-zinc-500">
-                      {[item.size && `Size: ${item.size}`, item.color && `Color: ${item.color}`].filter(Boolean).join(" · ")}
+                      {item.size_ml > 0 ? `${item.size_ml} ml` : ""}
                     </p>
                   </div>
                   <div className="ml-4 shrink-0 text-right">
@@ -235,9 +235,9 @@ export default function AdminPage() {
                   <tr className="border-b border-zinc-800">
                     <th className="p-3 font-semibold text-zinc-400">ID</th>
                     <th className="p-3 font-semibold text-zinc-400">Name</th>
-                    <th className="p-3 font-semibold text-zinc-400">Category</th>
-                    <th className="p-3 font-semibold text-zinc-400">Price</th>
-                    <th className="p-3 font-semibold text-zinc-400">Stock</th>
+                    <th className="p-3 font-semibold text-zinc-400">Type</th>
+                    <th className="p-3 font-semibold text-zinc-400">From</th>
+                    <th className="p-3 font-semibold text-zinc-400">In Stock</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -245,12 +245,13 @@ export default function AdminPage() {
                     <tr key={p.id} className="border-t border-zinc-800 hover:bg-zinc-900/50 transition-colors">
                       <td className="p-3 text-zinc-500">{p.id}</td>
                       <td className="p-3 font-medium text-white">{p.name}</td>
-                      <td className="p-3 text-zinc-400">{p.category}</td>
-                      <td className="p-3 text-zinc-300">{fmtEGP(p.price)}</td>
+                      <td className="p-3 text-zinc-400 capitalize">{p.product_type}</td>
+                      <td className="p-3 text-zinc-300">{fmtEGP(p.sale_price ?? (p.sizes?.[0]?.price ?? 0))}</td>
                       <td className="p-3">
-                        <span className={`font-semibold ${p.stock === 0 ? "text-sale" : p.stock < 5 ? "text-orange-400" : "text-success"}`}>
-                          {p.stock}
-                        </span>
+                        {(() => {
+                          const st = (p.sizes ?? []).reduce((s, sz) => s + sz.stock, 0);
+                          return <span className={`font-semibold ${st === 0 ? "text-sale" : st < 5 ? "text-orange-400" : "text-success"}`}>{st}</span>;
+                        })()}
                       </td>
                     </tr>
                   ))}

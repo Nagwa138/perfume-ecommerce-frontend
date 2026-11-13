@@ -92,23 +92,24 @@ export default function CommandPalette() {
                     focused === i ? "bg-surface-2" : "hover:bg-surface-2"
                   }`}
                 >
-                  <img
-                    src={p.image}
-                    alt={p.name}
-                    className="h-10 w-10 shrink-0 rounded-lg object-cover"
-                  />
+                  {p.images?.[0] ? (
+                    <img
+                      src={p.images[0]}
+                      alt={p.name}
+                      className="h-10 w-10 shrink-0 rounded-lg object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface-2 text-xs font-bold text-white/20">A</div>
+                  )}
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-sm font-medium">{p.name}</div>
                     <div className="text-xs text-muted">
-                      {p.category} ·{" "}
+                      {p.brand}
                       {p.sale_price != null ? (
-                        <>
-                          <span className="text-sale">${p.sale_price}</span>
-                          <span className="ml-1 line-through">${p.price}</span>
-                        </>
-                      ) : (
-                        `$${p.price}`
-                      )}
+                        <> · <span className="text-sale">{(p.sale_price * 50).toLocaleString()} EGP</span></>
+                      ) : p.sizes?.[0] ? (
+                        <> · {Math.round(p.sizes[0].price * 50).toLocaleString()} EGP</>
+                      ) : null}
                     </div>
                   </div>
                   <ArrowRight size={14} className="shrink-0 text-muted" />
