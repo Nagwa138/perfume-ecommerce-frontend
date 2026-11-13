@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Search, SlidersHorizontal, X } from "lucide-react";
 import { getProducts, fmtEGP, type Facets, type Product } from "./api";
+import { BRAND } from "./brand";
 import ProductCard from "./ProductCard";
 import QuickView from "./QuickView";
 import { useTitle } from "./hooks/useTitle";
@@ -386,7 +387,7 @@ export default function ShopPage() {
       {/* Page heading */}
       <div className="border-b border-border bg-surface/50 py-10 text-center">
         <p className="text-xs font-medium uppercase tracking-widest text-muted">
-          {ptType ? "AURA Beauty" : "Shop"}
+          {ptType ? `${BRAND.name} Beauty` : "Shop"}
         </p>
         <h1 className="mt-1 font-display text-4xl font-bold tracking-tight sm:text-5xl">
           {heading}

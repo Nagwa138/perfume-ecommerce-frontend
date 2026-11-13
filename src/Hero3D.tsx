@@ -2,6 +2,7 @@ import { useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, Environment } from "@react-three/drei";
 import * as THREE from "three";
+import { BRAND } from "./brand";
 
 // kept for ProductPage.tsx 3D product viewer
 export function makeShirtGeometry() {
@@ -145,7 +146,7 @@ export default function Hero3D() {
           <Mannequin />
         </Canvas>
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-end pb-24 text-center">
-          <h1 className="text-6xl font-black tracking-tight">NOVA WEAR</h1>
+          <h1 className="text-6xl font-black tracking-tight">{BRAND.nameUpper}</h1>
           <p className="mt-2 text-white/60">Scroll to spin the model. Fall collection is live.</p>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { Canvas } from "@react-three/fiber";
 import { useOutfitStore } from "./useOutfitStore";
 import HeroScene from "./HeroScene";
 import HeroOverlay from "./HeroOverlay";
+import { BRAND } from "../brand";
 
 // Beat progress fractions (must match AvatarMesh.tsx BEATS)
 const BEATS = [0.2, 0.4, 0.6, 0.8];
@@ -34,11 +35,11 @@ function FallbackHero() {
       <div className="absolute bottom-0 left-1/2 h-24 w-0.5 -translate-x-1/2 bg-white/20" />
       <div className="relative z-10 text-center">
         <h1 className="font-display text-5xl font-black tracking-tight text-white sm:text-6xl">
-          NOVA WEAR
+          {BRAND.nameUpper}
         </h1>
-        <p className="mt-2 text-sm text-white/60">Fall Collection — Live Now</p>
+        <p className="mt-2 text-sm text-white/60">{BRAND.tagline}</p>
         <a
-          href="/?cat=Hoodies"
+          href="/shop"
           className="mt-5 inline-block rounded-full bg-white/90 px-6 py-2.5 text-sm font-bold text-black transition-all hover:bg-white"
         >
           Shop Now →

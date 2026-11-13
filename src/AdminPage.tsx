@@ -239,7 +239,7 @@ function ProductForm({ onClose, onCreated }: { onClose: () => void; onCreated: (
           {/* Core fields */}
           {[
             { k: "name",        label: "Product Name", ph: "e.g. Rose Elixir" },
-            { k: "brand",       label: "Brand",        ph: "e.g. AURA" },
+            { k: "brand",       label: "Brand",        ph: "e.g. Hossam" },
             { k: "subcategory", label: "Subcategory",  ph: pt === "perfume" ? "e.g. Eau de Parfum" : "e.g. Serum" },
           ].map(({ k, label, ph }) => (
             <div key={k}>

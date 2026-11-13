@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Search, Heart, ShoppingBag, Menu } from "lucide-react";
 import { useCart, useWishlist } from "../store";
 import { useUI } from "../ui";
+import { BRAND } from "../brand";
 
 // Beauty navigation taxonomy
 const NAV: Record<string, Record<string, string[]>> = {
@@ -34,6 +35,17 @@ const NAV: Record<string, Record<string, string[]>> = {
     "Cleanse":      ["Body Wash", "Scrub", "Bar Soap"],
     "Fragrance":    ["Body Mist", "Deodorant"],
   },
+  "Gift Sets": {
+    "By Occasion":  ["Birthday", "Wedding", "Mother's Day", "Eid"],
+    "By Category":  ["Fragrance Sets", "Skincare Sets", "Makeup Sets", "Luxury Hampers"],
+    "By Price":     ["Under EGP 500", "EGP 500–1000", "Over EGP 1000"],
+  },
+  "Pharmacy": {
+    "Vitamins":     ["Vitamin C", "Vitamin D", "Omega-3", "Probiotics"],
+    "Skincare Rx":  ["Retinol", "AHA/BHA", "Niacinamide", "SPF Medical"],
+    "Wellness":     ["Collagen", "Supplements", "Herbal Remedies"],
+    "Medical":      ["Derma Brands", "Prescription Items"],
+  },
 };
 
 const CATEGORIES = Object.keys(NAV);
@@ -47,6 +59,8 @@ function MegaMenu({ cat, onClose }: { cat: string; onClose: () => void }) {
   const groups = NAV[cat] ?? {};
   const ptType = cat === "Fragrance" ? "perfume"
     : cat === "Hair" ? "haircare"
+    : cat === "Gift Sets" ? "gift_set"
+    : cat === "Pharmacy" ? "pharmacy"
     : cat.toLowerCase();
 
   return (
@@ -107,7 +121,7 @@ export default function Header() {
 
         {/* Logo */}
         <Link to="/" className="font-display text-2xl font-bold tracking-[0.25em] transition-colors hover:text-accent">
-          AURA
+          {BRAND.nameUpper}
         </Link>
 
         {/* Desktop nav */}

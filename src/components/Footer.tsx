@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { BRAND } from "../brand";
 
 function InstagramIcon({ size = 20 }: { size?: number }) {
   return (
@@ -29,11 +30,13 @@ function PinterestIcon({ size = 20 }: { size?: number }) {
 
 const LINKS = {
   "Beauty": [
-    { label: "Fragrance",  to: "/shop?product_type=perfume" },
-    { label: "Skincare",   to: "/shop?product_type=skincare" },
-    { label: "Makeup",     to: "/shop?product_type=makeup" },
-    { label: "Hair",       to: "/shop?product_type=haircare" },
-    { label: "Body",       to: "/shop?product_type=body" },
+    { label: "Fragrance",          to: "/shop?product_type=perfume" },
+    { label: "Skincare",           to: "/shop?product_type=skincare" },
+    { label: "Makeup",             to: "/shop?product_type=makeup" },
+    { label: "Hair",               to: "/shop?product_type=haircare" },
+    { label: "Body & Bath",        to: "/shop?product_type=body" },
+    { label: "Gift Sets",          to: "/shop?product_type=gift_set" },
+    { label: "Pharmacy",           to: "/shop?product_type=pharmacy" },
   ],
   "Discover": [
     { label: "New Arrivals",  to: "/shop?sort=newest" },
@@ -68,10 +71,10 @@ export default function Footer() {
           {/* Brand column */}
           <div className="lg:col-span-2">
             <Link to="/" className="font-display text-2xl font-bold tracking-[0.25em]">
-              AURA
+              {BRAND.nameUpper}
             </Link>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted">
-              Luxury beauty curated for those who appreciate the art of scent and skincare.
+              {BRAND.tagline} — luxury beauty curated for those who appreciate the art of scent and skincare.
               Refined rituals, extraordinary results.
             </p>
             <div className="mt-6 flex gap-5">
@@ -118,7 +121,7 @@ export default function Footer() {
               </p>
             </div>
             {submitted ? (
-              <p className="text-sm font-medium text-success">Welcome to AURA. Luxury awaits.</p>
+              <p className="text-sm font-medium text-success">Welcome to {BRAND.name}. Luxury awaits.</p>
             ) : (
               <form onSubmit={handleSubscribe} className="flex w-full gap-2 sm:w-auto">
                 <input
@@ -142,7 +145,7 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 text-xs text-muted md:flex-row">
-          <p>© {new Date().getFullYear()} AURA Beauty. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} {BRAND.name} Beauty. All rights reserved.</p>
           <div className="flex gap-5">
             {["Privacy", "Terms", "Cookies"].map((l) => (
               <Link key={l} to={`/${l.toLowerCase()}`} className="transition-colors hover:text-white">

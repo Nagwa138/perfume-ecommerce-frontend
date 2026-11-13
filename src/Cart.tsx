@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { BRAND } from "./brand";
 import {
   X, ChevronLeft, Minus, Plus, Tag, Truck, Shield,
   Banknote, CreditCard, Smartphone, Wallet, Check,
@@ -264,7 +265,7 @@ export default function Cart() {
                             {l.product.images?.[0] ? (
                               <img src={l.product.images[0]} alt={l.product.name} className="h-full w-full object-cover" />
                             ) : (
-                              <div className="flex h-full w-full items-center justify-center text-zinc-600 text-xs font-bold">AURA</div>
+                              <div className="flex h-full w-full items-center justify-center text-zinc-600 text-xs font-bold">{BRAND.nameUpper}</div>
                             )}
                           </div>
                           <div className="flex flex-1 min-w-0 flex-col gap-1">
@@ -496,7 +497,7 @@ export default function Cart() {
                 <h3 className="mt-6 font-display text-3xl font-bold text-white">Order Confirmed!</h3>
                 {orderId && <p className="mt-2 text-sm text-zinc-400">Order #{orderId}</p>}
                 <p className="mt-4 text-sm leading-relaxed text-zinc-500">
-                  Thank you for shopping with AURA. You'll receive a confirmation shortly.
+                  Thank you for shopping with {BRAND.name}. You'll receive a confirmation shortly.
                   Estimated delivery: <span className="font-medium text-white">2–5 business days</span>.
                 </p>
                 <button

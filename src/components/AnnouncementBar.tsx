@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 
 const MESSAGES = [
   "FREE SHIPPING on orders over EGP 2,500",
-  "Use code NOVA20 for 20% off",
+  "Use code HOSSAM20 for 20% off",
   "New arrivals every Friday",
 ];
 

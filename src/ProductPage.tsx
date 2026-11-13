@@ -9,6 +9,7 @@ import {
 import { getProduct, getRelated, getReviews, getProductVariants, fmtEGP, FREE_SHIPPING_USD, type Product, type ProductVariant, type Review } from "./api";
 import { useCart, useWishlist, useRecentlyViewed } from "./store";
 import { useTitle } from "./hooks/useTitle";
+import { BRAND } from "./brand";
 
 const Product3D = lazy(() => import("./product3d"));
 
@@ -31,7 +32,7 @@ function ImageGallery({ images, name, activeIndex, onIndexChange }: {
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <span className="font-display text-6xl font-bold tracking-widest text-white/10">AURA</span>
+            <span className="font-display text-6xl font-bold tracking-widest text-white/10">{BRAND.nameUpper}</span>
           </div>
         )}
         {images.length > 1 && (
@@ -120,7 +121,7 @@ function RelatedCard({ product: r }: { product: Product }) {
         {r.images?.[0] ? (
           <img src={r.images[0]} alt={r.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
         ) : (
-          <div className="flex h-full w-full items-center justify-center"><span className="font-display text-3xl font-bold text-white/10">AURA</span></div>
+          <div className="flex h-full w-full items-center justify-center"><span className="font-display text-3xl font-bold text-white/10">{BRAND.nameUpper}</span></div>
         )}
       </div>
       <p className="mt-2 line-clamp-1 text-sm font-medium">{r.name}</p>

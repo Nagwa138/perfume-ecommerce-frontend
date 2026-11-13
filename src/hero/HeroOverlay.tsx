@@ -6,8 +6,9 @@ import {
   TOP_OPTIONS, BOTTOM_OPTIONS, OUTER_OPTIONS, SHOE_OPTIONS, ACCESSORY_OPTIONS,
   type ClothingSlot, type ClothingItem,
 } from "./useOutfitStore";
+import { BRAND } from "../brand";
 
-const CAPTIONS = ["Streetwear", "Denim", "Sneakers", "Outerwear"] as const;
+const CAPTIONS = ["Fragrance", "Makeup", "Skincare", "Wellness"] as const;
 
 type SlotGroup = {
   slot: ClothingSlot;
@@ -47,10 +48,10 @@ export default function HeroOverlay({ activeBeat, scrollPct }: Props) {
           transition={{ duration: 0.6, delay: 0.3 }}
         >
           <h1 className="font-display text-3xl font-black tracking-tighter text-white sm:text-4xl md:text-5xl">
-            NOVA WEAR
+            {BRAND.nameUpper}
           </h1>
           <p className="mt-0.5 text-xs font-medium uppercase tracking-widest text-white/50">
-            Fall Collection — Live Now
+            {BRAND.tagline}
           </p>
         </motion.div>
 

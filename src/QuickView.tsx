@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Plus, Minus } from "lucide-react";
 import { fmtEGP, type Product } from "./api";
 import { useCart } from "./store";
+import { BRAND } from "./brand";
 
 type Props = { product: Product | null; onClose: () => void };
 
@@ -88,7 +89,7 @@ export default function QuickView({ product: p, onClose }: Props) {
                     <img src={images[imgIdx]} alt={p.name} className="h-full w-full object-cover" />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-surface-2">
-                      <span className="font-display text-4xl font-bold tracking-widest text-white/10">AURA</span>
+                      <span className="font-display text-4xl font-bold tracking-widest text-white/10">{BRAND.nameUpper}</span>
                     </div>
                   )}
                 </div>

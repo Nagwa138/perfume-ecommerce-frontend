@@ -18,6 +18,7 @@ import { Environment, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { BRAND } from "../brand";
 
 // ── Module-level scroll state ─────────────────────────────────────────────────
 const heroScroll = { current: 0 };
@@ -244,7 +245,7 @@ function HeroCaption({ containerRef }: { containerRef: RefObject<HTMLDivElement 
             <Sparkles size={11} />
             {c.label}
           </p>
-          <h1 className="font-display text-6xl font-bold tracking-[0.04em] md:text-8xl lg:text-9xl">AURA</h1>
+          <h1 className="font-display text-6xl font-bold tracking-[0.04em] md:text-8xl lg:text-9xl">{BRAND.nameUpper}</h1>
           <div className="gold-divider mx-auto my-5 w-28" />
           <p className="mx-auto max-w-xs text-sm leading-relaxed text-muted md:text-base">{c.sub}</p>
         </motion.div>
@@ -281,7 +282,7 @@ function StaticHero() {
           <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/8 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-accent">
             <Sparkles size={12} /> Luxury Beauty Destination
           </p>
-          <h1 className="font-display text-6xl font-bold tracking-[0.04em] md:text-8xl lg:text-9xl">AURA</h1>
+          <h1 className="font-display text-6xl font-bold tracking-[0.04em] md:text-8xl lg:text-9xl">{BRAND.nameUpper}</h1>
           <div className="gold-divider mx-auto my-5 w-32" />
           <p className="mx-auto max-w-md text-base leading-relaxed text-muted md:text-lg">
             Discover curated fragrances, skincare rituals and beauty essentials crafted for those who appreciate the extraordinary.

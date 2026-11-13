@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Heart, Eye } from "lucide-react";
 import { fmtEGP, type Product } from "./api";
 import { useCart, useWishlist, useRecentlyViewed } from "./store";
+import { BRAND } from "./brand";
 
 type Props = {
   product: Product;
@@ -100,7 +101,7 @@ export default function ProductCard({ product: p, featured = false, index = 0, o
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center bg-surface-2">
-            <span className="font-display text-5xl font-bold tracking-widest text-white/10">AURA</span>
+            <span className="font-display text-5xl font-bold tracking-widest text-white/10">{BRAND.nameUpper}</span>
           </div>
         )}
 

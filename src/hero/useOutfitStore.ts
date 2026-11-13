@@ -63,6 +63,6 @@ export const useOutfitStore = create<OutfitState>()(
       accessory: null,
       setSlot:   (slot, item) => set({ [slot]: item }),
     }),
-    { name: "nova-outfit" }
+    { name: "hossam-outfit" }
   )
 );

@@ -7,6 +7,7 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FlaskConical, Sparkles, Palette } from "lucide-react";
+import { BRAND } from "./brand";
 
 const QUIZZES = [
   {
@@ -47,7 +48,7 @@ export default function QuizHub() {
           Find Your Perfect Match
         </h1>
         <p className="mx-auto mt-4 max-w-sm text-sm leading-relaxed text-muted">
-          Answer a few questions and let AURA curate your ideal products from our catalogue.
+          Answer a few questions and let {BRAND.name} curate your ideal products from our catalogue.
         </p>
       </div>
 

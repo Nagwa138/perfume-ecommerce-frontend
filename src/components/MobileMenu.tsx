@@ -3,21 +3,26 @@ import { Link } from "react-router-dom";
 import { X, ShoppingBag, Heart, ChevronDown } from "lucide-react";
 import { useUI } from "../ui";
 import { useCart, useWishlist } from "../store";
+import { BRAND } from "../brand";
 
 const CATEGORIES: Record<string, string[]> = {
-  Fragrance: ["Women", "Men", "Unisex", "Floral", "Woody", "Oriental/Amber", "Collections"],
-  Skincare:  ["Serums", "Moisturisers", "Cleansers", "Eye Care", "Masks"],
-  Makeup:    ["Foundation", "Lips", "Eyes", "Blush & Bronzer"],
-  Hair:      ["Shampoo", "Conditioner", "Hair Oil", "Treatments"],
-  Body:      ["Body Lotion", "Body Wash", "Scrub", "Body Mist"],
+  Fragrance:  ["Women", "Men", "Unisex", "Floral", "Woody", "Oriental/Amber", "Collections"],
+  Skincare:   ["Serums", "Moisturisers", "Cleansers", "Eye Care", "Masks"],
+  Makeup:     ["Foundation", "Lips", "Eyes", "Blush & Bronzer"],
+  Hair:       ["Shampoo", "Conditioner", "Hair Oil", "Treatments"],
+  Body:       ["Body Lotion", "Body Wash", "Scrub", "Body Mist"],
+  "Gift Sets":["Birthday", "Wedding", "Mother's Day", "Luxury Hampers"],
+  Pharmacy:   ["Vitamins", "Skincare Rx", "Wellness", "Supplements"],
 };
 
 const CAT_TO_TYPE: Record<string, string> = {
-  Fragrance: "perfume",
-  Skincare:  "skincare",
-  Makeup:    "makeup",
-  Hair:      "haircare",
-  Body:      "body",
+  Fragrance:   "perfume",
+  Skincare:    "skincare",
+  Makeup:      "makeup",
+  Hair:        "haircare",
+  Body:        "body",
+  "Gift Sets": "gift_set",
+  Pharmacy:    "pharmacy",
 };
 
 const QUICK_NAV = [
@@ -39,7 +44,7 @@ export default function MobileMenu() {
     <div className="fixed inset-0 z-40 flex flex-col bg-bg">
       <div className="flex items-center justify-between border-b border-border px-6 py-4">
         <Link to="/" onClick={close} className="font-display text-2xl font-bold tracking-[0.25em]">
-          AURA
+          {BRAND.nameUpper}
         </Link>
         <button onClick={close} aria-label="Close menu"><X size={24} /></button>
       </div>

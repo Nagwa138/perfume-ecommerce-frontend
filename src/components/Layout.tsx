@@ -7,6 +7,8 @@ import Toast from "./Toast";
 import CommandPalette from "./CommandPalette";
 import MobileMenu from "./MobileMenu";
 import Cart from "../Cart";
+import ThemeSwitcher from "./ThemeSwitcher";
+import CursorSpotlight from "./CursorSpotlight";
 
 export default function Layout() {
   const location = useLocation();
@@ -36,6 +38,8 @@ export default function Layout() {
       <CommandPalette />
       <MobileMenu />
       <Cart />
+      <CursorSpotlight />
+      <ThemeSwitcher />
     </div>
   );
 }
