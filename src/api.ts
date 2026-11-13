@@ -279,3 +279,40 @@ export const updateOrderStatus = (id: number, status: string): Promise<void> =>
     headers: adminHeaders(),
     body: JSON.stringify({ status }),
   }).then(() => undefined);
+
+// ── Admin analytics ───────────────────────────────────────────────────────────
+
+export type Analytics = {
+  revenue_by_type:  Record<string, number>;
+  units_by_type:    Record<string, number>;
+  orders_by_status: Record<string, number>;
+  top_products:     Array<{ id: number; name: string; product_type: string; units: number }>;
+  total_revenue:    number;
+  total_orders:     number;
+};
+
+export const getAnalytics = (): Promise<Analytics | null> =>
+  fetch(`${ADMIN_API}/analytics`, { headers: adminHeaders() })
+    .then((r) => (r.ok ? r.json() : null))
+    .catch(() => null);
+
+// ── Admin create product ──────────────────────────────────────────────────────
+
+export type ProductDraft = {
+  name: string; brand: string; product_type: string; subcategory?: string;
+  gender?: string; family?: string; concentration?: string; description?: string;
+  sizes?: Array<{ ml: number; price: number; stock: number }>;
+  variants?: Array<{ name: string; shade_hex: string; stock: number }>;
+  skin_type?: string[]; ingredients?: string; how_to_use?: string;
+  longevity?: number; sillage?: number; bottle_color?: string; cap_style?: string;
+  season?: string[]; occasion?: string[]; collection?: string;
+};
+
+export const adminCreateProduct = (draft: ProductDraft): Promise<{ created_id: number; slug: string } | null> =>
+  fetch(`${ADMIN_API}/products`, {
+    method: "POST",
+    headers: adminHeaders(),
+    body: JSON.stringify(draft),
+  })
+    .then((r) => (r.ok ? r.json() : null))
+    .catch(() => null);

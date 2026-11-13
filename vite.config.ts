@@ -5,11 +5,11 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
-    port: 5174,
+    port: 8666,
     strictPort: true,
   },
   preview: {
-    port: 5174,
+    port: 8666,
     strictPort: true,
   },
 })

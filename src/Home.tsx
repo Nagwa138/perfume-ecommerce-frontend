@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { getProducts, type Product } from "./api";
 import ProductCard from "./ProductCard";
 import RecentlyViewed from "./RecentlyViewed";
+
+const ScrollHero = lazy(() => import("./hero/ScrollHero"));
 
 // ── Category tiles ─────────────────────────────────────────────────────────────
 
@@ -15,61 +17,6 @@ const CATEGORIES = [
   { label: "Hair",       pt: "haircare", accent: "#b8a0d4", desc: "Cleanse, condition & style" },
   { label: "Body",       pt: "body",     accent: "#a0c4c8", desc: "Luxurious body rituals" },
 ];
-
-// ── Hero ───────────────────────────────────────────────────────────────────────
-
-function Hero() {
-  return (
-    <section className="relative overflow-hidden border-b border-border bg-bg">
-      {/* Ambient glow */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/3 top-1/4 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/5 blur-[120px]" />
-        <div className="absolute right-1/4 top-2/3 h-[400px] w-[400px] rounded-full bg-accent/4 blur-[100px]" />
-      </div>
-
-      <div className="relative mx-auto flex max-w-7xl flex-col items-center px-6 py-28 text-center md:py-40">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-        >
-          <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/8 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-accent">
-            <Sparkles size={12} />
-            Luxury Beauty Destination
-          </p>
-          <h1 className="font-display text-6xl font-bold tracking-[0.04em] md:text-8xl lg:text-9xl">
-            AURA
-          </h1>
-          <div className="gold-divider mx-auto my-5 w-32" />
-          <p className="mx-auto max-w-md text-base leading-relaxed text-muted md:text-lg">
-            Discover curated fragrances, skincare rituals and beauty essentials
-            crafted for those who appreciate the extraordinary.
-          </p>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
-          className="mt-10 flex flex-wrap items-center justify-center gap-4"
-        >
-          <Link
-            to="/shop"
-            className="flex items-center gap-2 rounded-full bg-accent px-8 py-3.5 text-sm font-bold tracking-wider text-white transition-all hover:bg-accent-2 hover:shadow-gold"
-          >
-            Shop All Beauty <ArrowRight size={15} />
-          </Link>
-          <Link
-            to="/shop?product_type=perfume&sort=popular"
-            className="rounded-full border border-border px-8 py-3.5 text-sm font-semibold text-muted transition-colors hover:border-accent/50 hover:text-white"
-          >
-            Explore Fragrances
-          </Link>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
 
 // ── Category tiles ─────────────────────────────────────────────────────────────
 
@@ -201,7 +148,9 @@ export default function Home() {
 
   return (
     <>
-      <Hero />
+      <Suspense fallback={<div className="h-screen border-b border-border bg-bg" />}>
+        <ScrollHero />
+      </Suspense>
       <CategoryTiles />
       <FeaturedProducts products={featured} title="Best Sellers" />
       <FragranceHighlight products={newScents} />

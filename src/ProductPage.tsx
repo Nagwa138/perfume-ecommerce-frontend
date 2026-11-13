@@ -10,7 +10,7 @@ import { getProduct, getRelated, getReviews, fmtEGP, FREE_SHIPPING_USD, type Pro
 import { useCart, useWishlist, useRecentlyViewed } from "./store";
 import { useTitle } from "./hooks/useTitle";
 
-const Bottle3D = lazy(() => import("./bottle"));
+const Product3D = lazy(() => import("./product3d"));
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
@@ -268,27 +268,32 @@ export default function ProductPage() {
 
           {/* Media */}
           <div>
-            {isFragrance && (
-              <div className="mb-3 flex gap-2">
-                {(["photo", "3d"] as const).map((t) => (
-                  <button
-                    key={t}
-                    onClick={() => setMediaTab(t)}
-                    className={`rounded-full border px-4 py-1 text-sm font-semibold transition-all ${
-                      mediaTab === t
-                        ? "border-accent bg-accent text-white"
-                        : "border-white/20 text-muted hover:border-white/50 hover:text-white"
-                    }`}
-                  >
-                    {t === "photo" ? "Photo" : "3D"}
-                  </button>
-                ))}
-              </div>
-            )}
+            <div className="mb-3 flex gap-2">
+              {(["photo", "3d"] as const).map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setMediaTab(t)}
+                  className={`rounded-full border px-4 py-1 text-sm font-semibold transition-all ${
+                    mediaTab === t
+                      ? "border-accent bg-accent text-white"
+                      : "border-white/20 text-muted hover:border-white/50 hover:text-white"
+                  }`}
+                >
+                  {t === "photo" ? "Photo" : "3D"}
+                </button>
+              ))}
+            </div>
 
-            {mediaTab === "3d" && isFragrance ? (
+            {mediaTab === "3d" ? (
               <Suspense fallback={<div className="aspect-[4/5] animate-pulse rounded-2xl bg-surface-2" />}>
-                <Bottle3D capStyle={p.cap_style} liquidColor={p.bottle_color} name={p.name} />
+                <Product3D
+                  productType={p.product_type}
+                  subcategory={p.subcategory ?? ""}
+                  capStyle={p.cap_style}
+                  liquidColor={p.bottle_color}
+                  shadeHex={isMakeup && variants.length > 0 ? variants[selShade]?.shade_hex : ""}
+                  name={p.name}
+                />
               </Suspense>
             ) : (
               <ImageGallery images={images} name={p.name} activeIndex={imgIdx} onIndexChange={setImgIdx} />
