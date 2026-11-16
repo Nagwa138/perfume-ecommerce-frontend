@@ -24,10 +24,11 @@ const PRODUCT_TYPE_LABELS: Record<string, string> = {
   makeup:   "Makeup",
   haircare: "Hair",
   body:     "Body",
+  "pharmacy-wellness": "Pharmacy & Wellness",
 };
 
 function SkeletonCard() {
-  return <div className="animate-pulse rounded-xl bg-surface-2 aspect-[3/4]" />;
+  return <div className="aspect-[3/4] w-full animate-pulse rounded-xl bg-surface-2 border border-border/50" />;
 }
 
 function FilterSection({ title, children, defaultOpen = true }: {
@@ -35,13 +36,13 @@ function FilterSection({ title, children, defaultOpen = true }: {
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="border-b border-border py-4">
+    <div className="border-b border-border/60 py-4">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between text-left text-xs font-bold uppercase tracking-widest text-muted hover:text-white"
+        className="flex w-full items-center justify-between text-left text-[10px] font-bold uppercase tracking-widest text-text transition-colors hover:text-accent"
       >
         {title}
-        <ChevronDown size={14} className={`transition-transform ${open ? "" : "-rotate-90"}`} />
+        <ChevronDown size={14} className={`transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
       </button>
       <AnimatePresence initial={false}>
         {open && (
@@ -49,7 +50,7 @@ function FilterSection({ title, children, defaultOpen = true }: {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.18 }}
+            transition={{ duration: 0.25 }}
             className="overflow-hidden"
           >
             <div className="pt-3">{children}</div>
@@ -67,19 +68,19 @@ function ActiveFilters({ chips, onRemove, onClear }: {
 }) {
   if (chips.length === 0) return null;
   return (
-    <div className="mb-5 flex flex-wrap items-center gap-2">
+    <div className="mb-6 flex flex-wrap items-center gap-2">
       {chips.map((c) => (
         <button
           key={c.key}
           onClick={() => onRemove(c.key)}
-          className="flex items-center gap-1.5 rounded-full border border-accent/40 bg-accent/10 px-3 py-1 text-[11px] font-semibold text-accent transition-colors hover:bg-accent/20"
+          className="flex items-center gap-1.5 rounded-full border border-accent/40 bg-accent/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-accent transition-colors hover:bg-accent/20"
         >
           {c.label} <X size={10} />
         </button>
       ))}
       <button
         onClick={onClear}
-        className="rounded-full border border-border px-3 py-1 text-[11px] font-medium text-muted transition-colors hover:border-white/40 hover:text-white"
+        className="rounded-full border border-border px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-muted transition-colors hover:border-text/40 hover:text-text"
       >
         Clear all
       </button>
@@ -91,20 +92,38 @@ function ChipFilter({
   options, active, onChange,
 }: { options: Record<string, number>; active: string; onChange: (v: string | null) => void }) {
   return (
-    <div className="flex flex-wrap gap-1.5">
+    <div className="flex flex-wrap gap-2">
       {Object.entries(options).sort(([, a], [, b]) => b - a).map(([v, count]) => (
         <button
           key={v}
           onClick={() => onChange(active === v ? null : v)}
-          className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-all ${
+          className={`rounded-full border px-3 py-1 text-[11px] font-medium transition-all ${
             active === v
               ? "border-accent bg-accent/15 text-accent"
-              : "border-border text-muted hover:border-white/40 hover:text-white"
+              : "border-border text-muted hover:border-text/40 hover:text-text"
           }`}
         >
-          {v} <span className="opacity-50">{count}</span>
+          {v} <span className="opacity-50 ml-1">{count}</span>
         </button>
       ))}
+    </div>
+  );
+}
+
+// Editorial Break Component
+function EditorialBreak({ index }: { index: number }) {
+  return (
+    <div className="col-span-full my-8 rounded-2xl border border-border bg-surface-2 p-8 md:p-12 text-center relative overflow-hidden">
+      <div className="absolute inset-0 mesh-bg opacity-40 pointer-events-none" />
+      <div className="relative z-10">
+        <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent">The Edit</p>
+        <h3 className="mt-2 font-display text-3xl font-medium tracking-wide">
+          {index === 0 ? "A Scent for Every Mood" : "Elevate Your Daily Ritual"}
+        </h3>
+        <p className="mx-auto mt-3 max-w-md text-sm text-muted">
+          Discover our curated selection of luxury beauty essentials, designed to transform the ordinary into the extraordinary.
+        </p>
+      </div>
     </div>
   );
 }
@@ -238,7 +257,7 @@ export default function ShopPage() {
           value={qInput}
           onChange={(e) => setQInput(e.target.value)}
           placeholder="Search…"
-          className="w-full rounded-full border border-border bg-surface py-2 pl-8 pr-3 text-sm text-white outline-none placeholder:text-muted focus:border-accent"
+          className="w-full rounded-full border border-border bg-transparent py-2 pl-8 pr-3 text-sm text-text outline-none placeholder:text-muted focus:border-accent transition-colors"
         />
       </div>
 
@@ -249,15 +268,15 @@ export default function ShopPage() {
             <button
               key={pt}
               onClick={() => { setParam("product_type", ptType === pt ? null : pt); setParam("subcategory", null); }}
-              className={`flex items-center rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+              className={`flex items-center rounded-lg px-3 py-2 text-left text-xs transition-colors ${
                 ptType === pt
-                  ? "bg-accent/15 text-accent"
-                  : "text-muted hover:bg-surface-2 hover:text-white"
+                  ? "bg-accent/15 text-accent font-bold"
+                  : "text-muted hover:bg-surface-2 hover:text-text"
               }`}
             >
               {label}
               {facets?.product_types[pt] != null && (
-                <span className="ml-auto text-xs text-muted/60">{facets.product_types[pt]}</span>
+                <span className="ml-auto text-[10px] text-muted/60">{facets.product_types[pt]}</span>
               )}
             </button>
           ))}
@@ -288,51 +307,10 @@ export default function ShopPage() {
         </FilterSection>
       )}
 
-      {(isFragrance || !ptType) && facets && Object.keys(facets.concentrations).length > 0 && (
-        <FilterSection title="Concentration" defaultOpen={false}>
-          <ChipFilter options={facets.concentrations} active={conc} onChange={(v) => setParam("concentration", v)} />
-        </FilterSection>
-      )}
-
-      {/* Top notes */}
-      {(isFragrance || !ptType) && facets && Object.keys(facets.notes).length > 0 && (
-        <FilterSection title="Notes" defaultOpen={false}>
-          <ChipFilter options={facets.notes} active={note} onChange={(v) => setParam("note", v)} />
-        </FilterSection>
-      )}
-
-      {/* Season */}
-      {facets && Object.keys(facets.seasons).length > 0 && (
-        <FilterSection title="Season" defaultOpen={false}>
-          <ChipFilter options={facets.seasons} active={season} onChange={(v) => setParam("season", v)} />
-        </FilterSection>
-      )}
-
-      {/* Skin type for skincare/body/makeup */}
+      {/* Skin type */}
       {(isCosmetic || isMakeup || !ptType) && facets && Object.keys(facets.skin_types).length > 0 && (
         <FilterSection title="Skin Type" defaultOpen={false}>
           <ChipFilter options={facets.skin_types} active={skType} onChange={(v) => setParam("skin_type", v)} />
-        </FilterSection>
-      )}
-
-      {/* Volume sizes (perfume) */}
-      {(isFragrance || !ptType) && facets && Object.keys(facets.sizes).length > 0 && (
-        <FilterSection title="Size (ml)" defaultOpen={false}>
-          <div className="flex flex-wrap gap-1.5">
-            {Object.entries(facets.sizes).sort(([a], [b]) => Number(a) - Number(b)).map(([ml, count]) => (
-              <button
-                key={ml}
-                onClick={() => setParam("size_ml", sp.get("size_ml") === ml ? null : ml)}
-                className={`min-w-[2.5rem] rounded-md border px-2.5 py-1.5 text-center text-xs font-semibold transition-all ${
-                  sp.get("size_ml") === ml
-                    ? "border-accent bg-accent/15 text-accent"
-                    : "border-border text-muted hover:border-white/40 hover:text-white"
-                }`}
-              >
-                {ml}ml <span className="opacity-40">{count}</span>
-              </button>
-            ))}
-          </div>
         </FilterSection>
       )}
 
@@ -340,7 +318,7 @@ export default function ShopPage() {
       {facets && facets.price_range.max > 0 && (
         <FilterSection title="Price" defaultOpen={false}>
           <div className="space-y-3">
-            <div className="flex justify-between text-xs text-muted">
+            <div className="flex justify-between text-[11px] text-muted">
               <span>{fmtEGP(priceRange[0])}</span>
               <span>{fmtEGP(priceRange[1])}</span>
             </div>
@@ -369,8 +347,8 @@ export default function ShopPage() {
             <button
               key={key}
               onClick={() => setParam(key, active ? null : "true")}
-              className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors ${
-                active ? "bg-accent/10 text-accent" : "text-muted hover:bg-surface-2 hover:text-white"
+              className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs transition-colors ${
+                active ? "bg-accent/10 text-accent font-bold" : "text-muted hover:bg-surface-2 hover:text-text"
               }`}
             >
               <span className={`h-3 w-3 shrink-0 rounded-sm border transition-colors ${active ? "border-accent bg-accent" : "border-border"}`} />
@@ -384,31 +362,36 @@ export default function ShopPage() {
 
   return (
     <>
-      {/* Page heading */}
-      <div className="border-b border-border bg-surface/50 py-10 text-center">
-        <p className="text-xs font-medium uppercase tracking-widest text-muted">
-          {ptType ? `${BRAND.name} Beauty` : "Shop"}
-        </p>
-        <h1 className="mt-1 font-display text-4xl font-bold tracking-tight sm:text-5xl">
-          {heading}
-        </h1>
-        <p className="mt-2 text-sm text-muted">
-          {loading ? "Loading…" : `${total} item${total === 1 ? "" : "s"}`}
-        </p>
+      {/* Category Banner */}
+      <div className="relative overflow-hidden border-b border-border bg-surface py-16 text-center">
+        <div className="absolute inset-0 mesh-bg opacity-50" />
+        <div className="relative z-10 px-4">
+          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent">
+            {ptType ? `${BRAND.name} Beauty` : "Shop"}
+          </p>
+          <h1 className="mt-2 font-display text-4xl font-medium tracking-wide sm:text-5xl md:text-6xl text-text">
+            {heading}
+          </h1>
+          <p className="mt-3 text-sm text-muted">
+            {loading ? "Loading…" : `${total} item${total === 1 ? "" : "s"}`}
+          </p>
+        </div>
       </div>
 
-      <div className="mx-auto flex max-w-7xl gap-0 px-4 pb-24 md:gap-8 md:px-6">
+      <div className="mx-auto flex max-w-7xl gap-0 px-4 pb-24 md:gap-10 md:px-6">
         {/* Desktop sidebar */}
-        <aside className="hidden w-56 shrink-0 pt-8 md:block lg:w-64">
-          {sidebarContent}
+        <aside className="hidden w-60 shrink-0 pt-8 md:block lg:w-64">
+          <div className="sticky top-[100px] glass-card rounded-2xl p-5">
+            {sidebarContent}
+          </div>
         </aside>
 
         {/* Main content */}
-        <main className="min-w-0 flex-1 pt-6">
-          <div className="mb-5 flex items-center gap-3">
+        <main className="min-w-0 flex-1 pt-8">
+          <div className="mb-6 flex items-center gap-3">
             <button
               onClick={() => setSideOpen(true)}
-              className="flex items-center gap-2 rounded-full border border-border px-3.5 py-2 text-xs font-medium text-muted transition-colors hover:border-white/40 hover:text-white md:hidden"
+              className="flex items-center gap-2 rounded-full border border-border px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-muted transition-colors hover:border-text/40 hover:text-text md:hidden"
             >
               <SlidersHorizontal size={13} />
               Filters {chips.length > 0 && `(${chips.length})`}
@@ -417,9 +400,9 @@ export default function ShopPage() {
               <select
                 value={sort}
                 onChange={(e) => setParam("sort", e.target.value)}
-                className="cursor-pointer appearance-none rounded-full border border-border bg-surface py-2 pl-4 pr-8 text-xs font-medium text-white outline-none focus:border-accent"
+                className="cursor-pointer appearance-none rounded-full border border-border bg-transparent py-2 pl-4 pr-9 text-[10px] font-bold uppercase tracking-wider text-text outline-none focus:border-accent transition-colors"
               >
-                {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+                {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value} className="bg-surface text-text">{o.label}</option>)}
               </select>
               <ChevronDown size={11} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted" />
             </div>
@@ -427,40 +410,51 @@ export default function ShopPage() {
 
           <ActiveFilters chips={chips} onRemove={(k) => setParam(k, null)} onClear={clearAll} />
 
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-x-6 md:gap-y-12">
             {loading && items.length === 0
               ? Array.from({ length: PAGE_SIZE }).map((_, i) => <SkeletonCard key={i} />)
               : items.length === 0
               ? (
                 <div className="col-span-full flex flex-col items-center py-28 text-center">
-                  <p className="font-display text-5xl font-bold text-white/10">0</p>
-                  <p className="mt-3 text-muted">No products matched your filters.</p>
+                  <p className="font-display text-6xl font-bold text-border">0</p>
+                  <p className="mt-4 text-sm text-muted">No products matched your filters.</p>
                   <button
                     onClick={clearAll}
-                    className="mt-5 rounded-full border border-border px-5 py-2 text-sm font-medium text-muted transition-colors hover:border-accent hover:text-accent"
+                    className="mt-6 rounded-full border border-border px-6 py-2.5 text-[11px] font-bold uppercase tracking-wider text-muted transition-colors hover:border-accent hover:text-accent"
                   >
                     Clear filters
                   </button>
                 </div>
               )
-              : items.map((p, i) => <ProductCard key={p.id} product={p} index={i} onQuickView={setQv} />)
+              : items.map((p, i) => {
+                  // Inject editorial break every 10 products
+                  const showBreak = i > 0 && i % 10 === 0;
+                  return (
+                    <motion.div key={p.id} className="contents">
+                      {showBreak && <EditorialBreak index={i / 10} />}
+                      <div className="contents">
+                        <ProductCard product={p} index={i} onQuickView={setQv} />
+                      </div>
+                    </motion.div>
+                  );
+                })
             }
           </div>
 
           {!loading && pages > 1 && (
-            <div className="mt-10 flex items-center justify-center gap-2">
+            <div className="mt-12 flex items-center justify-center gap-3">
               <button
                 disabled={page <= 1}
                 onClick={() => setPageNum(page - 1)}
-                className="rounded-full border border-border px-4 py-2 text-sm text-muted transition-colors hover:border-accent hover:text-accent disabled:opacity-30"
+                className="rounded-full border border-border px-6 py-2.5 text-[11px] font-bold uppercase tracking-wider text-muted transition-colors hover:border-accent hover:text-accent disabled:opacity-30"
               >
                 ← Prev
               </button>
-              <span className="text-sm text-muted">{page} / {pages}</span>
+              <span className="text-[11px] font-bold text-muted">{page} / {pages}</span>
               <button
                 disabled={page >= pages}
                 onClick={() => setPageNum(page + 1)}
-                className="rounded-full border border-border px-4 py-2 text-sm text-muted transition-colors hover:border-accent hover:text-accent disabled:opacity-30"
+                className="rounded-full border border-border px-6 py-2.5 text-[11px] font-bold uppercase tracking-wider text-muted transition-colors hover:border-accent hover:text-accent disabled:opacity-30"
               >
                 Next →
               </button>
@@ -481,16 +475,16 @@ export default function ShopPage() {
             <motion.aside
               initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 28, stiffness: 280 }}
-              className="fixed inset-y-0 left-0 z-50 w-80 max-w-full overflow-y-auto bg-bg px-5 py-6 shadow-xl"
+              className="fixed inset-y-0 left-0 z-50 w-80 max-w-full overflow-y-auto bg-bg px-5 py-6 shadow-2xl"
             >
-              <div className="mb-4 flex items-center justify-between">
-                <h2 className="font-display text-lg font-bold">Filters</h2>
-                <button onClick={() => setSideOpen(false)} className="text-muted hover:text-white"><X size={20} /></button>
+              <div className="mb-6 flex items-center justify-between">
+                <h2 className="font-display text-xl font-medium">Filters</h2>
+                <button onClick={() => setSideOpen(false)} className="text-muted hover:text-text"><X size={20} /></button>
               </div>
               {sidebarContent}
               <button
                 onClick={() => setSideOpen(false)}
-                className="mt-6 w-full rounded-full bg-accent py-3 text-sm font-bold text-white"
+                className="mt-8 w-full rounded-full bg-accent py-3.5 text-xs font-bold uppercase tracking-wider text-[color:var(--h-text-inv)]"
               >
                 Show {total} results
               </button>
