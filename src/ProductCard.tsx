@@ -7,10 +7,10 @@ import { useWishlist, useRecentlyViewed } from "./store";
 type Props = {
   product: Product;
   index?: number;
-  onQuickView?: (p: Product) => void; // <-- Added to fix the TS2322 error
+  onQuickView?: (p: Product) => void;
 };
 
-export default function ProductCard({ product: p, onQuickView }: Props) {
+export default function ProductCard({ product: p, index: _index }: Props) {
   const [imgErr, setImgErr] = useState(false);
   const { toggle: toggleWish, has } = useWishlist();
   const track = useRecentlyViewed((s) => s.track);
