@@ -14,7 +14,7 @@ export default function Layout() {
   const location = useLocation();
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="relative z-0 flex min-h-screen flex-col mesh-bg">
       <AnnouncementBar />
       <Header />
 

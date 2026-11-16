@@ -40,11 +40,11 @@ const NAV: Record<string, Record<string, string[]>> = {
     "By Category":  ["Fragrance Sets", "Skincare Sets", "Makeup Sets", "Luxury Hampers"],
     "By Price":     ["Under EGP 500", "EGP 500–1000", "Over EGP 1000"],
   },
-  "Pharmacy": {
-    "Vitamins":     ["Vitamin C", "Vitamin D", "Omega-3", "Probiotics"],
-    "Skincare Rx":  ["Retinol", "AHA/BHA", "Niacinamide", "SPF Medical"],
-    "Wellness":     ["Collagen", "Supplements", "Herbal Remedies"],
-    "Medical":      ["Derma Brands", "Prescription Items"],
+  "Pharmacy & Wellness": {
+    "Daily Care":   ["Sun Care", "Oral Care", "First Aid"],
+    "Specialty":    ["Baby & Mom", "Hair & Scalp Care"],
+    "Wellness":     ["Vitamins & Supplements"],
+    "Filters":      ["Dermatologist-tested", "Fragrance-free"],
   },
 };
 
@@ -60,19 +60,19 @@ function MegaMenu({ cat, onClose }: { cat: string; onClose: () => void }) {
   const ptType = cat === "Fragrance" ? "perfume"
     : cat === "Hair" ? "haircare"
     : cat === "Gift Sets" ? "gift_set"
-    : cat === "Pharmacy" ? "pharmacy"
+    : cat === "Pharmacy & Wellness" ? "pharmacy-wellness"
     : cat.toLowerCase();
 
   return (
-    <div className="absolute left-0 top-full z-50 w-full border-t border-border bg-bg/97 shadow-xl backdrop-blur-lg">
+    <div className="absolute left-0 top-full z-50 w-full border-t border-border bg-bg/95 shadow-2xl backdrop-blur-2xl">
       <div className="mx-auto max-w-7xl px-6 py-8">
         <div className="grid grid-cols-2 gap-x-8 gap-y-6 md:grid-cols-4 lg:grid-cols-5">
           {Object.entries(groups).map(([group, items]) => (
             <div key={group}>
-              <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-accent/80">
+              <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-accent/80">
                 {group}
               </p>
-              <ul className="space-y-1.5">
+              <ul className="space-y-2">
                 {items.map((item) => (
                   <li key={item}>
                     <Link
@@ -91,7 +91,7 @@ function MegaMenu({ cat, onClose }: { cat: string; onClose: () => void }) {
             <Link
               to={`/shop?product_type=${ptType}`}
               onClick={onClose}
-              className="rounded-full bg-accent px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-accent-2"
+              className="rounded-full bg-accent px-5 py-2.5 text-xs font-bold text-[color:var(--h-text-inv)] transition-colors hover:bg-accent-2"
             >
               Shop All {cat} →
             </Link>
@@ -116,9 +116,9 @@ export default function Header() {
   const cancelClose = () => { if (closeTimer.current) clearTimeout(closeTimer.current); };
 
   return (
-    <header className="sticky top-0 z-30 w-full border-b border-border bg-bg/85 backdrop-blur-md">
+    <header className="sticky top-0 z-30 w-full glass-card border-b-0 border-x-0 border-t-0">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-
+        
         {/* Logo */}
         <Link to="/" className="font-display text-2xl font-bold tracking-[0.25em] transition-colors hover:text-accent">
           {BRAND.nameUpper}
@@ -170,7 +170,7 @@ export default function Header() {
           <Link to="/wishlist" aria-label="Wishlist" className="relative text-muted transition-colors hover:text-white">
             <Heart size={20} />
             {wishCount > 0 && (
-              <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[9px] font-bold text-white">
+              <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[9px] font-bold text-[color:var(--h-text-inv)]">
                 {wishCount > 9 ? "9+" : wishCount}
               </span>
             )}
@@ -179,7 +179,7 @@ export default function Header() {
           <button onClick={toggleCart} aria-label="Cart" className="relative text-muted transition-colors hover:text-white">
             <ShoppingBag size={20} />
             {cartCount > 0 && (
-              <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[9px] font-bold text-white">
+              <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[9px] font-bold text-[color:var(--h-text-inv)]">
                 {cartCount > 9 ? "9+" : cartCount}
               </span>
             )}

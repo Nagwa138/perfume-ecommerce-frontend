@@ -15,27 +15,23 @@ const SORT_OPTIONS = [
   { value: "price_desc", label: "Price: High → Low"  },
 ] as const;
 
-// ── Skeleton ──────────────────────────────────────────────────────────────────
-function SkeletonCard({ featured = false }: { featured?: boolean }) {
-  return (
-    <div className={`animate-pulse rounded-xl bg-surface-2 ${featured ? "col-span-2 row-span-2" : ""}`} />
-  );
+function SkeletonCard() {
+  return <div className="aspect-[3/4] w-full animate-pulse rounded-xl bg-surface-2 border border-border/50" />;
 }
 
-// ── Empty state ───────────────────────────────────────────────────────────────
 function EmptyState({ onReset }: { onReset: () => void }) {
   return (
     <motion.div
-      className="col-span-2 flex flex-col items-center justify-center py-28 text-center md:col-span-4"
+      className="col-span-2 flex flex-col items-center justify-center py-32 text-center md:col-span-4"
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <p className="font-display text-5xl font-bold text-white/10">0</p>
-      <p className="mt-3 text-muted">Nothing matched your search.</p>
+      <p className="font-display text-6xl font-bold text-border">0</p>
+      <p className="mt-4 text-sm text-muted">Nothing matched your search.</p>
       <button
         onClick={onReset}
-        className="mt-5 rounded-full border border-border px-5 py-2 text-sm font-medium text-muted transition-colors hover:border-accent hover:text-accent"
+        className="mt-6 rounded-full border border-border px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-muted transition-colors hover:border-accent hover:text-accent"
       >
         Clear filters
       </button>
@@ -43,7 +39,6 @@ function EmptyState({ onReset }: { onReset: () => void }) {
   );
 }
 
-// ── Main component ────────────────────────────────────────────────────────────
 export default function ProductGrid() {
   const [sp, setSp] = useSearchParams();
 
@@ -84,7 +79,6 @@ export default function ProductGrid() {
         setTotal(data.total);
         setLoading(false);
       });
-  // cat/q/sort come from URL — exhaustive-deps not needed here
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cat, q, sort]);
 
@@ -113,61 +107,50 @@ export default function ProductGrid() {
 
   const remaining = total - items.length;
 
-  // Build the display list (skeleton slots or real cards)
-  const skeletonCount = PAGE_SIZE;
-
   return (
     <>
       <section className="mx-auto w-full max-w-7xl px-4 pb-24 md:px-6">
 
-        {/* ── Heading ── */}
-        <div className="py-14 text-center">
-          <h2 className="font-display text-5xl font-bold uppercase tracking-tight md:text-6xl">
-            Shop{" "}
-            <span
-              className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent"
-            >
-              everything
-            </span>
+        {/* Heading */}
+        <div className="py-16 text-center">
+          <h2 className="font-display text-4xl font-medium tracking-[0.04em] md:text-5xl lg:text-6xl">
+            Shop <span className="italic text-accent">Everything</span>
           </h2>
-          <p className="mt-2 text-sm text-muted">
+          <p className="mt-3 text-xs font-medium uppercase tracking-widest text-muted">
             {total > 0 ? `${total} items` : loading ? "Loading…" : "No results"}
           </p>
         </div>
 
-        {/* ── Sticky toolbar ── */}
-        <div className="sticky top-14 z-20 -mx-4 mb-6 border-b border-border bg-bg/90 px-4 py-3 backdrop-blur-md md:-mx-6 md:px-6">
+        {/* Sticky toolbar */}
+        <div className="sticky top-[72px] z-20 -mx-4 mb-8 border-y border-border/50 bg-bg/85 px-4 py-3 backdrop-blur-xl md:-mx-6 md:px-6 md:top-[80px]">
           <div className="flex flex-wrap items-center gap-3">
 
             {/* Search */}
-            <div className="relative flex-1 min-w-[160px] max-w-xs">
+            <div className="relative flex-1 min-w-[200px] max-w-sm">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
               <input
                 type="search"
                 value={rawQ}
                 onChange={(e) => setRawQ(e.target.value)}
-                placeholder="Search…"
-                className="w-full rounded-full border border-border bg-surface py-1.5 pl-8 pr-3 text-sm text-white outline-none placeholder:text-muted focus:border-accent"
+                placeholder="Search products..."
+                className="w-full rounded-full border border-border bg-transparent py-2 pl-9 pr-3 text-sm text-text outline-none placeholder:text-muted focus:border-accent transition-colors"
               />
               {rawQ && (
-                <button
-                  onClick={() => setRawQ("")}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted hover:text-white"
-                >
+                <button onClick={() => setRawQ("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-white">
                   <X size={12} />
                 </button>
               )}
             </div>
 
             {/* Category pills — desktop */}
-            <div className="hidden flex-wrap gap-1.5 md:flex">
+            <div className="hidden flex-wrap gap-2 md:flex ml-4">
               {["", ...cats].map((c) => (
                 <button
                   key={c || "all"}
                   onClick={() => setParam("cat", c || null)}
-                  className={`rounded-full px-3.5 py-1 text-xs font-semibold transition-all ${
+                  className={`rounded-full px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider transition-all ${
                     cat === c
-                      ? "bg-accent text-white shadow-[0_0_12px_rgba(139,92,246,0.4)]"
+                      ? "bg-accent text-[color:var(--h-text-inv)] border-transparent shadow-[0_0_16px_rgba(217,185,121,0.3)]"
                       : "border border-border text-muted hover:border-white/40 hover:text-white"
                   }`}
                 >
@@ -179,7 +162,7 @@ export default function ProductGrid() {
             {/* Mobile filters toggle */}
             <button
               onClick={() => setFiltersOpen((o) => !o)}
-              className="flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted md:hidden"
+              className="flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-muted md:hidden"
             >
               <SlidersHorizontal size={12} />
               Filters
@@ -190,13 +173,13 @@ export default function ProductGrid() {
               <select
                 value={sort}
                 onChange={(e) => setParam("sort", e.target.value)}
-                className="cursor-pointer appearance-none rounded-full border border-border bg-surface py-1.5 pl-3.5 pr-7 text-xs font-medium text-white outline-none focus:border-accent"
+                className="cursor-pointer appearance-none rounded-full border border-border bg-transparent py-2 pl-4 pr-9 text-[11px] font-bold uppercase tracking-wider text-text outline-none focus:border-accent transition-colors"
               >
                 {SORT_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>{o.label}</option>
+                  <option key={o.value} value={o.value} className="bg-surface text-text">{o.label}</option>
                 ))}
               </select>
-              <ChevronDown size={11} className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-muted" />
+              <ChevronDown size={12} className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-muted" />
             </div>
           </div>
 
@@ -210,15 +193,15 @@ export default function ProductGrid() {
                 transition={{ duration: 0.2 }}
                 className="overflow-hidden"
               >
-                <div className="flex flex-wrap gap-1.5 pt-3">
+                <div className="flex flex-wrap gap-2 pt-4 pb-2">
                   {["", ...cats].map((c) => (
                     <button
                       key={c || "all"}
                       onClick={() => { setParam("cat", c || null); setFiltersOpen(false); }}
-                      className={`rounded-full px-3 py-1 text-xs font-semibold transition-all ${
+                      className={`rounded-full px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider transition-all ${
                         cat === c
-                          ? "bg-accent text-white"
-                          : "border border-border text-muted hover:border-white/40 hover:text-white"
+                          ? "bg-accent text-[color:var(--h-text-inv)]"
+                          : "border border-border text-muted"
                       }`}
                     >
                       {c || "All"}
@@ -230,21 +213,16 @@ export default function ProductGrid() {
           </AnimatePresence>
         </div>
 
-        {/* ── Grid ── */}
-        <div
-          className="grid grid-cols-2 gap-3 [grid-auto-rows:260px] [grid-auto-flow:row_dense] md:grid-cols-4 md:gap-4 md:[grid-auto-rows:300px]"
-        >
+        {/* Grid — removed the fixed row heights, using natural flow */}
+        <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 lg:grid-cols-4 md:gap-x-6 md:gap-y-12">
           {loading && items.length === 0
-            ? Array.from({ length: skeletonCount }).map((_, i) => (
-                <SkeletonCard key={i} featured={i % 7 === 6} />
-              ))
+            ? Array.from({ length: PAGE_SIZE }).map((_, i) => <SkeletonCard key={i} />)
             : items.length === 0
             ? <EmptyState onReset={resetFilters} />
             : items.map((p, i) => (
                 <ProductCard
                   key={p.id}
                   product={p}
-                  featured={i % 7 === 6}
                   index={i}
                   onQuickView={setQuickViewProduct}
                 />
@@ -259,17 +237,17 @@ export default function ProductGrid() {
           }
         </div>
 
-        {/* ── Load more ── */}
+        {/* Load more */}
         {!loading && remaining > 0 && (
           <motion.div
-            className="mt-10 flex justify-center"
+            className="mt-14 flex justify-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
           >
             <button
               onClick={loadMore}
-              className="rounded-full border border-border px-8 py-3 text-sm font-semibold text-muted transition-all hover:border-accent hover:bg-accent hover:text-white"
+              className="rounded-full border border-border px-10 py-3.5 text-xs font-bold uppercase tracking-widest text-muted transition-all hover:border-accent hover:bg-accent hover:text-[color:var(--h-text-inv)]"
             >
               Load more ({remaining} left)
             </button>
@@ -277,7 +255,7 @@ export default function ProductGrid() {
         )}
       </section>
 
-      {/* ── Quick-view modal ── */}
+      {/* Quick-view modal */}
       <QuickView
         product={quickViewProduct}
         onClose={() => setQuickViewProduct(null)}
