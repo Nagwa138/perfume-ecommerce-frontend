@@ -1,124 +1,90 @@
-import { useRef, useMemo } from "react";
+// src/hero/AvatarMesh.tsx
+// Single fixed shopper + shopping bag. Walk cycle + 4-beat turn-to-camera.
+import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import type { ClothingItem } from "./useOutfitStore";
+import { BEATS, MAIN_STORE_Z } from "./types";
+import { scrollRef } from "./useStreetStore";
 
-// Scroll beats: avatar turns to face camera at these progress fractions
-const BEATS = [0.2, 0.4, 0.6, 0.8];
-
-// Total scroll travel: container is 400vh, viewport is 100vh → 300vh of scroll
-function getProgress() {
-  if (typeof window === "undefined") return 0;
-  return THREE.MathUtils.clamp(
-    window.scrollY / (window.innerHeight * 3),
-    0, 1
-  );
-}
-
-// Reusable temp objects — avoids per-frame allocations
-const _camTarget = new THREE.Vector3();
+// Module-level temp vectors (no per-frame allocations)
 const _camPos = new THREE.Vector3();
+const _camTarget = new THREE.Vector3();
 
-export type Outfit = {
-  top:       ClothingItem;
-  bottom:    ClothingItem;
-  outerwear: ClothingItem | null;
-  shoes:     ClothingItem;
-  accessory: ClothingItem | null;
-};
+export default function AvatarMesh({ reducedMotion }: { reducedMotion: boolean }) {
+  const rootRef      = useRef<THREE.Group>(null);
+  const bodyRef      = useRef<THREE.Group>(null);
+  const torsoRef     = useRef<THREE.Group>(null);
+  const leftShoulder = useRef<THREE.Group>(null);
+  const rightShoulder= useRef<THREE.Group>(null);
+  const leftHip      = useRef<THREE.Group>(null);
+  const rightHip     = useRef<THREE.Group>(null);
+  const leftKnee     = useRef<THREE.Group>(null);
+  const rightKnee    = useRef<THREE.Group>(null);
 
-export default function AvatarMesh({
-  outfit,
-  reducedMotion = false,
-}: {
-  outfit: Outfit;
-  reducedMotion?: boolean;
-}) {
-  // ── Root group drives world position + Y rotation ─────────────────────
-  const rootRef      = useRef<THREE.Group>(null!);
-  // ── Sub-groups animated each frame ───────────────────────────────────
-  const bodyRef      = useRef<THREE.Group>(null!);  // vertical bob
-  const torsoRef     = useRef<THREE.Group>(null!);  // Y twist
-  const leftShldRef  = useRef<THREE.Group>(null!);
-  const rightShldRef = useRef<THREE.Group>(null!);
-  const leftHipRef   = useRef<THREE.Group>(null!);
-  const rightHipRef  = useRef<THREE.Group>(null!);
-  const leftKneeRef  = useRef<THREE.Group>(null!);
-  const rightKneeRef = useRef<THREE.Group>(null!);
-
-  // Smooth blend: 0 = walking away, 1 = facing camera
+  // Smooth blend 0 = walking away, 1 = facing camera
   const facingRef = useRef(0);
 
-  // ── Materials (recreated only when outfit prop changes) ───────────────
-  const skinMat   = useMemo(() => new THREE.MeshStandardMaterial({ color: "#c8956c", roughness: 0.9 }), []);
-  const shadowMat = useMemo(() => new THREE.MeshBasicMaterial({ color: "#000000", transparent: true, opacity: 0.32, depthWrite: false }), []);
-
-  const topMat    = useMemo(
-    () => new THREE.MeshStandardMaterial({ color: outfit.top.color,    roughness: 0.88 }),
-    [outfit.top.color]
-  );
-  const bottomMat = useMemo(
-    () => new THREE.MeshStandardMaterial({ color: outfit.bottom.color, roughness: 0.92 }),
-    [outfit.bottom.color]
-  );
-  const shoesMat  = useMemo(
-    () => new THREE.MeshStandardMaterial({ color: outfit.shoes.color,  roughness: 0.72 }),
-    [outfit.shoes.color]
-  );
-  const outerMat  = useMemo(
-    () => outfit.outerwear
-      ? new THREE.MeshStandardMaterial({ color: outfit.outerwear.color, roughness: 0.84 })
-      : null,
-    [outfit.outerwear?.color]
-  );
-  const accMat    = useMemo(
-    () => outfit.accessory
-      ? new THREE.MeshStandardMaterial({ color: outfit.accessory.color, roughness: 0.78 })
-      : null,
-    [outfit.accessory?.color]
-  );
-
-  // ── Per-frame animation (no React state mutations) ────────────────────
   useFrame(({ camera }) => {
     if (!rootRef.current) return;
-    const p = getProgress();
+    const p = scrollRef.current;
 
-    // Beat detection: smooth blend toward 1 when near a beat
-    const minDist = Math.min(...BEATS.map(b => Math.abs(p - b)));
+    // Nearest beat distance
+    const minDist = BEATS.reduce(
+      (m, b) => Math.min(m, Math.abs(p - b.at)),
+      Infinity,
+    );
     const nearBeat = minDist < 0.045;
-    facingRef.current = THREE.MathUtils.lerp(facingRef.current, nearBeat ? 1 : 0, 0.055);
-    const f = facingRef.current;
+    const nearEnd  = p > 0.92;
+    const wantFace = nearBeat || nearEnd;
 
-    // ── Avatar walks down -Z ─────────────────────────────────────────
+    facingRef.current = THREE.MathUtils.lerp(
+      facingRef.current,
+      wantFace ? 1 : 0,
+      0.055,
+    );
+    const facing = facingRef.current;
+
+    // ── Avatar walks down −Z ────────────────────────────────────────
+    const targetZ = -p * (Math.abs(MAIN_STORE_Z) - 6); // stop just short of doors
     rootRef.current.position.z = THREE.MathUtils.lerp(
       rootRef.current.position.z,
-      -p * 46,
-      0.075
+      targetZ,
+      0.075,
     );
+
     // Y rotation: 0 = back to camera, π = facing camera
     rootRef.current.rotation.y = THREE.MathUtils.lerp(
       rootRef.current.rotation.y,
-      Math.PI * f,
-      0.055
+      Math.PI * facing,
+      0.055,
     );
 
-    // ── Camera tracks avatar ─────────────────────────────────────────
+    // ── Camera follows behind the avatar ────────────────────────────
     const az = rootRef.current.position.z;
-    // Gentle side sway so camera isn't perfectly locked
     _camPos.set(Math.sin(p * Math.PI * 1.5) * 0.6, 2.3, az + 7.5);
     _camTarget.set(0, 1.15, az - 1);
-
     camera.position.lerp(_camPos, 0.04);
     camera.lookAt(_camTarget);
 
-    if (reducedMotion) return;
+    if (reducedMotion) {
+      // Static pose: stand neutral facing the doors
+      if (leftShoulder.current)  leftShoulder.current.rotation.set(0, 0,  0.1);
+      if (rightShoulder.current) rightShoulder.current.rotation.set(0, 0, -0.1);
+      if (leftHip.current)  leftHip.current.rotation.set(0, 0, 0);
+      if (rightHip.current) rightHip.current.rotation.set(0, 0, 0);
+      if (leftKnee.current)  leftKnee.current.rotation.set(0, 0, 0);
+      if (rightKnee.current) rightKnee.current.rotation.set(0, 0, 0);
+      if (bodyRef.current) bodyRef.current.position.y = 0;
+      if (torsoRef.current) torsoRef.current.rotation.y = 0;
+      return;
+    }
 
-    // ── Walk cycle (blended out near beats) ───────────────────────────
-    const walkBlend = 1 - f;
-    if (walkBlend < 0.005) {
-      // Pose: arms open slightly when facing camera
-      if (leftShldRef.current)  leftShldRef.current.rotation.z  = THREE.MathUtils.lerp(leftShldRef.current.rotation.z,   0.3, 0.07);
-      if (rightShldRef.current) rightShldRef.current.rotation.z = THREE.MathUtils.lerp(rightShldRef.current.rotation.z, -0.3, 0.07);
+    // ── Walk cycle (fades out as facing → 1) ────────────────────────
+    const walkBlend = 1 - facing;
+    if (walkBlend < 0.02) {
+      // Idle pose when facing camera
+      if (leftShoulder.current)  leftShoulder.current.rotation.set(0, 0,  0.25);
+      if (rightShoulder.current) rightShoulder.current.rotation.set(0, 0, -0.25);
       return;
     }
 
@@ -128,220 +94,153 @@ export default function AvatarMesh({
     const kneeBendR = Math.max(0,  Math.sin(phase)) * 0.38 * walkBlend;
     const armSwing  = -legSwing * 0.65;
 
-    if (leftHipRef.current)   leftHipRef.current.rotation.x  = legSwing;
-    if (rightHipRef.current)  rightHipRef.current.rotation.x = -legSwing;
-    if (leftKneeRef.current)  leftKneeRef.current.rotation.x  = kneeBendL;
-    if (rightKneeRef.current) rightKneeRef.current.rotation.x = kneeBendR;
-    if (leftShldRef.current)  { leftShldRef.current.rotation.x  = armSwing;  leftShldRef.current.rotation.z  = THREE.MathUtils.lerp(leftShldRef.current.rotation.z,  0, 0.07); }
-    if (rightShldRef.current) { rightShldRef.current.rotation.x = -armSwing; rightShldRef.current.rotation.z = THREE.MathUtils.lerp(rightShldRef.current.rotation.z, 0, 0.07); }
+    if (leftHip.current)   leftHip.current.rotation.x  = legSwing;
+    if (rightHip.current)  rightHip.current.rotation.x = -legSwing;
+    if (leftKnee.current)  leftKnee.current.rotation.x  = kneeBendL;
+    if (rightKnee.current) rightKnee.current.rotation.x = kneeBendR;
+    if (leftShoulder.current)  {
+      leftShoulder.current.rotation.x = armSwing;
+      leftShoulder.current.rotation.z = THREE.MathUtils.lerp(leftShoulder.current.rotation.z, 0, 0.07);
+    }
+    if (rightShoulder.current) {
+      rightShoulder.current.rotation.x = -armSwing;
+      rightShoulder.current.rotation.z = THREE.MathUtils.lerp(rightShoulder.current.rotation.z, 0, 0.07);
+    }
 
     if (bodyRef.current)  bodyRef.current.position.y  = Math.abs(Math.sin(phase * 2)) * 0.028 * walkBlend;
     if (torsoRef.current) torsoRef.current.rotation.y = Math.sin(phase) * 0.065 * walkBlend;
   });
 
-  // ── Outfit shape flags ────────────────────────────────────────────────
-  const isHoodie   = outfit.top.type === "hoodie";
-  const isPuffer   = outfit.outerwear?.type === "puffer";
-  const isBomber   = outfit.outerwear?.type === "bomber" || outfit.outerwear?.type === "denim_jacket";
-  const isCargo    = outfit.bottom.type === "cargo";
-  const isShorts   = outfit.bottom.type === "shorts";
-  const isCap      = outfit.accessory?.type === "cap";
-  const isBeanie   = outfit.accessory?.type === "beanie";
-  const isBackpack = outfit.accessory?.type === "backpack";
-  const isBoots    = outfit.shoes.type === "boots";
-
+  // ── Fixed skin + clothing materials ─────────────────────────────────
   return (
     <group ref={rootRef}>
-
-      {/* ── Contact shadow blob ───────────────────────────── */}
+      {/* Contact shadow */}
       <mesh position={[0, 0.012, 0]} rotation={[-Math.PI / 2, 0, 0]} renderOrder={-1}>
-        <circleGeometry args={[0.52, 24]} />
-        <primitive object={shadowMat} attach="material" />
+        <circleGeometry args={[0.5, 20]} />
+        <meshBasicMaterial color="#000000" transparent opacity={0.32} depthWrite={false} />
       </mesh>
 
-      {/* ── All body in a bob group ───────────────────────── */}
       <group ref={bodyRef}>
-
         {/* Head */}
         <mesh position={[0, 1.68, 0]}>
           <sphereGeometry args={[0.21, 14, 14]} />
-          <primitive object={skinMat} attach="material" />
+          <meshStandardMaterial color="#c8956c" roughness={0.9} />
         </mesh>
-
+        {/* Hair cap */}
+        <mesh position={[0, 1.78, -0.02]}>
+          <sphereGeometry args={[0.215, 14, 10, 0, Math.PI * 2, 0, Math.PI / 2]} />
+          <meshStandardMaterial color="#2a1a10" roughness={0.95} />
+        </mesh>
         {/* Neck */}
         <mesh position={[0, 1.5, 0]}>
           <cylinderGeometry args={[0.08, 0.1, 0.22, 8]} />
-          <primitive object={skinMat} attach="material" />
+          <meshStandardMaterial color="#c8956c" roughness={0.9} />
         </mesh>
 
-        {/* Hat / accessory on head */}
-        {isCap && outfit.accessory && accMat && (
-          <group>
-            <mesh position={[0, 1.9, 0]}>
-              <cylinderGeometry args={[0.22, 0.22, 0.14, 14]} />
-              <primitive object={accMat} attach="material" />
-            </mesh>
-            <mesh position={[0, 1.83, 0.14]} rotation={[0.15, 0, 0]}>
-              <boxGeometry args={[0.38, 0.04, 0.22]} />
-              <primitive object={accMat} attach="material" />
-            </mesh>
-          </group>
-        )}
-        {isBeanie && outfit.accessory && accMat && (
-          <mesh position={[0, 1.88, 0]}>
-            <sphereGeometry args={[0.24, 12, 12]} />
-            <primitive object={accMat} attach="material" />
-          </mesh>
-        )}
-
-        {/* ── Torso group (Y twist) ──────────────────────── */}
         <group ref={torsoRef}>
-
-          {/* Backpack (behind torso) */}
-          {isBackpack && outfit.accessory && accMat && (
-            <mesh position={[0, 1.03, -0.27]}>
-              <boxGeometry args={[0.38, 0.52, 0.17]} />
-              <primitive object={accMat} attach="material" />
-            </mesh>
-          )}
-
-          {/* Torso base */}
+          {/* Torso body */}
           <mesh position={[0, 1.03, 0]}>
             <boxGeometry args={[0.46, 0.68, 0.28]} />
-            <primitive object={skinMat} attach="material" />
+            <meshStandardMaterial color="#D9B979" roughness={0.7} metalness={0.1} />
           </mesh>
-
-          {/* Top clothing */}
-          <mesh position={[0, 1.03, 0]}>
-            <boxGeometry args={[0.5, 0.72, 0.32]} />
-            <primitive object={topMat} attach="material" />
+          {/* Coat / blazer accent */}
+          <mesh position={[0, 1.08, 0.02]}>
+            <boxGeometry args={[0.5, 0.7, 0.3]} />
+            <meshStandardMaterial color="#0B2B26" roughness={0.8} />
           </mesh>
-
-          {/* Hood (hoodie) */}
-          {isHoodie && (
-            <mesh position={[0, 1.5, -0.06]}>
-              <sphereGeometry args={[0.26, 10, 10]} />
-              <primitive object={topMat} attach="material" />
-            </mesh>
-          )}
-
-          {/* Outerwear shell */}
-          {outfit.outerwear && outerMat && (
-            <mesh position={[0, 1.03, 0]}>
-              <boxGeometry args={isPuffer ? [0.63, 0.78, 0.42] : [0.56, 0.74, 0.36]} />
-              <primitive object={outerMat} attach="material" />
-            </mesh>
-          )}
-          {/* Bomber/denim collar accent */}
-          {isBomber && outerMat && (
-            <mesh position={[0, 1.44, 0.1]} rotation={[0.3, 0, 0]}>
-              <boxGeometry args={[0.5, 0.08, 0.1]} />
-              <primitive object={outerMat} attach="material" />
-            </mesh>
-          )}
-
           {/* Hips */}
           <mesh position={[0, 0.59, 0]}>
             <boxGeometry args={[0.44, 0.24, 0.27]} />
-            <primitive object={skinMat} attach="material" />
+            <meshStandardMaterial color="#0B2B26" roughness={0.85} />
           </mesh>
 
-          {/* ── Left arm ─────────────────────────────────── */}
-          <group ref={leftShldRef} position={[-0.33, 1.3, 0]}>
-            {/* Upper arm */}
+          {/* ── Left arm ─────────────────────────────────────── */}
+          <group ref={leftShoulder} position={[-0.33, 1.3, 0]}>
             <mesh position={[0, -0.15, 0]}>
-              <cylinderGeometry args={[0.093, 0.082, 0.3, 8]} />
-              <primitive object={topMat} attach="material" />
-            </mesh>
-            {/* Elbow pivot (no ref — no animation) */}
-            <group position={[0, -0.3, 0]}>
-              <mesh position={[0, -0.14, 0]}>
-                <cylinderGeometry args={[0.079, 0.072, 0.28, 8]} />
-                <primitive object={skinMat} attach="material" />
-              </mesh>
-              <mesh position={[0, -0.3, 0]}>
-                <boxGeometry args={[0.09, 0.09, 0.055]} />
-                <primitive object={skinMat} attach="material" />
-              </mesh>
-            </group>
-          </group>
-
-          {/* ── Right arm ────────────────────────────────── */}
-          <group ref={rightShldRef} position={[0.33, 1.3, 0]}>
-            <mesh position={[0, -0.15, 0]}>
-              <cylinderGeometry args={[0.093, 0.082, 0.3, 8]} />
-              <primitive object={topMat} attach="material" />
+              <cylinderGeometry args={[0.09, 0.08, 0.3, 8]} />
+              <meshStandardMaterial color="#0B2B26" roughness={0.8} />
             </mesh>
             <group position={[0, -0.3, 0]}>
               <mesh position={[0, -0.14, 0]}>
-                <cylinderGeometry args={[0.079, 0.072, 0.28, 8]} />
-                <primitive object={skinMat} attach="material" />
+                <cylinderGeometry args={[0.075, 0.07, 0.28, 8]} />
+                <meshStandardMaterial color="#c8956c" roughness={0.9} />
               </mesh>
               <mesh position={[0, -0.3, 0]}>
                 <boxGeometry args={[0.09, 0.09, 0.055]} />
-                <primitive object={skinMat} attach="material" />
+                <meshStandardMaterial color="#c8956c" roughness={0.9} />
               </mesh>
             </group>
           </group>
 
-          {/* ── Left leg ─────────────────────────────────── */}
-          <group ref={leftHipRef} position={[-0.14, 0.58, 0]}>
-            {/* Thigh */}
+          {/* ── Right arm — holds the shopping bag ───────────── */}
+          <group ref={rightShoulder} position={[0.33, 1.3, 0]}>
+            <mesh position={[0, -0.15, 0]}>
+              <cylinderGeometry args={[0.09, 0.08, 0.3, 8]} />
+              <meshStandardMaterial color="#0B2B26" roughness={0.8} />
+            </mesh>
+            <group position={[0, -0.3, 0]}>
+              <mesh position={[0, -0.14, 0]}>
+                <cylinderGeometry args={[0.075, 0.07, 0.28, 8]} />
+                <meshStandardMaterial color="#c8956c" roughness={0.9} />
+              </mesh>
+              {/* Shopping bag — hangs from right hand */}
+              <group position={[0, -0.36, 0]}>
+                {/* Handle */}
+                <mesh position={[0, 0.06, 0]}>
+                  <torusGeometry args={[0.06, 0.008, 6, 12, Math.PI]} />
+                  <meshStandardMaterial color="#111111" roughness={0.7} />
+                </mesh>
+                {/* Bag body */}
+                <mesh position={[0, -0.12, 0]}>
+                  <boxGeometry args={[0.22, 0.24, 0.1]} />
+                  <meshStandardMaterial color="#D9B979" roughness={0.6} metalness={0.05} />
+                </mesh>
+                {/* Logo stripe */}
+                <mesh position={[0, -0.1, 0.051]}>
+                  <planeGeometry args={[0.16, 0.05]} />
+                  <meshBasicMaterial color="#0B2B26" />
+                </mesh>
+              </group>
+            </group>
+          </group>
+
+          {/* ── Left leg ─────────────────────────────────────── */}
+          <group ref={leftHip} position={[-0.14, 0.58, 0]}>
             <mesh position={[0, -0.2, 0]}>
               <cylinderGeometry args={[0.13, 0.11, 0.42, 8]} />
-              <primitive object={bottomMat} attach="material" />
+              <meshStandardMaterial color="#0B2B26" roughness={0.85} />
             </mesh>
-            {/* Cargo pocket */}
-            {isCargo && (
-              <mesh position={[-0.15, -0.22, 0]}>
-                <boxGeometry args={[0.08, 0.14, 0.11]} />
-                <primitive object={bottomMat} attach="material" />
+            <group ref={leftKnee} position={[0, -0.43, 0]}>
+              <mesh position={[0, -0.18, 0]}>
+                <cylinderGeometry args={[0.1, 0.09, 0.36, 8]} />
+                <meshStandardMaterial color="#0B2B26" roughness={0.85} />
               </mesh>
-            )}
-            {/* Knee pivot */}
-            <group ref={leftKneeRef} position={[0, -0.43, 0]}>
-              {!isShorts && (
-                <mesh position={[0, -0.18, 0]}>
-                  <cylinderGeometry args={[0.1, 0.09, 0.36, 8]} />
-                  <primitive object={bottomMat} attach="material" />
-                </mesh>
-              )}
-              {/* Shoe */}
-              <mesh position={[0, isShorts ? -0.06 : -0.4, 0.07]}>
-                <boxGeometry args={isBoots ? [0.14, 0.28, 0.28] : [0.14, 0.1, 0.3]} />
-                <primitive object={shoesMat} attach="material" />
+              <mesh position={[0, -0.4, 0.07]}>
+                <boxGeometry args={[0.14, 0.1, 0.3]} />
+                <meshStandardMaterial color="#111111" roughness={0.6} />
               </mesh>
             </group>
           </group>
 
-          {/* ── Right leg ────────────────────────────────── */}
-          <group ref={rightHipRef} position={[0.14, 0.58, 0]}>
+          {/* ── Right leg ────────────────────────────────────── */}
+          <group ref={rightHip} position={[0.14, 0.58, 0]}>
             <mesh position={[0, -0.2, 0]}>
               <cylinderGeometry args={[0.13, 0.11, 0.42, 8]} />
-              <primitive object={bottomMat} attach="material" />
+              <meshStandardMaterial color="#0B2B26" roughness={0.85} />
             </mesh>
-            {isCargo && (
-              <mesh position={[0.15, -0.22, 0]}>
-                <boxGeometry args={[0.08, 0.14, 0.11]} />
-                <primitive object={bottomMat} attach="material" />
+            <group ref={rightKnee} position={[0, -0.43, 0]}>
+              <mesh position={[0, -0.18, 0]}>
+                <cylinderGeometry args={[0.1, 0.09, 0.36, 8]} />
+                <meshStandardMaterial color="#0B2B26" roughness={0.85} />
               </mesh>
-            )}
-            <group ref={rightKneeRef} position={[0, -0.43, 0]}>
-              {!isShorts && (
-                <mesh position={[0, -0.18, 0]}>
-                  <cylinderGeometry args={[0.1, 0.09, 0.36, 8]} />
-                  <primitive object={bottomMat} attach="material" />
-                </mesh>
-              )}
-              <mesh position={[0, isShorts ? -0.06 : -0.4, 0.07]}>
-                <boxGeometry args={isBoots ? [0.14, 0.28, 0.28] : [0.14, 0.1, 0.3]} />
-                <primitive object={shoesMat} attach="material" />
+              <mesh position={[0, -0.4, 0.07]}>
+                <boxGeometry args={[0.14, 0.1, 0.3]} />
+                <meshStandardMaterial color="#111111" roughness={0.6} />
               </mesh>
             </group>
           </group>
-
-        </group>{/* /torso group */}
-      </group>{/* /body group */}
+        </group>
+      </group>
     </group>
   );
 }

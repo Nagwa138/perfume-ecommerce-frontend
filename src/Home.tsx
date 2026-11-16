@@ -6,19 +6,15 @@ import { getProducts, type Product } from "./api";
 import ProductCard from "./ProductCard";
 import RecentlyViewed from "./RecentlyViewed";
 
-const ScrollHero = lazy(() => import("./hero/ScrollHero"));
-
-// ── Category tiles ─────────────────────────────────────────────────────────────
+const StreetHero = lazy(() => import("./hero/StreetHero"));
 
 const CATEGORIES = [
-  { label: "Fragrance",  pt: "perfume",  accent: "#C8A951", desc: "Niche perfumes & luxury scents" },
-  { label: "Skincare",   pt: "skincare", accent: "#a0c4b8", desc: "Serums, moisturisers & more" },
-  { label: "Makeup",     pt: "makeup",   accent: "#d4a0a0", desc: "Complexion, lips & eyes" },
-  { label: "Hair",       pt: "haircare", accent: "#b8a0d4", desc: "Cleanse, condition & style" },
-  { label: "Body",       pt: "body",     accent: "#a0c4c8", desc: "Luxurious body rituals" },
+  { label: "Fragrance",  pt: "perfume",   accent: "#C8A951", desc: "Niche perfumes & luxury scents" },
+  { label: "Skincare",   pt: "skincare",  accent: "#a0c4b8", desc: "Serums, moisturisers & more" },
+  { label: "Makeup",     pt: "makeup",    accent: "#d4a0a0", desc: "Complexion, lips & eyes" },
+  { label: "Hair",       pt: "haircare",  accent: "#b8a0d4", desc: "Cleanse, condition & style" },
+  { label: "Body",       pt: "body",      accent: "#a0c4c8", desc: "Luxurious body rituals" },
 ];
-
-// ── Category tiles ─────────────────────────────────────────────────────────────
 
 function CategoryTiles() {
   return (
@@ -56,18 +52,13 @@ function CategoryTiles() {
   );
 }
 
-// ── Featured products ─────────────────────────────────────────────────────────
-
 function FeaturedProducts({ products, title }: { products: Product[]; title: string }) {
   if (products.length === 0) return null;
   return (
     <section className="mx-auto max-w-7xl px-4 py-10 md:px-6">
       <div className="mb-8 flex items-center justify-between">
         <h2 className="font-display text-3xl font-bold tracking-wide">{title}</h2>
-        <Link
-          to="/shop?sort=popular"
-          className="flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-accent"
-        >
+        <Link to="/shop?sort=popular" className="flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-accent">
           View all <ArrowRight size={14} />
         </Link>
       </div>
@@ -77,8 +68,6 @@ function FeaturedProducts({ products, title }: { products: Product[]; title: str
     </section>
   );
 }
-
-// ── Fragrance highlight ───────────────────────────────────────────────────────
 
 function FragranceHighlight({ products }: { products: Product[] }) {
   if (products.length === 0) return null;
@@ -90,10 +79,7 @@ function FragranceHighlight({ products }: { products: Product[] }) {
             <p className="text-xs font-bold uppercase tracking-widest text-accent">Signature Scents</p>
             <h2 className="mt-1 font-display text-3xl font-bold tracking-wide">New in Fragrance</h2>
           </div>
-          <Link
-            to="/shop?product_type=perfume&sort=newest"
-            className="flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-accent"
-          >
+          <Link to="/shop?product_type=perfume&sort=newest" className="flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-accent">
             View all <ArrowRight size={14} />
           </Link>
         </div>
@@ -104,8 +90,6 @@ function FragranceHighlight({ products }: { products: Product[] }) {
     </section>
   );
 }
-
-// ── Gift sets banner ──────────────────────────────────────────────────────────
 
 function GiftBanner() {
   return (
@@ -135,8 +119,6 @@ function GiftBanner() {
   );
 }
 
-// ── Main home ──────────────────────────────────────────────────────────────────
-
 export default function Home() {
   const [featured,  setFeatured]  = useState<Product[]>([]);
   const [newScents, setNewScents] = useState<Product[]>([]);
@@ -149,9 +131,11 @@ export default function Home() {
   return (
     <>
       <Suspense fallback={<div className="h-screen border-b border-border bg-bg" />}>
-        <ScrollHero />
+        <StreetHero />
       </Suspense>
-      <CategoryTiles />
+      <div id="first-section">
+        <CategoryTiles />
+      </div>
       <FeaturedProducts products={featured} title="Best Sellers" />
       <FragranceHighlight products={newScents} />
       <GiftBanner />

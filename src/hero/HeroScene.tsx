@@ -1,67 +1,77 @@
-import { useFrame, useThree } from "@react-three/fiber";
+// src/hero/HeroScene.tsx
+// Lights + composition. Four real lights MAX, by policy.
+// All other glow (lamps, windows, signs) is emissive meshes in StreetScene.tsx.
+import { useRef } from "react";
+import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import StreetSceneRoot from "./StreetScene";
+import StreetScene from "./StreetScene";
 import AvatarMesh from "./AvatarMesh";
-import type { Outfit } from "./AvatarMesh";
+import { scrollRef } from "./useStreetStore";
 
-type Props = {
-  outfit: Outfit;
+export default function HeroScene({
+  reducedMotion,
+}: {
   reducedMotion: boolean;
-};
-
-// Animate ambient + directional light intensity with scroll
-function SceneLights() {
-  const { scene } = useThree();
+}) {
+  const ambientRef = useRef<THREE.AmbientLight>(null);
+  const sunRef = useRef<THREE.DirectionalLight>(null);
+  const doorL1 = useRef<THREE.PointLight>(null);
+  const doorL2 = useRef<THREE.PointLight>(null);
 
   useFrame(() => {
-    const p = typeof window !== "undefined"
-      ? THREE.MathUtils.clamp(window.scrollY / (window.innerHeight * 3), 0, 1)
-      : 0;
-
-    scene.traverse((obj) => {
-      if (obj instanceof THREE.AmbientLight) {
-        obj.intensity = THREE.MathUtils.lerp(0.7, 0.12, p);
-      }
-      if (obj instanceof THREE.DirectionalLight) {
-        obj.intensity = THREE.MathUtils.lerp(2.0, 0.25, p);
-        // Shift sun color from warm orange to cool blue
-        obj.color.lerpColors(
-          new THREE.Color("#ffd580"),
-          new THREE.Color("#334466"),
-          p
-        );
-      }
-    });
+    const p = scrollRef.current;
+    // Ambient dims as night falls
+    if (ambientRef.current) {
+      ambientRef.current.intensity = THREE.MathUtils.lerp(0.55, 0.18, p);
+    }
+    // Sun fades and cools from dusk-warm to night-blue
+    if (sunRef.current) {
+      sunRef.current.intensity = THREE.MathUtils.lerp(1.6, 0.25, p);
+      sunRef.current.color.lerpColors(
+        new THREE.Color("#ffd9a0"),
+        new THREE.Color("#3a4a70"),
+        p,
+      );
+    }
+    // Door spill lights only come alive in the final 15% of the scroll
+    const doorGlow = THREE.MathUtils.smoothstep(p, 0.85, 1);
+    if (doorL1.current) doorL1.current.intensity = doorGlow * 6;
+    if (doorL2.current) doorL2.current.intensity = doorGlow * 6;
   });
 
   return (
     <>
-      {/* Ambient */}
-      <ambientLight intensity={0.7} />
+      {/* 1 — ambient */}
+      <ambientLight ref={ambientRef} intensity={0.55} />
 
-      {/* Sun / directional (positioned for dusk look) */}
+      {/* 2 — sun / moon directional */}
       <directionalLight
-        position={[6, 8, 4]}
-        intensity={2.0}
-        color="#ffd580"
+        ref={sunRef}
+        position={[8, 12, 4]}
+        intensity={1.6}
+        color="#ffd9a0"
       />
 
-      {/* Subtle fill from opposite side */}
-      <directionalLight
-        position={[-4, 3, -6]}
-        intensity={0.3}
-        color="#334488"
+      {/* 3 + 4 — door spill point lights (HOSSAM main storefront) */}
+      <pointLight
+        ref={doorL1}
+        position={[-1.2, 2.0, -59.4]}
+        color="#ffe7b8"
+        intensity={0}
+        distance={14}
+        decay={2}
       />
-    </>
-  );
-}
+      <pointLight
+        ref={doorL2}
+        position={[1.2, 2.0, -59.4]}
+        color="#ffe7b8"
+        intensity={0}
+        distance={14}
+        decay={2}
+      />
 
-export default function HeroScene({ outfit, reducedMotion }: Props) {
-  return (
-    <>
-      <SceneLights />
-      <StreetSceneRoot />
-      <AvatarMesh outfit={outfit} reducedMotion={reducedMotion} />
+      <StreetScene reducedMotion={reducedMotion} />
+      <AvatarMesh reducedMotion={reducedMotion} />
     </>
   );
 }
