@@ -7,7 +7,7 @@ import RecentlyViewed from "./RecentlyViewed";
 const HERO_IMAGE = "https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=1600&auto=format&fit=crop";
 
 export default function Home() {
-  const [featured, setFeatured] = useState<Product[]>([]);
+  const [_featured, setFeatured] = useState<Product[]>([]);
   const [newArrivals, setNewArrivals] = useState<Product[]>([]);
 
   useEffect(() => {

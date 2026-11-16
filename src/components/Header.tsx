@@ -1,7 +1,6 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Search, User, ShoppingBag, Menu } from "lucide-react";
-import { useCart, useWishlist } from "../store";
+import { useCart } from "../store";
 import { useUI } from "../ui";
 import logoImg from "../assets/logo.jpg"; 
 

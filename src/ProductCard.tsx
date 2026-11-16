@@ -2,16 +2,16 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { fmtEGP, type Product } from "./api";
-import { useCart, useWishlist, useRecentlyViewed } from "./store";
+import { useWishlist, useRecentlyViewed } from "./store";
 
 type Props = {
   product: Product;
   index?: number;
+  onQuickView?: (p: Product) => void; // <-- Added to fix the TS2322 error
 };
 
-export default function ProductCard({ product: p, index = 0 }: Props) {
+export default function ProductCard({ product: p, onQuickView }: Props) {
   const [imgErr, setImgErr] = useState(false);
-  const add = useCart((s) => s.add);
   const { toggle: toggleWish, has } = useWishlist();
   const track = useRecentlyViewed((s) => s.track);
   const wished = has(p.id);

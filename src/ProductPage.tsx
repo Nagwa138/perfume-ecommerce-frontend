@@ -3,8 +3,8 @@ import { Link, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   AlertCircle, CheckCircle, ChevronRight, ChevronDown,
-  Heart, Minus, Package, Plus, Star,
-  Droplets, Wind, Flame, Truck, ShieldCheck, RotateCcw
+  Heart, Minus, Plus, Star,
+  Droplets, Wind, Flame,
 } from "lucide-react";
 import { getProduct, getRelated, getReviews, getProductVariants, fmtEGP, FREE_SHIPPING_USD, type Product, type ProductVariant, type Review } from "./api";
 import { useCart, useWishlist, useRecentlyViewed } from "./store";
