@@ -58,7 +58,7 @@ function CategoryTiles() {
 function NewArrivalsRail({ products }: { products: Product[] }) {
   if (products.length === 0) return null;
   return (
-    <section className="w-full max-w-[100vw] border-y border-border bg-surface py-16">
+    <section className="w-full overflow-hidden border-y border-border bg-surface py-16">
       <div className="mx-auto max-w-7xl px-4 md:px-6">
         <div className="mb-8 flex items-end justify-between gap-4">
           <div>
@@ -74,9 +74,8 @@ function NewArrivalsRail({ products }: { products: Product[] }) {
             View all <ArrowRight size={14} />
           </Link>
         </div>
-        
-        {/* Fix: Explicit w-full and overflow-hidden on the outer container */}
-        <div className="w-full overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-thin">
+
+        <div className="w-full max-w-[calc(100vw-2rem)] overflow-x-scroll pb-4 snap-x snap-mandatory scrollbar-thin">
           <div className="flex gap-4 min-w-max">
             {products.map((p, i) => (
               <div key={p.id} className="w-[240px] shrink-0 snap-start md:w-[280px]">
@@ -95,11 +94,11 @@ function EditorialBlock() {
     <section className="mx-auto max-w-7xl px-4 py-20 md:px-6 overflow-hidden">
       <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
         <motion.div
-          initial={{ opacity: 0, x: -24 }}
+          initial={{ opacity: 0, x: -12 }}
           whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.7 }}
-          className="order-2 md:order-1"
+          className="order-2 md:order-1 overflow-hidden"
         >
           <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent">The Ritual</p>
           <h2 className="mt-3 font-display text-4xl font-medium leading-tight tracking-wide md:text-5xl">
@@ -117,17 +116,16 @@ function EditorialBlock() {
           </Link>
         </motion.div>
         <motion.div
-          initial={{ opacity: 0, x: 24 }}
+          initial={{ opacity: 0, x: 12 }}
           whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.7 }}
-          className="order-1 md:order-2"
+          className="order-1 md:order-2 overflow-hidden"
         >
-          {/* Fix: Added a real image instead of an empty mesh box */}
           <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-border bg-surface-2">
-             <img 
-               src="https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=1000&auto=format&fit=crop" 
-               alt="Editorial" 
+             <img
+               src="https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=1000&auto=format&fit=crop"
+               alt="Editorial"
                className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
              />
              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
@@ -216,7 +214,7 @@ function GiftBanner() {
             Explore Gift Sets <ArrowRight size={14} />
           </Link>
         </div>
-        <div className="relative aspect-[4/3] md:aspect-auto md:h-full">
+        <div className="relative overflow-hidden min-h-[220px] md:min-h-[320px] md:self-stretch">
           <div className="absolute inset-0 mesh-bg" />
         </div>
       </div>

@@ -1,12 +1,11 @@
 // src/hero/AvatarMesh.tsx
-// Single shopper with a gold bag. Walk cycle + 4-beat turn-to-camera.
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { BEATS, MAIN_STORE_Z } from "./types";
+import { BEATS } from "./types";
 import { scrollRef } from "./useStreetStore";
 
-const _camPos    = new THREE.Vector3();
+const _camPos = new THREE.Vector3();
 const _camTarget = new THREE.Vector3();
 
 export default function AvatarMesh({ reducedMotion }: { reducedMotion: boolean }) {
@@ -25,7 +24,7 @@ export default function AvatarMesh({ reducedMotion }: { reducedMotion: boolean }
     if (!rootRef.current) return;
     const p = scrollRef.current;
 
-    const minDist  = BEATS.reduce((m, b) => Math.min(m, Math.abs(p - b.at)), Infinity);
+    const minDist = BEATS.reduce((m, b) => Math.min(m, Math.abs(p - b.at)), Infinity);
     const nearBeat = minDist < 0.045;
     const nearEnd  = p > 0.92;
     const wantFace = nearBeat || nearEnd;
@@ -33,14 +32,22 @@ export default function AvatarMesh({ reducedMotion }: { reducedMotion: boolean }
     facingRef.current = THREE.MathUtils.lerp(facingRef.current, wantFace ? 1 : 0, 0.06);
     const facing = facingRef.current;
 
-    const targetZ = -p * (Math.abs(MAIN_STORE_Z) - 10);
-    rootRef.current.position.z = THREE.MathUtils.lerp(rootRef.current.position.z, targetZ, 0.08);
-    rootRef.current.rotation.y = THREE.MathUtils.lerp(rootRef.current.rotation.y, Math.PI * facing, 0.06);
+    // 1. Move avatar down the street
+    const avatarZ = -p * 50;
+    rootRef.current.position.z = avatarZ;
+    rootRef.current.position.x = 0;
+    rootRef.current.position.y = 0;
 
-    // ── Camera: pulled back, raised, targets slightly ahead of the avatar ──
-    const az = rootRef.current.position.z;
-    _camPos.set(Math.sin(p * Math.PI * 1.5) * 0.5, 4.0, az + 11.0);
-    _camTarget.set(0, 1.4, az - 3.0);
+    rootRef.current.rotation.y = THREE.MathUtils.lerp(
+      rootRef.current.rotation.y,
+      Math.PI * facing,
+      0.06
+    );
+
+    // 2. Camera sits CLOSER to the avatar (z + 3.5) and looks AT it
+    _camPos.set(0, 2.2, avatarZ + 3.5);
+    _camTarget.set(0, 1.2, avatarZ); 
+    
     camera.position.lerp(_camPos, 0.06);
     camera.lookAt(_camTarget);
 
@@ -49,7 +56,7 @@ export default function AvatarMesh({ reducedMotion }: { reducedMotion: boolean }
     const walkBlend = 1 - facing;
     if (walkBlend < 0.02) return;
 
-    const phase    = p * 24 * Math.PI * 2;
+    const phase = p * 24 * Math.PI * 2;
     const legSwing = Math.sin(phase) * 0.55 * walkBlend;
     const armSwing = -legSwing * 0.6;
 
@@ -79,40 +86,33 @@ export default function AvatarMesh({ reducedMotion }: { reducedMotion: boolean }
       </mesh>
 
       <group ref={bodyRef}>
-        {/* Head */}
         <mesh position={[0, 1.75, 0]}>
           <sphereGeometry args={[0.22, 16, 16]} />
           <meshStandardMaterial color="#F2CBA0" roughness={0.85} />
         </mesh>
-        {/* Hair */}
         <mesh position={[0, 1.85, -0.02]}>
           <sphereGeometry args={[0.23, 16, 12, 0, Math.PI * 2, 0, Math.PI / 1.6]} />
           <meshStandardMaterial color="#2a1a10" roughness={0.9} />
         </mesh>
-        {/* Neck */}
         <mesh position={[0, 1.55, 0]}>
           <cylinderGeometry args={[0.08, 0.1, 0.2, 8]} />
           <meshStandardMaterial color="#F2CBA0" roughness={0.85} />
         </mesh>
 
         <group ref={torsoRef}>
-          {/* Cream coat body */}
           <mesh position={[0, 1.05, 0]}>
             <boxGeometry args={[0.5, 0.75, 0.3]} />
             <meshStandardMaterial color="#F0E4CC" roughness={0.7} />
           </mesh>
-          {/* Gold collar accent */}
           <mesh position={[0, 1.42, 0.05]}>
             <boxGeometry args={[0.35, 0.06, 0.2]} />
             <meshStandardMaterial color="#D9B979" roughness={0.4} metalness={0.3} />
           </mesh>
-          {/* Hips / trousers top */}
           <mesh position={[0, 0.6, 0]}>
             <boxGeometry args={[0.46, 0.25, 0.28]} />
             <meshStandardMaterial color="#1a1a1f" roughness={0.85} />
           </mesh>
 
-          {/* Left arm */}
           <group ref={leftShoulder} position={[-0.35, 1.35, 0]}>
             <mesh position={[0, -0.2, 0]}>
               <cylinderGeometry args={[0.09, 0.08, 0.4, 8]} />
@@ -124,7 +124,6 @@ export default function AvatarMesh({ reducedMotion }: { reducedMotion: boolean }
             </mesh>
           </group>
 
-          {/* Right arm + bag */}
           <group ref={rightShoulder} position={[0.35, 1.35, 0]}>
             <mesh position={[0, -0.2, 0]}>
               <cylinderGeometry args={[0.09, 0.08, 0.4, 8]} />
@@ -134,7 +133,6 @@ export default function AvatarMesh({ reducedMotion }: { reducedMotion: boolean }
               <sphereGeometry args={[0.08, 8, 8]} />
               <meshStandardMaterial color="#F2CBA0" roughness={0.85} />
             </mesh>
-            {/* Gold bag */}
             <group position={[0, -0.55, 0]}>
               <mesh position={[0, 0.1, 0]}>
                 <torusGeometry args={[0.08, 0.01, 8, 16, Math.PI]} />
@@ -147,7 +145,6 @@ export default function AvatarMesh({ reducedMotion }: { reducedMotion: boolean }
             </group>
           </group>
 
-          {/* Left leg */}
           <group ref={leftHip} position={[-0.14, 0.6, 0]}>
             <mesh position={[0, -0.22, 0]}>
               <cylinderGeometry args={[0.14, 0.12, 0.45, 8]} />
@@ -165,7 +162,6 @@ export default function AvatarMesh({ reducedMotion }: { reducedMotion: boolean }
             </group>
           </group>
 
-          {/* Right leg */}
           <group ref={rightHip} position={[0.14, 0.6, 0]}>
             <mesh position={[0, -0.22, 0]}>
               <cylinderGeometry args={[0.14, 0.12, 0.45, 8]} />

@@ -1,38 +1,17 @@
-// src/hero/StreetHero.tsx
-// 400vh scroll section. Sticky Canvas. Single WebGL context. Capability fallbacks.
 import { Suspense, useEffect, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import HeroScene from "./HeroScene";
 import HeroOverlay from "./HeroOverlay";
 import StaticStreetHero from "./StaticStreetHero";
-import { readReducedMotion } from "./useStreetStore";
-
-function detectWebGL(): boolean {
-  try {
-    const c = document.createElement("canvas");
-    return !!(
-      window.WebGLRenderingContext &&
-      (c.getContext("webgl2") || c.getContext("webgl") || c.getContext("experimental-webgl"))
-    );
-  } catch {
-    return false;
-  }
-}
 
 export default function StreetHero() {
   const heroRef = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(true);
-  const [webGLFailed, setWebGLFailed] = useState(false);
-  const [reducedMotion] = useState<boolean>(() =>
-    typeof window === "undefined" ? false : readReducedMotion(),
-  ); // TEMPORARILY FORCED OFF
+  
+  // FORCE 3D TO RENDER (Comment out the safety checks temporarily)
+  const webGLFailed = false; 
+  const reducedMotion = false; 
 
-  // WebGL detection — one shot at mount
-  useEffect(() => {
-    if (!detectWebGL()) setWebGLFailed(true);
-  }, []);
-
-  // IntersectionObserver — unmount Canvas when off-screen
   useEffect(() => {
     const el = heroRef.current;
     if (!el) return;
@@ -44,7 +23,6 @@ export default function StreetHero() {
     return () => obs.disconnect();
   }, []);
 
-  // Reduced motion, WebGL failed, or context lost → static fallback
   if (reducedMotion || webGLFailed) return <StaticStreetHero />;
 
   return (
@@ -53,24 +31,14 @@ export default function StreetHero() {
         {inView && (
           <Canvas
             dpr={[1, 1.5]}
-            gl={{
-              antialias: false,
-              powerPreference: "high-performance",
-            }}
-            camera={{ position: [0, 2.3, 8], fov: 55, near: 0.5, far: 160 }}
-            onCreated={({ gl }) => {
-              gl.domElement.addEventListener("webglcontextlost", (e) => {
-                e.preventDefault();
-                setWebGLFailed(true);
-              });
-            }}
+            gl={{ antialias: false }}
+            camera={{ position: [0, 2.8, 6], fov: 65, near: 0.5, far: 200 }}
           >
             <Suspense fallback={null}>
               <HeroScene reducedMotion={reducedMotion} />
             </Suspense>
           </Canvas>
         )}
-
         {inView && <HeroOverlay reducedMotion={reducedMotion} />}
       </div>
     </div>

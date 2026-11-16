@@ -1,16 +1,14 @@
 // src/hero/StreetScene.tsx
-// Luxe HOSSAM sunset → deep night. 4 storefronts, opening doors. Emissive glow only.
 import { useEffect, useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { BEATS, MAIN_STORE_Z, MAIN_DOORS_OPEN_AT } from "./types";
 import { scrollRef, readThemeAccent } from "./useStreetStore";
 
-// ── Sunset → night palette (warm gold → deep emerald) ─────────────────────
-const DUSK_SKY  = new THREE.Color("#E8A76A");  // warm amber sunset
-const NIGHT_SKY = new THREE.Color("#0B2B26");  // deep emerald night
-const DUSK_FOG  = new THREE.Color("#C08858");  // warm haze
-const NIGHT_FOG = new THREE.Color("#06201B");  // emerald deep
+const DUSK_SKY  = new THREE.Color("#E8A76A");
+const NIGHT_SKY = new THREE.Color("#0B2B26");
+const DUSK_FOG  = new THREE.Color("#C08858");
+const NIGHT_FOG = new THREE.Color("#06201B");
 
 const tmpColor = new THREE.Color();
 const dummy    = new THREE.Object3D();
@@ -25,7 +23,6 @@ const TOTAL_WINS = BCOUNT * 2 * WINS_PER_BLDG;
 
 function bldH(i: number) { return 7 + ((i * 7 + i * i * 3) % 5) * 1.8; }
 
-// ── Canvas sign ───────────────────────────────────────────────────────────
 function makeSignTexture(text: string, color: string): THREE.CanvasTexture {
   const w = 512, h = 128;
   const c = document.createElement("canvas");
@@ -65,7 +62,6 @@ function StreetScene({ reducedMotion }: { reducedMotion: boolean }) {
   const rightDoor   = useRef<THREE.Mesh>(null);
   const fogRef      = useRef<THREE.FogExp2 | null>(null);
 
-  // Materials
   const winMat = useMemo(() => new THREE.MeshStandardMaterial({
     color: "#FFD58A", emissive: "#FFC46A", emissiveIntensity: 0.5, roughness: 0.5,
   }), []);
@@ -90,7 +86,7 @@ function StreetScene({ reducedMotion }: { reducedMotion: boolean }) {
 
   useEffect(() => {
     scene.background = DUSK_SKY.clone();
-    const fog = new THREE.FogExp2(DUSK_FOG.getHex(), 0.014);
+    const fog = new THREE.FogExp2(DUSK_FOG.getHex(), 0.005);
     scene.fog = fog;
     fogRef.current = fog;
     return () => { scene.fog = null; scene.background = null; };
@@ -228,7 +224,7 @@ function StreetScene({ reducedMotion }: { reducedMotion: boolean }) {
     if (fogRef.current) {
       tmpColor.lerpColors(DUSK_FOG, NIGHT_FOG, p);
       fogRef.current.color.copy(tmpColor);
-      fogRef.current.density = 0.012 + p * 0.01;
+      fogRef.current.density = 0.005 + p * 0.004;
     }
 
     winMat.emissiveIntensity  = THREE.MathUtils.lerp(0.35, 1.8, p);
@@ -254,7 +250,6 @@ function StreetScene({ reducedMotion }: { reducedMotion: boolean }) {
 
   return (
     <>
-      {/* Road */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, -40]}>
         <planeGeometry args={[12, 100]} />
         <meshStandardMaterial color="#22222a" roughness={0.9} />
@@ -290,7 +285,7 @@ function StreetScene({ reducedMotion }: { reducedMotion: boolean }) {
       {buildings.map((b, i) => (
         <mesh key={i} position={[b.x, b.h / 2, b.z]}>
           <boxGeometry args={[6, b.h, 6]} />
-          <meshStandardMaterial color="#1f1d22" roughness={0.9} />
+          <meshStandardMaterial color="#50505a" roughness={0.6} />
         </mesh>
       ))}
 

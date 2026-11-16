@@ -14,7 +14,7 @@ export default function Layout() {
   const location = useLocation();
 
   return (
-    <div className="relative z-0 flex min-h-screen flex-col mesh-bg">
+    <div className="relative z-0 flex min-h-screen flex-col mesh-bg overflow-x-hidden">
       <AnnouncementBar />
       <Header />
 
@@ -25,7 +25,7 @@ export default function Layout() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
           transition={{ duration: 0.22, ease: "easeInOut" }}
-          className="flex flex-1 flex-col"
+          className="flex w-full flex-1 flex-col"
         >
           <Outlet />
         </motion.div>
@@ -33,7 +33,6 @@ export default function Layout() {
 
       <Footer />
 
-      {/* Global overlays */}
       <Toast />
       <CommandPalette />
       <MobileMenu />
