@@ -1,204 +1,97 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Heart, Eye } from "lucide-react";
+import { Heart } from "lucide-react";
 import { fmtEGP, type Product } from "./api";
 import { useCart, useWishlist, useRecentlyViewed } from "./store";
-import { BRAND } from "./brand";
 
 type Props = {
   product: Product;
   index?: number;
-  onQuickView?: (p: Product) => void;
 };
 
-type BadgeVariant = "new" | "low" | "out" | "sale";
-
-function Badge({ text, variant }: { text: string; variant: BadgeVariant }) {
-  const cls: Record<BadgeVariant, string> = {
-    new:  "bg-accent text-[color:var(--h-text-inv)]",
-    low:  "bg-orange-500 text-white",
-    out:  "bg-surface-2 text-muted",
-    sale: "bg-sale text-white",
-  };
-  return (
-    <span className={`inline-block rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ${cls[variant]}`}>
-      {text}
-    </span>
-  );
-}
-
-function minPrice(p: Product): number {
-  if (p.sale_price != null) return p.sale_price;
-  const prices = (p.sizes ?? []).map((s) => s.price).filter(Boolean);
-  return prices.length ? Math.min(...prices) : 0;
-}
-
-function origPrice(p: Product): number {
-  const prices = (p.sizes ?? []).map((s) => s.price).filter(Boolean);
-  return prices.length ? Math.min(...prices) : 0;
-}
-
-function totalStock(p: Product): number {
-  return (p.sizes ?? []).reduce((sum, s) => sum + (s.stock ?? 0), 0);
-}
-
-function firstAvailableSize(p: Product): number {
-  const sz = (p.sizes ?? []).find((s) => (s.stock ?? 0) > 0);
-  return sz?.ml ?? (p.sizes?.[0]?.ml ?? 0);
-}
-
-export default function ProductCard({ product: p, index = 0, onQuickView }: Props) {
+export default function ProductCard({ product: p, index = 0 }: Props) {
   const [imgErr, setImgErr] = useState(false);
-  const [rippling, setRippling] = useState<string | null>(null);
   const add = useCart((s) => s.add);
   const { toggle: toggleWish, has } = useWishlist();
   const track = useRecentlyViewed((s) => s.track);
   const wished = has(p.id);
 
   const imgSrc = imgErr
-    ? `https://placehold.co/600x800/0e0e10/333333?text=${encodeURIComponent(p.name.slice(0, 12))}`
+    ? `https://placehold.co/600x800/f5f5f5/cccccc?text=No+Image`
     : (p.images?.[0] ?? "");
 
-  const displayPrice = minPrice(p);
-  const hasDiscount  = p.sale_price != null && p.sale_price < origPrice(p);
-  const stock        = totalStock(p);
-
-  const badge: { text: string; variant: BadgeVariant } | null =
-    stock === 0
-      ? { text: "Sold out", variant: "out" }
-      : stock <= 5
-      ? { text: `Only ${stock} left`, variant: "low" }
-      : hasDiscount
-      ? { text: "Sale", variant: "sale" }
-      : p.is_new
-      ? { text: "New", variant: "new" }
-      : null;
-
-  // Makeup shade swatches (up to 5)
-  const shades = p.product_type === "makeup" ? (p.variants ?? []).slice(0, 5) : [];
-
-  const handleSwatchClick = (name: string) => {
-    setRippling(name);
-    setTimeout(() => setRippling(null), 500);
-  };
+  const displayPrice = p.sale_price ?? (p.sizes?.[0]?.price ?? 0);
+  const origPrice = p.sizes?.[0]?.price ?? 0;
+  const hasDiscount = p.sale_price != null && p.sale_price < origPrice;
+  
+  // Calculate percentage for the badge
+  const discountPercent = hasDiscount ? Math.round(((origPrice - p.sale_price!) / origPrice) * 100) : 0;
 
   return (
-    <motion.div
-      className="group flex flex-col"
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.5, ease: "easeOut", delay: Math.min(index * 0.05, 0.3) }}
-    >
+    <div className="group flex flex-col bg-white">
+      
       {/* Image Area */}
-      <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl bg-surface-2 border border-border/50 group-hover:border-accent/40 transition-colors duration-500">
-
-        {/* Gold Shimmer overlay */}
-        <div className="absolute inset-0 z-[1] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none shimmer-text mix-blend-overlay" />
+      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-[#FAFAFA]">
+        
+        {/* Discount Badge - Scales down on mobile */}
+        {hasDiscount && (
+          <div className="absolute left-2 top-2 z-10 bg-[#D9385E] text-white text-[9px] md:text-[10px] font-bold px-1.5 md:px-2 py-0.5 md:py-1 rounded">
+            Save {discountPercent}%
+          </div>
+        )}
 
         {imgSrc ? (
           <img
             src={imgSrc}
             alt={p.name}
             loading="lazy"
-            decoding="async"
             onError={() => setImgErr(true)}
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="font-display text-5xl font-bold tracking-widest text-white/5">{BRAND.nameUpper}</span>
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+            <span className="text-gray-400 text-xs md:text-sm">No Image</span>
           </div>
         )}
 
-        {/* Link overlay */}
+        {/* Wishlist Button - Smaller on mobile */}
+        <button
+          onClick={(e) => { e.preventDefault(); toggleWish(p.id); }}
+          className="absolute right-2 top-2 z-10 flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-full bg-white/80 backdrop-blur-sm transition-all hover:bg-white text-gray-600 shadow-sm"
+        >
+          <Heart size={14} className={`md:w-4 md:h-4 ${wished ? "fill-[#D9385E] text-[#D9385E]" : ""}`} />
+        </button>
+
+        {/* Link Overlay */}
         <Link
           to={`/product/${p.slug || p.id}`}
-          className="absolute inset-0 z-[2]"
-          aria-label={p.name}
+          className="absolute inset-0 z-0"
           onClick={() => track(p)}
         />
-
-        {/* Badges */}
-        {badge && (
-          <div className="absolute left-3 top-3 z-10">
-            <Badge {...badge} />
-          </div>
-        )}
-
-        {/* Action Buttons */}
-        <div className="absolute right-3 top-3 z-10 flex flex-col gap-2">
-          <button
-            aria-label={wished ? "Remove from wishlist" : "Save to wishlist"}
-            onClick={(e) => { e.preventDefault(); toggleWish(p.id); }}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-black/40 backdrop-blur-md transition-all hover:bg-accent hover:text-[color:var(--h-text-inv)]"
-          >
-            <Heart size={14} className={wished ? "fill-current" : ""} />
-          </button>
-
-          {onQuickView && (
-            <button
-              aria-label="Quick view"
-              onClick={(e) => { e.preventDefault(); onQuickView(p); }}
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-black/40 backdrop-blur-md transition-all opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 duration-300 hover:bg-white hover:text-black"
-            >
-              <Eye size={14} />
-            </button>
-          )}
-        </div>
       </div>
 
-      {/* Info Area (Below image) */}
-      <div className="flex flex-1 flex-col pt-3 pb-1">
-        <div className="flex items-center justify-between gap-2 mb-1">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted">
-            {p.brand}
-          </span>
-          {shades.length > 0 && (
-            <div className="flex gap-1.5">
-              {shades.map((sv) => (
-                <button
-                  key={sv.name}
-                  onClick={() => handleSwatchClick(sv.name)}
-                  title={sv.name}
-                  className={`h-3 w-3 rounded-full border border-border shadow-sm swatch-ripple ${rippling === sv.name ? "active" : ""}`}
-                  style={{ background: sv.shade_hex, color: sv.shade_hex }}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-
-        <Link to={`/product/${p.slug || p.id}`} className="group-hover:text-accent transition-colors">
-          <h3 className="font-display text-lg font-medium leading-tight line-clamp-2">
+      {/* Info Area - Fluid text sizes */}
+      <div className="flex flex-1 flex-col pt-2 md:pt-3">
+        <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-0.5 md:mb-1">
+          {p.brand}
+        </span>
+        <Link to={`/product/${p.slug || p.id}`} className="hover:underline">
+          <h3 className="text-xs md:text-sm font-medium leading-snug line-clamp-2 text-black">
             {p.name}
           </h3>
         </Link>
-
-        <div className="mt-auto flex items-end justify-between pt-2">
-          <div className="flex flex-col">
-            <span className={`text-sm font-bold ${hasDiscount ? "text-sale" : "text-text"}`}>
-              {fmtEGP(displayPrice)}
+        
+        <div className="mt-1.5 md:mt-2 flex items-baseline flex-wrap gap-1.5 md:gap-2">
+          <span className={`text-xs md:text-sm font-bold ${hasDiscount ? "text-[#D9385E]" : "text-black"}`}>
+            {fmtEGP(displayPrice)}
+          </span>
+          {hasDiscount && (
+            <span className="text-[10px] md:text-xs text-gray-400 line-through">
+              {fmtEGP(origPrice)}
             </span>
-            {hasDiscount && (
-              <span className="text-[11px] text-muted line-through -mt-0.5">{fmtEGP(origPrice(p))}</span>
-            )}
-          </div>
-
-          <button
-            disabled={stock < 1}
-            onClick={() => add(p, firstAvailableSize(p))}
-            className="
-              rounded-full border border-border px-3.5 py-1.5 text-[11px] font-bold tracking-wider
-              transition-all duration-300 disabled:opacity-40
-              hover:bg-accent hover:text-[color:var(--h-text-inv)] hover:border-accent
-            "
-          >
-            ADD
-          </button>
+          )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

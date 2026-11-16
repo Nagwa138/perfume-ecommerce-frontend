@@ -1,201 +1,85 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, Heart, ShoppingBag, Menu } from "lucide-react";
+import { Search, User, ShoppingBag, Menu } from "lucide-react";
 import { useCart, useWishlist } from "../store";
 import { useUI } from "../ui";
-import { BRAND } from "../brand";
+import logoImg from "../assets/logo.jpg"; 
 
-// Beauty navigation taxonomy
-const NAV: Record<string, Record<string, string[]>> = {
-  Fragrance: {
-    "By Gender":    ["Women", "Men", "Unisex"],
-    "By Family":    ["Floral", "Woody", "Oriental/Amber", "Fresh/Aquatic", "Citrus", "Gourmand"],
-    "Collections":  ["Signature", "Nuit Privée", "Velour Essentials"],
-    "Format":       ["Parfum", "Eau de Parfum", "Eau de Toilette"],
-  },
-  Skincare: {
-    "Face":         ["Serums", "Moisturisers", "Cleansers", "Eye Care", "Masks & Exfoliants"],
-    "By Skin Type": ["Dry", "Oily", "Sensitive", "Combination"],
-    "Body":         ["Body Cream", "Body Oil", "SPF & Sun Care"],
-    "Sets":         ["Gift Sets", "Routines"],
-  },
-  Makeup: {
-    "Complexion":   ["Foundation", "Concealer", "Primers", "Powders"],
-    "Eyes":         ["Mascara", "Eyeliner", "Eye Shadow"],
-    "Lips":         ["Lipstick", "Lip Gloss", "Lip Liner"],
-    "Cheeks":       ["Blush", "Bronzer", "Highlighter"],
-  },
-  Hair: {
-    "Cleanse":      ["Shampoo", "Co-Wash"],
-    "Condition":    ["Conditioner", "Hair Mask"],
-    "Style & Treat":["Hair Oil", "Serum", "Styling Cream"],
-  },
-  Body: {
-    "Moisturise":   ["Body Lotion", "Body Butter", "Body Oil"],
-    "Cleanse":      ["Body Wash", "Scrub", "Bar Soap"],
-    "Fragrance":    ["Body Mist", "Deodorant"],
-  },
-  "Gift Sets": {
-    "By Occasion":  ["Birthday", "Wedding", "Mother's Day", "Eid"],
-    "By Category":  ["Fragrance Sets", "Skincare Sets", "Makeup Sets", "Luxury Hampers"],
-    "By Price":     ["Under EGP 500", "EGP 500–1000", "Over EGP 1000"],
-  },
-  "Pharmacy & Wellness": {
-    "Daily Care":   ["Sun Care", "Oral Care", "First Aid"],
-    "Specialty":    ["Baby & Mom", "Hair & Scalp Care"],
-    "Wellness":     ["Vitamins & Supplements"],
-    "Filters":      ["Dermatologist-tested", "Fragrance-free"],
-  },
-};
-
-const CATEGORIES = Object.keys(NAV);
-
-const QUICK = [
-  { label: "New",  to: "/shop?sort=newest" },
-  { label: "Sale", to: "/shop?on_sale=true" },
+const NAV = [
+  "Black Friday", "New & Bestsellers", "Skincare", "K-Beauty", "Hair", "Fragrance", "Body & Wellbeing", "Makeup", "Brands"
 ];
-
-function MegaMenu({ cat, onClose }: { cat: string; onClose: () => void }) {
-  const groups = NAV[cat] ?? {};
-  const ptType = cat === "Fragrance" ? "perfume"
-    : cat === "Hair" ? "haircare"
-    : cat === "Gift Sets" ? "gift_set"
-    : cat === "Pharmacy & Wellness" ? "pharmacy-wellness"
-    : cat.toLowerCase();
-
-  return (
-    <div className="absolute left-0 top-full z-50 w-full border-t border-border bg-bg/95 shadow-2xl backdrop-blur-2xl">
-      <div className="mx-auto max-w-7xl px-6 py-8">
-        <div className="grid grid-cols-2 gap-x-8 gap-y-6 md:grid-cols-4 lg:grid-cols-5">
-          {Object.entries(groups).map(([group, items]) => (
-            <div key={group}>
-              <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-accent/80">
-                {group}
-              </p>
-              <ul className="space-y-2">
-                {items.map((item) => (
-                  <li key={item}>
-                    <Link
-                      to={`/shop?product_type=${ptType}&subcategory=${encodeURIComponent(item)}`}
-                      onClick={onClose}
-                      className="block text-xs text-muted transition-colors hover:text-white"
-                    >
-                      {item}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-          <div className="flex items-end">
-            <Link
-              to={`/shop?product_type=${ptType}`}
-              onClick={onClose}
-              className="rounded-full bg-accent px-5 py-2.5 text-xs font-bold text-[color:var(--h-text-inv)] transition-colors hover:bg-accent-2"
-            >
-              Shop All {cat} →
-            </Link>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default function Header() {
   const { lines, toggle: toggleCart } = useCart();
-  const wishCount = useWishlist((s) => s.ids.length);
   const { setCommandOpen, setMobileMenuOpen } = useUI();
   const cartCount = lines.reduce((t, l) => t + l.qty, 0);
 
-  const [activeCat, setActiveCat] = useState<string | null>(null);
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const openMenu  = (cat: string) => { if (closeTimer.current) clearTimeout(closeTimer.current); setActiveCat(cat); };
-  const startClose = () => { closeTimer.current = setTimeout(() => setActiveCat(null), 180); };
-  const cancelClose = () => { if (closeTimer.current) clearTimeout(closeTimer.current); };
-
   return (
-    <header className="sticky top-0 z-30 w-full glass-card border-b-0 border-x-0 border-t-0">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        
-        {/* Logo */}
-        <Link to="/" className="font-display text-2xl font-bold tracking-[0.25em] transition-colors hover:text-accent">
-          {BRAND.nameUpper}
-        </Link>
+    <header className="sticky top-0 z-40 w-full bg-white shadow-sm">
+      
+      {/* Announcement Bar */}
+      <div className="bg-[#D9385E] px-4 py-2 text-center text-[10px] md:text-xs font-semibold text-white tracking-wide">
+        BLACK FRIDAY SALE · UP TO 70% OFF! <Link to="/shop" className="underline ml-1">Shop Now</Link>
+      </div>
 
-        {/* Desktop nav */}
-        <nav className="hidden items-center gap-6 md:flex">
-          {CATEGORIES.map((cat) => (
-            <div
-              key={cat}
-              className="relative"
-              onMouseEnter={() => openMenu(cat)}
-              onMouseLeave={startClose}
+      {/* Main Header */}
+      <div className="mx-auto w-full max-w-[1600px] px-4 md:px-8">
+        <div className="flex h-16 md:h-20 items-center justify-between gap-4">
+          
+          {/* Logo */}
+          <Link to="/" className="flex shrink-0 items-center h-full py-2">
+            <img 
+              src={logoImg} 
+              alt="HOSSAM Pharmacy" 
+              className="h-10 md:h-14 lg:h-16 w-auto object-contain"
+            />
+          </Link>
+
+          {/* Gender Tabs (Hidden on Mobile) */}
+          <div className="hidden lg:flex items-center border border-gray-200 rounded-md overflow-hidden ml-2">
+            <button className="bg-gray-100 px-6 py-2 text-sm font-bold text-black border-r border-gray-200 hover:bg-gray-200 transition-colors">WOMEN</button>
+            <button className="bg-white px-6 py-2 text-sm font-medium text-gray-500 hover:text-black transition-colors">MEN</button>
+          </div>
+
+          {/* Search Bar (Hidden on Mobile) */}
+          <div className="hidden md:flex flex-1 max-w-2xl relative mx-4">
+            <input 
+              type="text" 
+              placeholder="What are you looking for?" 
+              className="w-full rounded-full border border-gray-300 bg-gray-50 py-2 pl-4 pr-10 text-sm text-black outline-none focus:border-black focus:bg-white transition-colors"
+            />
+            <Search size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500" />
+          </div>
+
+          {/* Right Actions */}
+          <div className="flex items-center gap-3 md:gap-5">
+            <button onClick={() => setCommandOpen(true)} className="md:hidden text-gray-600 p-1"><Search size={22} /></button>
+            <Link to="/wishlist" className="hidden md:block text-gray-600 hover:text-black transition-colors p-1"><User size={22} /></Link>
+            <button onClick={toggleCart} className="relative text-gray-600 hover:text-black transition-colors p-1">
+              <ShoppingBag size={22} />
+              {cartCount > 0 && (
+                <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#D9385E] text-[9px] font-bold text-white">
+                  {cartCount}
+                </span>
+              )}
+            </button>
+            <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden text-gray-600 p-1"><Menu size={24} /></button>
+          </div>
+        </div>
+
+        {/* Categories Nav (Hidden on Mobile) */}
+        <nav className="hidden lg:flex items-center gap-6 py-3 overflow-x-auto hide-scrollbar">
+          {NAV.map((item) => (
+            <Link 
+              key={item} 
+              to={item === "Black Friday" ? "/shop?on_sale=true" : "/shop"}
+              className={`text-sm font-medium whitespace-nowrap transition-colors ${item === "Black Friday" ? "text-[#D9385E]" : "text-gray-700 hover:text-black"}`}
             >
-              <button
-                className={`text-sm font-medium transition-colors ${
-                  activeCat === cat ? "text-accent" : "text-muted hover:text-white"
-                }`}
-              >
-                {cat}
-              </button>
-            </div>
-          ))}
-          {QUICK.map((n) => (
-            <Link
-              key={n.to}
-              to={n.to}
-              className="text-sm font-medium text-muted transition-colors hover:text-white"
-            >
-              {n.label}
+              {item}
             </Link>
           ))}
         </nav>
-
-        {/* Actions */}
-        <div className="flex items-center gap-5">
-          <button
-            onClick={() => setCommandOpen(true)}
-            aria-label="Search"
-            className="hidden text-muted transition-colors hover:text-white md:flex items-center gap-1.5"
-          >
-            <Search size={18} />
-            <span className="hidden rounded border border-border px-1.5 py-0.5 font-mono text-[10px] lg:inline">⌘K</span>
-          </button>
-          <button onClick={() => setCommandOpen(true)} aria-label="Search" className="text-muted transition-colors hover:text-white md:hidden">
-            <Search size={20} />
-          </button>
-
-          <Link to="/wishlist" aria-label="Wishlist" className="relative text-muted transition-colors hover:text-white">
-            <Heart size={20} />
-            {wishCount > 0 && (
-              <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[9px] font-bold text-[color:var(--h-text-inv)]">
-                {wishCount > 9 ? "9+" : wishCount}
-              </span>
-            )}
-          </Link>
-
-          <button onClick={toggleCart} aria-label="Cart" className="relative text-muted transition-colors hover:text-white">
-            <ShoppingBag size={20} />
-            {cartCount > 0 && (
-              <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[9px] font-bold text-[color:var(--h-text-inv)]">
-                {cartCount > 9 ? "9+" : cartCount}
-              </span>
-            )}
-          </button>
-
-          <button onClick={() => setMobileMenuOpen(true)} aria-label="Menu" className="text-muted transition-colors hover:text-white md:hidden">
-            <Menu size={22} />
-          </button>
-        </div>
       </div>
-
-      {activeCat && (
-        <div onMouseEnter={cancelClose} onMouseLeave={startClose}>
-          <MegaMenu cat={activeCat} onClose={() => setActiveCat(null)} />
-        </div>
-      )}
     </header>
   );
 }

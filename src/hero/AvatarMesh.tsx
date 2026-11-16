@@ -32,7 +32,6 @@ export default function AvatarMesh({ reducedMotion }: { reducedMotion: boolean }
     facingRef.current = THREE.MathUtils.lerp(facingRef.current, wantFace ? 1 : 0, 0.06);
     const facing = facingRef.current;
 
-    // 1. Move avatar down the street
     const avatarZ = -p * 50;
     rootRef.current.position.z = avatarZ;
     rootRef.current.position.x = 0;
@@ -44,7 +43,6 @@ export default function AvatarMesh({ reducedMotion }: { reducedMotion: boolean }
       0.06
     );
 
-    // 2. Camera sits CLOSER to the avatar (z + 3.5) and looks AT it
     _camPos.set(0, 2.2, avatarZ + 3.5);
     _camTarget.set(0, 1.2, avatarZ); 
     

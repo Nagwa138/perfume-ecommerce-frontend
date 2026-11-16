@@ -26,8 +26,8 @@ export default function StreetHero() {
   if (reducedMotion || webGLFailed) return <StaticStreetHero />;
 
   return (
-    <div ref={heroRef} className="relative h-[400vh]">
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
+    <div ref={heroRef} className="relative h-[100vh]">
+      <div className="relative h-screen w-full overflow-hidden">
         {inView && (
           <Canvas
             dpr={[1, 1.5]}

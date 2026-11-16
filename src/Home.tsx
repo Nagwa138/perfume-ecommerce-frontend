@@ -1,287 +1,13 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { ArrowRight, Sparkles, ShieldCheck, Truck, Lock } from "lucide-react";
 import { getProducts, type Product } from "./api";
 import ProductCard from "./ProductCard";
 import RecentlyViewed from "./RecentlyViewed";
 
-const StreetHero = lazy(() => import("./hero/StreetHero"));
-
-const CATEGORIES = [
-  { label: "Fragrance",  pt: "perfume",   accent: "#D9B979", desc: "Niche perfumes & luxury scents" },
-  { label: "Skincare",   pt: "skincare",  accent: "#A8C8B8", desc: "Serums, moisturisers & rituals" },
-  { label: "Makeup",     pt: "makeup",    accent: "#D8A18B", desc: "Complexion, lips & eyes" },
-  { label: "Hair",       pt: "haircare",  accent: "#B8A0D4", desc: "Cleanse, condition & style" },
-  { label: "Body",       pt: "body",      accent: "#A0C4C8", desc: "Luxurious body rituals" },
-  { label: "Pharmacy",   pt: "pharmacy-wellness", accent: "#7EC8A0", desc: "Wellness & daily care" },
-];
-
-function CategoryTiles() {
-  return (
-    <section className="mx-auto max-w-7xl px-4 py-20 md:px-6">
-      <div className="mb-10 text-center">
-        <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent">Discover</p>
-        <h2 className="mt-2 font-display text-4xl font-medium tracking-wide md:text-5xl">
-          Shop by Category
-        </h2>
-      </div>
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
-        {CATEGORIES.map((cat, i) => (
-          <motion.div
-            key={cat.pt}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: i * 0.06 }}
-          >
-            <Link
-              to={`/shop?product_type=${cat.pt}`}
-              className="group block rounded-2xl border border-border bg-surface-2 p-6 text-center transition-all hover:border-accent/40 hover:-translate-y-1"
-            >
-              <div
-                className="mx-auto mb-4 h-14 w-14 rounded-full transition-all group-hover:scale-110"
-                style={{ background: `${cat.accent}22`, boxShadow: `0 0 24px ${cat.accent}18` }}
-              />
-              <p className="font-display text-lg font-semibold tracking-wide transition-colors group-hover:text-accent">
-                {cat.label}
-              </p>
-              <p className="mt-1 text-[11px] text-muted leading-relaxed">{cat.desc}</p>
-            </Link>
-          </motion.div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function NewArrivalsRail({ products }: { products: Product[] }) {
-  if (products.length === 0) return null;
-  return (
-    <section className="w-full overflow-hidden border-y border-border bg-surface py-16">
-      <div className="mx-auto max-w-7xl px-4 md:px-6">
-        <div className="mb-8 flex items-end justify-between gap-4">
-          <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent">Just arrived</p>
-            <h2 className="mt-2 font-display text-3xl font-medium tracking-wide md:text-4xl">
-              New Arrivals
-            </h2>
-          </div>
-          <Link
-            to="/shop?sort=newest"
-            className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted transition-colors hover:text-accent"
-          >
-            View all <ArrowRight size={14} />
-          </Link>
-        </div>
-
-        <div className="w-full max-w-[calc(100vw-2rem)] overflow-x-scroll pb-4 snap-x snap-mandatory scrollbar-thin">
-          <div className="flex gap-4 min-w-max">
-            {products.map((p, i) => (
-              <div key={p.id} className="w-[240px] shrink-0 snap-start md:w-[280px]">
-                <ProductCard product={p} index={i} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function EditorialBlock() {
-  return (
-    <section className="mx-auto max-w-7xl px-4 py-20 md:px-6 overflow-hidden">
-      <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
-        <motion.div
-          initial={{ opacity: 0, x: -12 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.7 }}
-          className="order-2 md:order-1 overflow-hidden"
-        >
-          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent">The Ritual</p>
-          <h2 className="mt-3 font-display text-4xl font-medium leading-tight tracking-wide md:text-5xl">
-            Beauty is an <span className="italic text-accent">everyday</span> ceremony.
-          </h2>
-          <div className="gold-divider my-6 w-24" />
-          <p className="text-sm leading-relaxed text-muted md:text-base">
-            HOSSAM curates the world's finest fragrance, skincare, and wellness — chosen for their craft, their scent, and the way they make you feel. Every bottle is a small ritual. Every morning, a chance to begin again.
-          </p>
-          <Link
-            to="/shop"
-            className="mt-8 inline-flex items-center gap-2 rounded-full border border-border px-6 py-3 text-xs font-bold uppercase tracking-widest text-text transition-all hover:border-accent hover:text-accent"
-          >
-            Explore the collection <ArrowRight size={14} />
-          </Link>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, x: 12 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.7 }}
-          className="order-1 md:order-2 overflow-hidden"
-        >
-          <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-border bg-surface-2">
-             <img
-               src="https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=1000&auto=format&fit=crop"
-               alt="Editorial"
-               className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
-             />
-             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-             <div className="absolute bottom-8 left-8">
-               <p className="font-display text-3xl text-white">Autumn 2026</p>
-               <p className="mt-1 text-xs uppercase tracking-widest text-white/70">The signature edit</p>
-             </div>
-          </div>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-function Bestsellers({ products }: { products: Product[] }) {
-  if (products.length === 0) return null;
-  return (
-    <section className="border-y border-border bg-surface py-16">
-      <div className="mx-auto max-w-7xl px-4 md:px-6">
-        <div className="mb-10 flex items-end justify-between gap-4">
-          <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent">Loved by many</p>
-            <h2 className="mt-2 font-display text-3xl font-medium tracking-wide md:text-4xl">
-              Best Sellers
-            </h2>
-          </div>
-          <Link
-            to="/shop?sort=popular"
-            className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted transition-colors hover:text-accent"
-          >
-            View all <ArrowRight size={14} />
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4 md:gap-x-6">
-          {products.map((p, i) => <ProductCard key={p.id} product={p} index={i} />)}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function QuizBanner() {
-  return (
-    <section className="mx-auto max-w-7xl px-4 py-16 md:px-6">
-      <div className="relative overflow-hidden rounded-3xl border border-border bg-surface-2 px-8 py-14 text-center md:py-20">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute left-1/2 top-0 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/8 blur-[100px]" />
-        </div>
-        <div className="relative">
-          <Sparkles size={22} className="mx-auto text-accent" />
-          <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.3em] text-accent">Personalised</p>
-          <h2 className="mt-2 font-display text-3xl font-medium tracking-wide md:text-4xl">
-            Find your signature scent
-          </h2>
-          <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-muted">
-            Answer a few questions and we'll match you with fragrances you'll love.
-          </p>
-          <Link
-            to="/quiz/fragrance"
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-accent px-8 py-3.5 text-xs font-bold uppercase tracking-widest text-[color:var(--h-text-inv)] transition-all hover:bg-accent-2"
-          >
-            Take the quiz <ArrowRight size={14} />
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function GiftBanner() {
-  return (
-    <section className="mx-auto max-w-7xl px-4 py-16 md:px-6">
-      <div className="grid items-center gap-8 overflow-hidden rounded-3xl border border-border bg-surface md:grid-cols-2">
-        <div className="p-10 md:p-14">
-          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent">Limited edition</p>
-          <h2 className="mt-3 font-display text-4xl font-medium tracking-wide md:text-5xl">
-            Gift Sets & Collections
-          </h2>
-          <p className="mt-4 max-w-md text-sm leading-relaxed text-muted">
-            Beautifully curated sets for every occasion. Free gift wrapping on all orders.
-          </p>
-          <Link
-            to="/shop?collection=Gift+Sets"
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-accent px-8 py-3.5 text-xs font-bold uppercase tracking-widest text-[color:var(--h-text-inv)] transition-all hover:bg-accent-2"
-          >
-            Explore Gift Sets <ArrowRight size={14} />
-          </Link>
-        </div>
-        <div className="relative overflow-hidden min-h-[220px] md:min-h-[320px] md:self-stretch">
-          <div className="absolute inset-0 mesh-bg" />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function BenefitsStrip() {
-  const items = [
-    { icon: Truck,       title: "Free delivery",     sub: "On orders over EGP 500" },
-    { icon: ShieldCheck, title: "100% authentic",    sub: "Sourced with care" },
-    { icon: Lock,        title: "Secure payment",    sub: "Encrypted checkout" },
-  ];
-  return (
-    <section className="border-y border-border bg-surface py-12">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 md:grid-cols-3 md:px-6">
-        {items.map(({ icon: Icon, title, sub }) => (
-          <div key={title} className="flex items-center gap-4">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-accent/30 bg-accent/5">
-              <Icon size={16} className="text-accent" />
-            </div>
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-text">{title}</p>
-              <p className="text-[11px] text-muted">{sub}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function Newsletter() {
-  return (
-    <section className="mx-auto max-w-7xl px-4 py-20 md:px-6">
-      <div className="mx-auto max-w-xl text-center">
-        <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent">The list</p>
-        <h2 className="mt-3 font-display text-3xl font-medium tracking-wide md:text-4xl">
-          Join the HOSSAM circle
-        </h2>
-        <p className="mt-3 text-sm text-muted">
-          New arrivals, exclusive offers, and the occasional love letter. No noise.
-        </p>
-        <form
-          className="mt-8 flex flex-col gap-2 sm:flex-row"
-          onSubmit={(e) => e.preventDefault()}
-        >
-          <input
-            type="email"
-            required
-            placeholder="your@email.com"
-            className="flex-1 rounded-full border border-border bg-surface px-5 py-3 text-sm text-text outline-none placeholder:text-muted focus:border-accent transition-colors"
-          />
-          <button
-            type="submit"
-            className="rounded-full bg-accent px-8 py-3 text-xs font-bold uppercase tracking-widest text-[color:var(--h-text-inv)] transition-colors hover:bg-accent-2"
-          >
-            Subscribe
-          </button>
-        </form>
-      </div>
-    </section>
-  );
-}
+const HERO_IMAGE = "https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=1600&auto=format&fit=crop";
 
 export default function Home() {
-  const [featured,  setFeatured]  = useState<Product[]>([]);
+  const [featured, setFeatured] = useState<Product[]>([]);
   const [newArrivals, setNewArrivals] = useState<Product[]>([]);
 
   useEffect(() => {
@@ -290,21 +16,186 @@ export default function Home() {
   }, []);
 
   return (
-    <>
-      <Suspense fallback={<div className="h-screen border-b border-border bg-bg" />}>
-        <StreetHero />
-      </Suspense>
-      <div id="first-section">
-        <CategoryTiles />
-      </div>
-      <NewArrivalsRail products={newArrivals} />
-      <EditorialBlock />
-      <Bestsellers products={featured} />
-      <QuizBanner />
-      <GiftBanner />
-      <BenefitsStrip />
-      <Newsletter />
+    <div className="bg-[#FAFAFA] min-h-screen text-[#111] overflow-x-hidden">
+      
+      {/* 1. Promotional Hero Banner */}
+      <section className="relative w-full bg-[#F9D8E0]">
+        <div className="mx-auto max-w-[1400px] flex flex-col md:flex-row items-center min-h-[400px] md:min-h-[500px]">
+          {/* Text Side */}
+          <div className="w-full md:w-1/2 p-8 md:p-16 flex flex-col justify-center z-10 bg-[#F9D8E0]">
+            <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-[#D9385E] mb-2">Taya's Picks</p>
+            <h1 className="text-3xl md:text-5xl font-extrabold leading-tight mb-4 text-black">
+              Taya's Must-Have Beauty Favorites.
+            </h1>
+            <p className="text-sm md:text-base text-gray-700 mb-6 md:mb-8 max-w-md">
+              From everyday essentials to standout finds, explore the products she loves and thinks you will too!
+            </p>
+            <Link to="/shop" className="bg-black text-white px-6 md:px-8 py-3 rounded-full font-bold text-sm md:text-base w-fit hover:bg-gray-800 transition-colors">
+              Shop Taya's Picks
+            </Link>
+          </div>
+          
+          {/* Image Side */}
+          <div className="w-full md:w-1/2 h-[300px] md:h-[500px] relative">
+            <img src={HERO_IMAGE} alt="Beauty Model" className="w-full h-full object-cover" />
+          </div>
+        </div>
+        
+        {/* Carousel Dots */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+          <div className="h-2 w-2 rounded-full bg-gray-300"></div>
+          <div className="h-2 w-2 rounded-full bg-gray-300"></div>
+          <div className="h-2 w-2 rounded-full bg-black"></div>
+          <div className="h-2 w-2 rounded-full bg-gray-300"></div>
+        </div>
+      </section>
+
+      {/* 2. Deals Selling Fast (Product Rail) */}
+      <section className="mx-auto max-w-[1400px] px-4 md:px-8 py-12 md:py-16">
+        <div className="flex items-end justify-between mb-6 md:mb-8">
+          <div>
+            <h2 className="text-xl md:text-2xl font-extrabold text-black">Deals selling fast</h2>
+            <p className="text-xs md:text-sm text-gray-500 mt-1">Our bestsellers, now on sale</p>
+          </div>
+          <Link to="/shop?on_sale=true" className="text-xs md:text-sm font-bold underline decoration-2 underline-offset-4 hover:text-[#D9385E]">
+            View All
+          </Link>
+        </div>
+        
+        {/* Horizontal Scroll Rail - Fixed width for mobile, wider for desktop */}
+        <div className="flex gap-3 md:gap-4 overflow-x-auto pb-6 hide-scrollbar snap-x">
+          {newArrivals.slice(0, 6).map((p, i) => (
+            <div key={p.id} className="w-[160px] md:w-[240px] shrink-0 snap-start">
+              <ProductCard product={p} index={i} />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 3. Shop the Sale (Pink Promo Grid) */}
+      <section className="mx-auto max-w-[1400px] px-4 md:px-8 py-12 md:py-16 bg-white">
+        <h2 className="text-xl md:text-2xl font-extrabold text-black mb-6 md:mb-8">Shop the sale</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          
+          {/* Card 1 */}
+          <Link to="/shop?product_type=skincare" className="promo-card p-6 md:p-8 flex flex-col justify-between h-[360px] md:h-[400px] relative overflow-hidden group">
+            <div className="z-10 relative">
+              <h3 className="text-xl md:text-2xl font-extrabold text-black mb-1 md:mb-2">THE SKINCARE GIRL</h3>
+              <p className="text-xs md:text-sm text-gray-700 italic font-serif mb-3 md:mb-4">Beauty Kit</p>
+              <ul className="text-xs md:text-sm font-medium text-gray-800 space-y-1 mb-4 md:mb-6">
+                <li>+ Hydrate</li>
+                <li>+ Repair</li>
+                <li>+ Healthy Glow</li>
+              </ul>
+              <div className="bg-black text-white text-[9px] md:text-xs font-bold px-3 md:px-4 py-1.5 md:py-2 rounded-full w-fit">Black Friday UP TO 70% OFF</div>
+            </div>
+            <div className="absolute bottom-0 right-0 w-2/3 h-2/3 bg-[url('https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=600&auto=format&fit=crop')] bg-cover bg-center rounded-tl-full opacity-80 group-hover:scale-105 transition-transform duration-500"></div>
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20">
+               <span className="bg-black text-white text-[10px] md:text-xs font-bold px-4 md:px-6 py-1.5 md:py-2 rounded-full whitespace-nowrap">SHOP SKINCARE</span>
+            </div>
+          </Link>
+
+          {/* Card 2 */}
+          <Link to="/shop?product_type=makeup" className="promo-card p-6 md:p-8 flex flex-col justify-between h-[360px] md:h-[400px] relative overflow-hidden group">
+             <div className="z-10 relative">
+              <h3 className="text-xl md:text-2xl font-extrabold text-black mb-1 md:mb-2">THE NIGHT OUT GIRL</h3>
+              <p className="text-xs md:text-sm text-gray-700 italic font-serif mb-3 md:mb-4">Beauty Kit</p>
+              <ul className="text-xs md:text-sm font-medium text-gray-800 space-y-1 mb-4 md:mb-6">
+                <li>+ Effortless</li>
+                <li>+ Polished</li>
+                <li>+ Always on the go</li>
+              </ul>
+              <div className="bg-black text-white text-[9px] md:text-xs font-bold px-3 md:px-4 py-1.5 md:py-2 rounded-full w-fit">Black Friday UP TO 70% OFF</div>
+            </div>
+            <div className="absolute bottom-0 right-0 w-2/3 h-2/3 bg-[url('https://images.unsplash.com/photo-1596462502278-27bfdc403348?q=80&w=600&auto=format&fit=crop')] bg-cover bg-center rounded-tl-full opacity-80 group-hover:scale-105 transition-transform duration-500"></div>
+             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20">
+               <span className="bg-black text-white text-[10px] md:text-xs font-bold px-4 md:px-6 py-1.5 md:py-2 rounded-full whitespace-nowrap">SHOP MAKEUP</span>
+            </div>
+          </Link>
+
+          {/* Card 3 */}
+          <Link to="/shop?product_type=haircare" className="promo-card p-6 md:p-8 flex flex-col justify-between h-[360px] md:h-[400px] relative overflow-hidden group md:col-span-2 lg:col-span-1">
+             <div className="z-10 relative">
+              <h3 className="text-xl md:text-2xl font-extrabold text-black mb-1 md:mb-2">THE HEALTHY HAIR GIRL</h3>
+              <p className="text-xs md:text-sm text-gray-700 italic font-serif mb-3 md:mb-4">Beauty Kit</p>
+              <ul className="text-xs md:text-sm font-medium text-gray-800 space-y-1 mb-4 md:mb-6">
+                <li>+ Hydrated</li>
+                <li>+ Fresh</li>
+                <li>+ Natural glow</li>
+              </ul>
+              <div className="bg-black text-white text-[9px] md:text-xs font-bold px-3 md:px-4 py-1.5 md:py-2 rounded-full w-fit">Black Friday UP TO 70% OFF</div>
+            </div>
+            <div className="absolute bottom-0 right-0 w-2/3 h-2/3 bg-[url('https://images.unsplash.com/photo-1522337660859-02fbefca4702?q=80&w=600&auto=format&fit=crop')] bg-cover bg-center rounded-tl-full opacity-80 group-hover:scale-105 transition-transform duration-500"></div>
+             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20">
+               <span className="bg-black text-white text-[10px] md:text-xs font-bold px-4 md:px-6 py-1.5 md:py-2 rounded-full whitespace-nowrap">SHOP HAIRCARE</span>
+            </div>
+          </Link>
+        </div>
+      </section>
+
+      {/* 4. Shop by Budget */}
+      <section className="mx-auto max-w-[1400px] px-4 md:px-8 py-12 md:py-16">
+        <h2 className="text-xl md:text-2xl font-extrabold text-black mb-6 md:mb-8">Shop by budget</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          {[500, 1000, 1500].map((price, i) => (
+            <div key={i} className="bg-[#F9D8E0] rounded-2xl p-6 md:p-10 flex flex-col items-center text-center">
+              <p className="font-serif italic text-lg md:text-xl text-[#D9385E] mb-2">
+                {i === 0 ? "Little Beauty Finds" : i === 1 ? "Everyday Favorites" : "Treat Yourself"}
+              </p>
+              <h3 className="text-2xl md:text-4xl font-extrabold text-black mb-3 md:mb-4">UNDER {price} <span className="text-base md:text-xl">EGP</span></h3>
+              <p className="text-[10px] md:text-xs font-semibold uppercase tracking-widest text-gray-700 mb-6 md:mb-8">
+                {i === 0 ? "Small prices. Big finds." : i === 1 ? "Everyday favorites, within reach." : "More beauty. More savings."}
+              </p>
+              <Link to={`/shop?max_price=${price}`} className="mt-auto bg-black text-white px-6 md:px-8 py-2.5 md:py-3 rounded-full text-xs md:text-sm font-bold hover:bg-gray-800 transition-colors">
+                Shop the sale
+              </Link>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 5. Shop by Concern (Grid) */}
+      <section className="mx-auto max-w-[1400px] px-4 md:px-8 py-12 md:py-16 bg-white">
+        <h2 className="text-xl md:text-2xl font-extrabold text-black mb-6 md:mb-8">Shop by concern</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
+          {[
+            { title: "HAIR LOSS", desc: "Fuller hair starts here." },
+            { title: "DARK SPOTS & BLEMISHES", desc: "Your brighter-skin edit." },
+            { title: "ACNE & PORES", desc: "Keep pores in check." },
+            { title: "FINE LINES & FIRMING", desc: "Smooth. Firm. Glow." },
+            { title: "DRY & SENSITIVE", desc: "Calm. Comfort. Hydrate." },
+            { title: "LASHES & BROWS", desc: "Your lash & brow boost." },
+          ].map((concern, i) => (
+            <Link key={i} to="/shop" className="bg-[#F9D8E0] rounded-xl p-5 md:p-6 flex flex-col justify-center min-h-[140px] md:min-h-[200px] relative overflow-hidden group">
+              <div className="z-10 max-w-[70%] md:max-w-[60%]">
+                <h3 className="text-base md:text-xl font-extrabold text-black mb-1">{concern.title}</h3>
+                <p className="text-[10px] md:text-xs font-semibold text-gray-700 uppercase mb-3 md:mb-4">{concern.desc}</p>
+                <span className="bg-black text-white text-[9px] md:text-[10px] font-bold px-3 md:px-4 py-1.5 rounded-full inline-block">Shop the sale</span>
+              </div>
+              {/* Decorative imagery */}
+              <div className="absolute right-0 bottom-0 w-2/5 md:w-1/2 h-full opacity-80 group-hover:scale-105 transition-transform duration-500 bg-contain bg-no-repeat bg-right-bottom" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=400&auto=format&fit=crop')` }}></div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* 6. Brands on Sale */}
+      <section className="mx-auto max-w-[1400px] px-4 md:px-8 py-12 md:py-16">
+        <div className="flex items-center justify-between mb-6 md:mb-8">
+          <h2 className="text-xl md:text-2xl font-extrabold text-black">Brands on sale</h2>
+          <Link to="/brands" className="text-xs md:text-sm font-bold underline decoration-2 underline-offset-4 hover:text-[#D9385E]">All Brands</Link>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 border-t border-l border-gray-200">
+          {["QUEEN BY LORD", "BLUMIN' KAKTUS", "CAPIXY", "SHEGLAM", "VACATION", "LOCKEN", "THE BATH LAND", "SESH", "HELMADERM", "PLUMPY CURLS", "NFRY", "DERMACY LABS"].map((brand) => (
+            <Link key={brand} to="/shop" className="border-r border-b border-gray-200 p-4 md:p-8 flex items-center justify-center text-center hover:bg-gray-50 transition-colors">
+              <span className="text-[10px] md:text-sm font-bold tracking-[0.2em] text-gray-800 uppercase">{brand}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       <RecentlyViewed />
-    </>
+      
+    </div>
   );
 }
