@@ -258,3 +258,18 @@ body::before {
   .animate-fade-in-up,
   .animate-spin-slow { animation: none !important; }
 }
+
+/* Hide scrollbars for the new arrivals rail while keeping scroll functionality */
+.scrollbar-thin::-webkit-scrollbar {
+  height: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--h-border);
+  border-radius: 9999px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: var(--h-accent);
+}

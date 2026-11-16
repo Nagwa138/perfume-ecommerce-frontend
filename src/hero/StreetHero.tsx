@@ -25,7 +25,7 @@ export default function StreetHero() {
   const [webGLFailed, setWebGLFailed] = useState(false);
   const [reducedMotion] = useState<boolean>(() =>
     typeof window === "undefined" ? false : readReducedMotion(),
-  );
+  ); // TEMPORARILY FORCED OFF
 
   // WebGL detection — one shot at mount
   useEffect(() => {

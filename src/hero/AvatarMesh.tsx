@@ -6,7 +6,7 @@ import * as THREE from "three";
 import { BEATS, MAIN_STORE_Z } from "./types";
 import { scrollRef } from "./useStreetStore";
 
-const _camPos = new THREE.Vector3();
+const _camPos    = new THREE.Vector3();
 const _camTarget = new THREE.Vector3();
 
 export default function AvatarMesh({ reducedMotion }: { reducedMotion: boolean }) {
@@ -25,7 +25,7 @@ export default function AvatarMesh({ reducedMotion }: { reducedMotion: boolean }
     if (!rootRef.current) return;
     const p = scrollRef.current;
 
-    const minDist = BEATS.reduce((m, b) => Math.min(m, Math.abs(p - b.at)), Infinity);
+    const minDist  = BEATS.reduce((m, b) => Math.min(m, Math.abs(p - b.at)), Infinity);
     const nearBeat = minDist < 0.045;
     const nearEnd  = p > 0.92;
     const wantFace = nearBeat || nearEnd;
@@ -33,14 +33,15 @@ export default function AvatarMesh({ reducedMotion }: { reducedMotion: boolean }
     facingRef.current = THREE.MathUtils.lerp(facingRef.current, wantFace ? 1 : 0, 0.06);
     const facing = facingRef.current;
 
-    const targetZ = -p * (Math.abs(MAIN_STORE_Z) - 8);
+    const targetZ = -p * (Math.abs(MAIN_STORE_Z) - 10);
     rootRef.current.position.z = THREE.MathUtils.lerp(rootRef.current.position.z, targetZ, 0.08);
     rootRef.current.rotation.y = THREE.MathUtils.lerp(rootRef.current.rotation.y, Math.PI * facing, 0.06);
 
+    // ── Camera: pulled back, raised, targets slightly ahead of the avatar ──
     const az = rootRef.current.position.z;
-    _camPos.set(Math.sin(p * Math.PI * 1.5) * 0.4, 2.2, az + 6.5);
-    _camTarget.set(0, 1.4, az - 2);
-    camera.position.lerp(_camPos, 0.05);
+    _camPos.set(Math.sin(p * Math.PI * 1.5) * 0.5, 4.0, az + 11.0);
+    _camTarget.set(0, 1.4, az - 3.0);
+    camera.position.lerp(_camPos, 0.06);
     camera.lookAt(_camTarget);
 
     if (reducedMotion) return;
@@ -48,7 +49,7 @@ export default function AvatarMesh({ reducedMotion }: { reducedMotion: boolean }
     const walkBlend = 1 - facing;
     if (walkBlend < 0.02) return;
 
-    const phase = p * 24 * Math.PI * 2;
+    const phase    = p * 24 * Math.PI * 2;
     const legSwing = Math.sin(phase) * 0.55 * walkBlend;
     const armSwing = -legSwing * 0.6;
 
@@ -146,7 +147,7 @@ export default function AvatarMesh({ reducedMotion }: { reducedMotion: boolean }
             </group>
           </group>
 
-          {/* Legs */}
+          {/* Left leg */}
           <group ref={leftHip} position={[-0.14, 0.6, 0]}>
             <mesh position={[0, -0.22, 0]}>
               <cylinderGeometry args={[0.14, 0.12, 0.45, 8]} />
@@ -163,6 +164,8 @@ export default function AvatarMesh({ reducedMotion }: { reducedMotion: boolean }
               </mesh>
             </group>
           </group>
+
+          {/* Right leg */}
           <group ref={rightHip} position={[0.14, 0.6, 0]}>
             <mesh position={[0, -0.22, 0]}>
               <cylinderGeometry args={[0.14, 0.12, 0.45, 8]} />

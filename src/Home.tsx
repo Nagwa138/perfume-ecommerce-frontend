@@ -58,7 +58,7 @@ function CategoryTiles() {
 function NewArrivalsRail({ products }: { products: Product[] }) {
   if (products.length === 0) return null;
   return (
-    <section className="border-y border-border bg-surface py-16">
+    <section className="w-full max-w-[100vw] border-y border-border bg-surface py-16">
       <div className="mx-auto max-w-7xl px-4 md:px-6">
         <div className="mb-8 flex items-end justify-between gap-4">
           <div>
@@ -74,12 +74,16 @@ function NewArrivalsRail({ products }: { products: Product[] }) {
             View all <ArrowRight size={14} />
           </Link>
         </div>
-        <div className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-thin">
-          {products.map((p, i) => (
-            <div key={p.id} className="w-[240px] shrink-0 snap-start md:w-[280px]">
-              <ProductCard product={p} index={i} />
-            </div>
-          ))}
+        
+        {/* Fix: Explicit w-full and overflow-hidden on the outer container */}
+        <div className="w-full overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-thin">
+          <div className="flex gap-4 min-w-max">
+            {products.map((p, i) => (
+              <div key={p.id} className="w-[240px] shrink-0 snap-start md:w-[280px]">
+                <ProductCard product={p} index={i} />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -88,7 +92,7 @@ function NewArrivalsRail({ products }: { products: Product[] }) {
 
 function EditorialBlock() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-20 md:px-6">
+    <section className="mx-auto max-w-7xl px-4 py-20 md:px-6 overflow-hidden">
       <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
         <motion.div
           initial={{ opacity: 0, x: -24 }}
@@ -119,14 +123,18 @@ function EditorialBlock() {
           transition={{ duration: 0.7 }}
           className="order-1 md:order-2"
         >
+          {/* Fix: Added a real image instead of an empty mesh box */}
           <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-border bg-surface-2">
-            <div className="absolute inset-0 mesh-bg opacity-60" />
-            <div className="absolute inset-0 flex items-end p-8">
-              <div>
-                <p className="font-display text-3xl text-text">Autumn 2026</p>
-                <p className="mt-1 text-xs uppercase tracking-widest text-muted">The signature edit</p>
-              </div>
-            </div>
+             <img 
+               src="https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=1000&auto=format&fit=crop" 
+               alt="Editorial" 
+               className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+             />
+             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+             <div className="absolute bottom-8 left-8">
+               <p className="font-display text-3xl text-white">Autumn 2026</p>
+               <p className="mt-1 text-xs uppercase tracking-widest text-white/70">The signature edit</p>
+             </div>
           </div>
         </motion.div>
       </div>
