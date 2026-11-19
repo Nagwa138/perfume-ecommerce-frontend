@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Star } from "lucide-react";
-import { getProducts, getTopReviews, fmtEGP, type Product, type TopReview } from "./api";
+import { getProducts, getTopReviews, type Product, type TopReview } from "./api";
 import ProductCard from "./ProductCard";
 import StreetHero from "./hero/StreetHero";
 import RitualFinder from "./features/ritual-finder";

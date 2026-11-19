@@ -66,8 +66,7 @@ export default function QuizHub() {
                   Soon
                 </span>
                 <div
-                  className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl"
-                  className={q.iconClass}
+                  className={`mb-4 flex h-12 w-12 items-center justify-center rounded-xl ${q.iconClass}`}
                 >
                   {q.icon}
                 </div>
@@ -81,8 +80,7 @@ export default function QuizHub() {
                 className="group relative block h-full rounded-2xl border border-border bg-surface-2 p-6 transition-all hover:border-accent/40 hover:bg-surface-2/80"
               >
                 <div
-                  className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl transition-transform group-hover:scale-105"
-                  className={q.iconClass}
+                  className={`mb-4 flex h-12 w-12 items-center justify-center rounded-xl transition-transform group-hover:scale-105 ${q.iconClass}`}
                 >
                   {q.icon}
                 </div>
