@@ -11,45 +11,61 @@
 @import "@fontsource/cairo/600.css";
 @import "tailwindcss";
 
-/* ── 2 · THEME TOKENS (SOURCE BEAUTY INSPIRED) ───────────────────── */
+/* ── 2 · HOSSAM BRAND TOKENS (locked — see BRAND_BRIEF.md §2.1) ───── */
 :root {
-  --h-bg:        #FAFAFA;
-  --h-deep:      #F3F3F3;
-  --h-surface:   #FFFFFF;
-  --h-surface-2: #F9F9F9;
-  --h-accent:    #D9385E; /* Brand Pink/Red */
-  --h-accent-2:  #B82A4B;
-  --h-blush:     #F9D8E0; /* Light Pink background */
-  --h-ivory:     #FFFFFF;
-  --h-text:      #111111;
-  --h-text-inv:  #FFFFFF;
-  --h-muted:     rgba(17, 17, 17, 0.6);
-  --h-border:    #E5E5E5;
+  /* backgrounds */
+  --h-bg:              #F6F1E8;  /* warm ivory */
+  --h-surface:         #EDE5D4;  /* cards, raised elements */
+  --h-surface-2:       #E4DAC2;  /* deeper surface, dividers */
+
+  /* text */
+  --h-ink:             #0F2A24;  /* primary text, headings */
+  --h-ink-soft:        #3B4F48;  /* body text */
+  --h-ink-muted:       #6B7A72;  /* captions, metadata */
+
+  /* brand */
+  --h-accent:          #1F5C4C;  /* buttons, links, marks */
+  --h-accent-hover:    #174539;
+  --h-accent-contrast: #F6F1E8;  /* text on accent bg */
+  --h-highlight:       #B98E3C;  /* amber — DECORATION ONLY, never body text */
+
+  /* structure */
+  --h-line:            #DCD2BE;  /* hairlines, borders */
+  --h-success:         #2F7A5A;
+  --h-error:           #8B2E2E;
+
+  /* backward-compat aliases — remove as old pages are rebuilt */
+  --h-text-inv:        #F6F1E8;  /* was white; now accent-contrast */
+  --h-accent-2:        #174539;  /* was B82A4B; now accent-hover */
 }
 
 /* ── 3 · TAILWIND TOKEN MAPPING ──────────────────────────────────── */
 @theme {
-  --font-display: "Manrope", system-ui, sans-serif;
+  --font-display: "Cormorant Garamond", Georgia, serif;
   --font-sans:    "Manrope", system-ui, sans-serif;
   --font-arabic:  "Cairo", system-ui, sans-serif;
 
-  --color-bg:        var(--h-bg);
-  --color-surface:   var(--h-surface);
-  --color-surface-2: var(--h-surface-2);
-  --color-accent:    var(--h-accent);
-  --color-accent-2:  var(--h-accent-2);
-  --color-blush:     var(--h-blush);
-  --color-ivory:     var(--h-ivory);
-  --color-border:    var(--h-border);
-  --color-muted:     var(--h-muted);
+  --color-bg:               var(--h-bg);
+  --color-surface:          var(--h-surface);
+  --color-surface-2:        var(--h-surface-2);
+  --color-ink:              var(--h-ink);
+  --color-ink-soft:         var(--h-ink-soft);
+  --color-ink-muted:        var(--h-ink-muted);
+  --color-accent:           var(--h-accent);
+  --color-accent-hover:     var(--h-accent-hover);
+  --color-accent-contrast:  var(--h-accent-contrast);
+  --color-highlight:        var(--h-highlight);
+  --color-line:             var(--h-line);
+  --color-success:          var(--h-success);
+  --color-error:            var(--h-error);
 
-  --color-sale:    #D9385E;
-  --color-success: #2E7D32;
+  /* backward-compat aliases — remove as old pages are rebuilt */
+  --color-accent-2:         var(--h-accent-2);
 
   --radius-card: 0.5rem;
   --radius-btn:  9999px;
 
-  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 4px 20px rgba(15, 42, 36, 0.06);
 }
 
 /* ── 4 · BASE STYLES ─────────────────────────────────────────────── */
@@ -59,7 +75,7 @@ html { scroll-behavior: smooth; }
 body {
   margin: 0;
   background: var(--h-bg);
-  color: var(--h-text);
+  color: var(--h-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
@@ -86,14 +102,14 @@ body {
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* Pink Promo Cards */
-.promo-card {
-  background-color: var(--h-blush);
+/* Surface cards (category tiles, editorial blocks) */
+.surface-card {
+  background-color: var(--h-surface);
   border-radius: 1rem;
   overflow: hidden;
   transition: transform 0.3s ease;
 }
-.promo-card:hover { transform: translateY(-4px); }
+.surface-card:hover { transform: translateY(-4px); }
 
 /* ── 7 · SCROLL LOCK ─────────────────────────────────────────────── */
 html, body {

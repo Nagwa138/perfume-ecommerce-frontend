@@ -157,7 +157,7 @@ export default function SkincareQuiz() {
                 <span>Build Your Skincare Routine</span>
               </div>
               <div className="h-1 w-full overflow-hidden rounded-full bg-surface-2">
-                <motion.div className="h-full rounded-full" style={{ background: "#a0c4b8" }}
+                <motion.div className="h-full rounded-full" style={{ background: "var(--color-accent)" }}
                   animate={{ width: `${progress}%` }} transition={{ duration: 0.3 }} />
               </div>
             </div>
@@ -169,9 +169,9 @@ export default function SkincareQuiz() {
                 <motion.button key={opt.value}
                   whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
                   onClick={() => choose(q.key, opt.value)}
-                  className="group flex items-center gap-3 rounded-2xl border border-border bg-surface-2 px-5 py-4 text-left transition-all hover:border-[#a0c4b8]/50">
+                  className="group flex items-center gap-3 rounded-2xl border border-border bg-surface-2 px-5 py-4 text-left transition-all hover:border-[var(--color-accent)]/50">
                   <span className="text-xl">{opt.emoji}</span>
-                  <span className="font-semibold group-hover:text-[#a0c4b8] transition-colors">{opt.label}</span>
+                  <span className="font-semibold group-hover:text-[var(--color-accent)] transition-colors">{opt.label}</span>
                 </motion.button>
               ))}
             </div>
@@ -182,7 +182,7 @@ export default function SkincareQuiz() {
         {step === "loading" && (
           <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             className="flex flex-col items-center py-32 text-center">
-            <div className="mb-6 h-10 w-10 animate-spin rounded-full border-2 border-[#a0c4b8] border-t-transparent" />
+            <div className="mb-6 h-10 w-10 animate-spin rounded-full border-2 border-[var(--color-accent)] border-t-transparent" />
             <p className="text-muted">Building your personalised routine…</p>
           </motion.div>
         )}
@@ -190,8 +190,8 @@ export default function SkincareQuiz() {
         {/* ── Results ───────────────────────────────────────────────────────── */}
         {step === "results" && (
           <motion.div key="results" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="mb-10 rounded-2xl border p-6 text-center" style={{ borderColor: "#a0c4b830", background: "#a0c4b810" }}>
-              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "#a0c4b8" }}>Your Routine</p>
+            <div className="mb-10 rounded-2xl border border-[var(--color-accent)]/20 bg-[var(--color-accent)]/5 p-6 text-center">
+              <p className="text-xs font-bold uppercase tracking-widest text-[var(--color-accent)]">Your Routine</p>
               <h2 className="mt-2 font-display text-3xl font-bold">
                 {answers.skinType.charAt(0).toUpperCase() + answers.skinType.slice(1)} Skin · {" "}
                 {answers.concern.replace(/-/g, " ")}
@@ -233,8 +233,7 @@ export default function SkincareQuiz() {
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/shop?product_type=skincare"
-                className="flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold text-white transition-colors hover:opacity-90"
-                style={{ background: "#a0c4b8" }}>
+                className="flex items-center gap-2 rounded-full bg-[var(--color-accent)] px-6 py-2.5 text-sm font-bold text-[var(--color-accent-contrast)] transition-colors hover:bg-[var(--color-accent-hover)]">
                 Shop All Skincare <ArrowRight size={13} />
               </Link>
               <button onClick={restart}

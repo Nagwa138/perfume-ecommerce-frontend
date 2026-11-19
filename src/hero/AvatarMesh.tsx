@@ -108,7 +108,7 @@ export default function AvatarMesh({ reducedMotion }: { reducedMotion: boolean }
           </mesh>
           <mesh position={[0, 0.6, 0]}>
             <boxGeometry args={[0.46, 0.25, 0.28]} />
-            <meshStandardMaterial color="#1a1a1f" roughness={0.85} />
+            <meshStandardMaterial color="#1F5C4C" roughness={0.75} />
           </mesh>
 
           <group ref={leftShoulder} position={[-0.35, 1.35, 0]}>
@@ -146,16 +146,16 @@ export default function AvatarMesh({ reducedMotion }: { reducedMotion: boolean }
           <group ref={leftHip} position={[-0.14, 0.6, 0]}>
             <mesh position={[0, -0.22, 0]}>
               <cylinderGeometry args={[0.14, 0.12, 0.45, 8]} />
-              <meshStandardMaterial color="#1a1a1f" roughness={0.85} />
+              <meshStandardMaterial color="#DCD2BE" roughness={0.85} />
             </mesh>
             <group ref={leftKnee} position={[0, -0.45, 0]}>
               <mesh position={[0, -0.2, 0]}>
                 <cylinderGeometry args={[0.11, 0.1, 0.4, 8]} />
-                <meshStandardMaterial color="#1a1a1f" roughness={0.85} />
+                <meshStandardMaterial color="#DCD2BE" roughness={0.85} />
               </mesh>
               <mesh position={[0, -0.42, 0.08]}>
                 <boxGeometry args={[0.15, 0.12, 0.32]} />
-                <meshStandardMaterial color="#111" roughness={0.4} />
+                <meshStandardMaterial color="#0F2A24" roughness={0.4} />
               </mesh>
             </group>
           </group>
@@ -163,16 +163,16 @@ export default function AvatarMesh({ reducedMotion }: { reducedMotion: boolean }
           <group ref={rightHip} position={[0.14, 0.6, 0]}>
             <mesh position={[0, -0.22, 0]}>
               <cylinderGeometry args={[0.14, 0.12, 0.45, 8]} />
-              <meshStandardMaterial color="#1a1a1f" roughness={0.85} />
+              <meshStandardMaterial color="#DCD2BE" roughness={0.85} />
             </mesh>
             <group ref={rightKnee} position={[0, -0.45, 0]}>
               <mesh position={[0, -0.2, 0]}>
                 <cylinderGeometry args={[0.11, 0.1, 0.4, 8]} />
-                <meshStandardMaterial color="#1a1a1f" roughness={0.85} />
+                <meshStandardMaterial color="#DCD2BE" roughness={0.85} />
               </mesh>
               <mesh position={[0, -0.42, 0.08]}>
                 <boxGeometry args={[0.15, 0.12, 0.32]} />
-                <meshStandardMaterial color="#111" roughness={0.4} />
+                <meshStandardMaterial color="#0F2A24" roughness={0.4} />
               </mesh>
             </group>
           </group>

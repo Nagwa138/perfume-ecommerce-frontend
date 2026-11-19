@@ -1,10 +1,32 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { BRAND } from "../brand";
-import { Smile, DollarSign, Package } from "lucide-react";
+import { Sparkles, ShieldCheck, Package } from "lucide-react";
+
+const SHOP_LINKS = [
+  { label: "Fragrance",          href: "/shop?category=fragrance" },
+  { label: "Skincare",           href: "/shop?category=skincare" },
+  { label: "Makeup",             href: "/shop?category=makeup" },
+  { label: "Hair",               href: "/shop?category=hair" },
+  { label: "Body & Bath",        href: "/shop?category=body-bath" },
+  { label: "Gift Sets",          href: "/shop?category=gift-sets" },
+  { label: "Pharmacy",           href: "/shop?category=pharmacy-wellness" },
+];
+
+const HOUSE_LINKS = [
+  { label: "About the house", href: "/about" },
+  { label: "Journal",         href: "/journal" },
+  { label: "Contact",         href: "/contact" },
+];
+
+const CARE_LINKS = [
+  { label: "Shipping & delivery", href: "/shipping" },
+  { label: "Returns",             href: "/returns" },
+  { label: "FAQ",                 href: "/faq" },
+];
 
 export default function Footer() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail]       = useState("");
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubscribe = (e: React.FormEvent) => {
@@ -13,98 +35,108 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-[#FAFAFA] border-t border-gray-200 pt-16 pb-10">
-      
-      {/* Trust Bar */}
+    <footer className="bg-[var(--color-surface)] border-t border-[var(--color-line)] pt-16 pb-10">
+
+      {/* Trust bar */}
       <div className="mx-auto max-w-[1400px] px-4 md:px-8 mb-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center border-b border-gray-200 pb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center border-b border-[var(--color-line)] pb-12">
           <div className="flex flex-col items-center">
-            <Smile size={32} className="text-[#D9385E] mb-3" strokeWidth={1.5} />
-            <h4 className="font-bold text-black mb-1">100% authentic</h4>
-            <p className="text-sm text-gray-500">Sourced from the brands</p>
+            <ShieldCheck size={28} className="text-[var(--color-accent)] mb-3" strokeWidth={1.5} />
+            <h4 className="font-bold text-[var(--color-ink)] mb-1">100% authentic</h4>
+            <p className="text-sm text-[var(--color-ink-muted)]">Sourced directly from the brands</p>
           </div>
           <div className="flex flex-col items-center">
-            <DollarSign size={32} className="text-[#D9385E] mb-3" strokeWidth={1.5} />
-            <h4 className="font-bold text-black mb-1">Cash on delivery</h4>
-            <p className="text-sm text-gray-500">Or pay securely online</p>
+            <Package size={28} className="text-[var(--color-accent)] mb-3" strokeWidth={1.5} />
+            <h4 className="font-bold text-[var(--color-ink)] mb-1">Free delivery across the GCC</h4>
+            <p className="text-sm text-[var(--color-ink-muted)]">On orders over EGP 1,500</p>
           </div>
           <div className="flex flex-col items-center">
-            <Package size={32} className="text-[#D9385E] mb-3" strokeWidth={1.5} />
-            <h4 className="font-bold text-black mb-1">Free delivery</h4>
-            <p className="text-sm text-gray-500">On orders over EGP 999</p>
+            <Sparkles size={28} className="text-[var(--color-accent)] mb-3" strokeWidth={1.5} />
+            <h4 className="font-bold text-[var(--color-ink)] mb-1">Curated by the house</h4>
+            <p className="text-sm text-[var(--color-ink-muted)]">Every piece chosen with intention</p>
           </div>
         </div>
       </div>
 
+      {/* Links + newsletter */}
       <div className="mx-auto max-w-[1400px] px-4 md:px-8">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-5 mb-12">
-          
-          {/* Brand & Newsletter */}
-          <div className="lg:col-span-2">
-            <span className="text-2xl font-extrabold tracking-[0.1em] text-black block mb-4">
+        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4 mb-12">
+
+          {/* Newsletter */}
+          <div className="lg:col-span-1">
+            <span className="text-xl font-extrabold tracking-[0.12em] text-[var(--color-ink)] block mb-4 uppercase">
               {BRAND.nameUpper}
             </span>
-            <h4 className="text-xl font-bold text-black mb-2">Join Our Newsletter</h4>
-            <p className="text-sm text-gray-500 mb-4">Sign up to our newsletter & receive 10% off your first order.</p>
+            <p className="text-xs text-[var(--color-ink-muted)] mb-5 leading-relaxed">
+              New arrivals, ritual edits, and notes from the house — a few times a month.
+            </p>
             {submitted ? (
-              <p className="text-sm font-bold text-[#2E7D32]">Thank you for subscribing!</p>
+              <p className="text-sm font-medium text-[var(--color-success)]">You're on the list.</p>
             ) : (
-              <form onSubmit={handleSubscribe} className="flex w-full max-w-md gap-2">
+              <form onSubmit={handleSubscribe} className="flex w-full gap-2">
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your@email.com"
                   required
-                  className="flex-1 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-black outline-none focus:border-black"
+                  className="flex-1 rounded-full border border-[var(--color-line)] bg-[var(--color-bg)] px-4 py-2 text-sm text-[var(--color-ink)] outline-none focus:border-[var(--color-accent)] placeholder:text-[var(--color-ink-muted)]"
                 />
                 <button
                   type="submit"
-                  className="rounded-full bg-black px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-gray-800"
+                  className="rounded-full bg-[var(--color-accent)] px-5 py-2 text-xs font-bold text-[var(--color-accent-contrast)] transition-colors hover:bg-[var(--color-accent-hover)]"
                 >
-                  Sign Up
+                  Stay
                 </button>
               </form>
             )}
           </div>
 
-          {/* Links */}
+          {/* Shop */}
           <div>
-            <h4 className="mb-4 text-sm font-bold text-black">By Category</h4>
-            <ul className="space-y-2 text-sm text-gray-600">
-              <li><Link to="/shop?product_type=perfume" className="hover:text-black">Fragrance</Link></li>
-              <li><Link to="/shop?product_type=skincare" className="hover:text-black">Skincare</Link></li>
-              <li><Link to="/shop?product_type=makeup" className="hover:text-black">Makeup</Link></li>
-              <li><Link to="/shop?product_type=haircare" className="hover:text-black">Hair</Link></li>
+            <h4 className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-ink)]">Shop</h4>
+            <ul className="space-y-2.5 text-sm text-[var(--color-ink-soft)]">
+              {SHOP_LINKS.map((l) => (
+                <li key={l.label}>
+                  <Link to={l.href} className="hover:text-[var(--color-accent)] transition-colors">{l.label}</Link>
+                </li>
+              ))}
             </ul>
           </div>
 
+          {/* The house */}
           <div>
-            <h4 className="mb-4 text-sm font-bold text-black">Customer Account</h4>
-            <ul className="space-y-2 text-sm text-gray-600">
-              <li><Link to="/account" className="hover:text-black">My Account</Link></li>
-              <li><Link to="/orders" className="hover:text-black">Order & Tracking</Link></li>
-              <li><Link to="/wishlist" className="hover:text-black">Wishlist</Link></li>
+            <h4 className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-ink)]">The House</h4>
+            <ul className="space-y-2.5 text-sm text-[var(--color-ink-soft)]">
+              {HOUSE_LINKS.map((l) => (
+                <li key={l.label}>
+                  <Link to={l.href} className="hover:text-[var(--color-accent)] transition-colors">{l.label}</Link>
+                </li>
+              ))}
             </ul>
           </div>
 
+          {/* Care */}
           <div>
-            <h4 className="mb-4 text-sm font-bold text-black">About Us</h4>
-            <ul className="space-y-2 text-sm text-gray-600">
-              <li><Link to="/about" className="hover:text-black">About HOSSAM</Link></li>
-              <li><Link to="/contact" className="hover:text-black">Contact Us</Link></li>
-              <li><Link to="/faq" className="hover:text-black">FAQ</Link></li>
+            <h4 className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-ink)]">Care</h4>
+            <ul className="space-y-2.5 text-sm text-[var(--color-ink-soft)]">
+              {CARE_LINKS.map((l) => (
+                <li key={l.label}>
+                  <Link to={l.href} className="hover:text-[var(--color-accent)] transition-colors">{l.label}</Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
 
-        {/* Bottom */}
-        <div className="border-t border-gray-200 pt-6 flex flex-col items-center justify-between gap-4 text-xs text-gray-500 md:flex-row">
-          <p>© {new Date().getFullYear()} {BRAND.name}. All rights reserved.</p>
-          <div className="flex gap-4">
-            <span className="font-bold">VISA</span>
-            <span className="font-bold">Mastercard</span>
-            <span className="font-bold">PayPal</span>
+        {/* Bottom bar */}
+        <div className="border-t border-[var(--color-line)] pt-6 flex flex-col items-center justify-between gap-3 text-xs text-[var(--color-ink-muted)] md:flex-row">
+          <p>© {new Date().getFullYear()} {BRAND.name} · {BRAND.tagline}</p>
+          <p className="text-[var(--color-ink-muted)]">Shipping across Egypt · Free over EGP 1,500</p>
+          <div className="flex gap-2">
+            <span className="font-semibold text-[var(--color-ink-soft)]">EN</span>
+            <span className="text-[var(--color-line)]">|</span>
+            <span className="font-semibold text-[var(--color-ink-muted)] font-arabic">ع</span>
           </div>
         </div>
       </div>

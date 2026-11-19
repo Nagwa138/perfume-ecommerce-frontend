@@ -42,7 +42,7 @@ function ImageGallery({ images, name, activeIndex, onIndexChange }: {
       )}
 
       {/* Main Image */}
-      <div className="group relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-[#FAFAFA]">
+      <div className="group relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-[var(--color-surface)]">
         {images.length > 0 ? (
           <img
             key={safe}
@@ -67,8 +67,8 @@ function StarRating({ rating, count }: { rating: number; count: number }) {
       <div className="flex gap-0.5">
         {Array.from({ length: 5 }).map((_, i) => (
           <Star key={i} size={13} className={
-            i < Math.floor(rating) ? "fill-[#D9385E] text-[#D9385E]"
-            : i < rating ? "fill-[#D9385E]/50 text-[#D9385E]"
+            i < Math.floor(rating) ? "fill-[var(--color-accent)] text-[var(--color-accent)]"
+            : i < rating ? "fill-[var(--color-accent)]/50 text-[var(--color-accent)]"
             : "fill-transparent text-gray-300"
           } />
         ))}
@@ -80,7 +80,7 @@ function StarRating({ rating, count }: { rating: number; count: number }) {
   );
 }
 
-function Meter({ value, max = 10, label, colorClass = "bg-[#D9385E]" }: {
+function Meter({ value, max = 10, label, colorClass = "bg-[var(--color-accent)]" }: {
   value: number; max?: number; label: string; colorClass?: string;
 }) {
   return (
@@ -117,7 +117,7 @@ function Accordion({ title, children }: { title: string; children: React.ReactNo
     <div className="border-b border-gray-200 py-4">
       <button
         onClick={() => setOpen(!open)}
-        className="flex w-full items-center justify-between text-left text-sm font-bold text-black transition-colors hover:text-[#D9385E]"
+        className="flex w-full items-center justify-between text-left text-sm font-bold text-black transition-colors hover:text-[var(--color-accent)]"
       >
         {title}
         <ChevronDown size={16} className={`transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
@@ -146,7 +146,7 @@ function RelatedCard({ product: r }: { product: Product }) {
   const hasDiscount = r.sale_price != null;
   return (
     <Link to={`/product/${r.slug || r.id}`} className="group block w-40 shrink-0 md:w-auto">
-      <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-[#FAFAFA]">
+      <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-[var(--color-surface)]">
         {r.images?.[0] ? (
           <img src={r.images[0]} alt={r.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
         ) : (
@@ -155,7 +155,7 @@ function RelatedCard({ product: r }: { product: Product }) {
       </div>
       <p className="mt-2 line-clamp-1 text-sm font-medium text-black">{r.name}</p>
       <div className="flex items-baseline gap-1.5">
-        <span className={`text-sm font-bold ${hasDiscount ? "text-[#D9385E]" : "text-black"}`}>{fmtEGP(minP)}</span>
+        <span className={`text-sm font-bold ${hasDiscount ? "text-[var(--color-accent)]" : "text-black"}`}>{fmtEGP(minP)}</span>
       </div>
     </Link>
   );
@@ -358,13 +358,13 @@ export default function ProductPage() {
 
             {/* Price */}
             <div className="flex items-baseline gap-3">
-              <span className={`text-3xl font-extrabold ${hasDiscount ? "text-[#D9385E]" : "text-black"}`}>
+              <span className={`text-3xl font-extrabold ${hasDiscount ? "text-[var(--color-accent)]" : "text-black"}`}>
                 {fmtEGP(displayPrice)}
               </span>
               {hasDiscount && (
                 <>
                   <span className="text-lg text-gray-400 line-through">{fmtEGP(origPriceVal)}</span>
-                  <span className="rounded-full bg-[#D9385E]/10 px-2.5 py-0.5 text-xs font-bold text-[#D9385E]">Save {discountPct}%</span>
+                  <span className="rounded-full bg-[var(--color-accent)]/10 px-2.5 py-0.5 text-xs font-bold text-[var(--color-accent)]">Save {discountPct}%</span>
                 </>
               )}
             </div>
@@ -445,7 +445,7 @@ export default function ProductPage() {
                 ref={addBtnRef}
                 disabled={chosenStock < 1}
                 onClick={handleAdd}
-                className="flex-1 rounded-full bg-[#D9385E] py-4 text-sm font-bold text-white transition-colors hover:bg-[#B82A4B] disabled:cursor-not-allowed disabled:opacity-50 shadow-md"
+                className="flex-1 rounded-full bg-[var(--color-accent)] py-4 text-sm font-bold text-white transition-colors hover:bg-[var(--color-accent-hover)] disabled:cursor-not-allowed disabled:opacity-50 shadow-md"
               >
                 {chosenStock < 1 ? "Sold Out" : "Add to Cart"}
               </button>
@@ -454,7 +454,7 @@ export default function ProductPage() {
                 aria-label={isWished ? "Remove from wishlist" : "Save to wishlist"}
                 onClick={() => toggleWish(p.id)}
                 className={`flex h-12 w-12 items-center justify-center rounded-full border transition-all ${
-                  isWished ? "border-[#D9385E] bg-pink-50 text-[#D9385E]" : "border-gray-300 text-gray-500 hover:border-black hover:text-black"
+                  isWished ? "border-[var(--color-accent)] bg-[var(--color-surface)] text-[var(--color-accent)]" : "border-gray-300 text-gray-500 hover:border-black hover:text-black"
                 }`}
               >
                 <Heart size={18} className={isWished ? "fill-current" : ""} />
@@ -465,22 +465,22 @@ export default function ProductPage() {
 
             {/* Fragrance meters */}
             {isFragrance && (p.longevity > 0 || p.sillage > 0) && (
-              <div className="space-y-3 rounded-2xl border border-gray-100 bg-[#FAFAFA] px-5 py-4 mt-2">
+              <div className="space-y-3 rounded-2xl border border-gray-100 bg-[var(--color-surface)] px-5 py-4 mt-2">
                 {p.longevity > 0 && <Meter value={p.longevity} label="Longevity" />}
-                {p.sillage   > 0 && <Meter value={p.sillage}   label="Sillage" colorClass="bg-[#D9385E]/70" />}
+                {p.sillage   > 0 && <Meter value={p.sillage}   label="Sillage" colorClass="bg-[var(--color-accent)]/70" />}
               </div>
             )}
 
             {/* Trust Badges */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4 pt-6 border-t border-gray-100">
               <div className="flex items-center gap-2 text-xs text-gray-600 font-medium">
-                <Truck size={16} className="text-[#D9385E]" /> Free Delivery
+                <Truck size={16} className="text-[var(--color-accent)]" /> Free Delivery
               </div>
               <div className="flex items-center gap-2 text-xs text-gray-600 font-medium">
-                <ShieldCheck size={16} className="text-[#D9385E]" /> 100% Authentic
+                <ShieldCheck size={16} className="text-[var(--color-accent)]" /> 100% Authentic
               </div>
               <div className="flex items-center gap-2 text-xs text-gray-600 font-medium">
-                <RotateCcw size={16} className="text-[#D9385E]" /> 14-Day Returns
+                <RotateCcw size={16} className="text-[var(--color-accent)]" /> 14-Day Returns
               </div>
             </div>
 
@@ -499,7 +499,7 @@ export default function ProductPage() {
                 { label: "Heart Notes", notes: p.heart_notes, Icon: Droplets, color: "text-rose-500" },
                 { label: "Base Notes", notes: p.base_notes,  Icon: Flame,    color: "text-amber-500" },
               ].filter(({ notes }) => (notes ?? []).length > 0).map(({ label, notes, Icon, color }) => (
-                <div key={label} className="rounded-xl border border-gray-100 bg-[#FAFAFA] p-5">
+                <div key={label} className="rounded-xl border border-gray-100 bg-[var(--color-surface)] p-5">
                   <div className="mb-3 flex items-center gap-2">
                     <Icon size={16} className={color} />
                     <p className="text-xs font-bold uppercase tracking-widest text-gray-700">{label}</p>
@@ -547,7 +547,7 @@ export default function ProductPage() {
           <div className="mt-16 border-t border-gray-200 pt-12">
             <div className="grid gap-10 md:grid-cols-[280px_1fr]">
               {/* Rating Bars */}
-              <div className="rounded-2xl border border-gray-200 bg-[#FAFAFA] p-6 h-fit">
+              <div className="rounded-2xl border border-gray-200 bg-[var(--color-surface)] p-6 h-fit">
                 <h2 className="text-xl font-extrabold text-black">Customer Reviews</h2>
                 <div className="mt-4 flex items-center gap-3">
                   <span className="text-4xl font-extrabold text-black">{p.rating.toFixed(1)}</span>
@@ -563,7 +563,7 @@ export default function ProductPage() {
                       <div key={stars} className="flex items-center gap-2 text-xs">
                         <span className="w-8 text-gray-500 font-medium">{stars} ★</span>
                         <div className="h-1.5 flex-1 rounded-full bg-gray-200 overflow-hidden">
-                          <div className="h-full bg-[#D9385E] rounded-full" style={{ width: `${pct}%` }} />
+                          <div className="h-full bg-[var(--color-accent)] rounded-full" style={{ width: `${pct}%` }} />
                         </div>
                         <span className="w-6 text-right text-gray-500">{count}</span>
                       </div>
@@ -581,7 +581,7 @@ export default function ProductPage() {
                         <p className="text-sm font-bold text-black">{rv.author}</p>
                         <div className="mt-1 flex gap-0.5">
                           {Array.from({ length: 5 }).map((_, i) => (
-                            <Star key={i} size={11} className={i < rv.rating ? "fill-[#D9385E] text-[#D9385E]" : "fill-transparent text-gray-300"} />
+                            <Star key={i} size={11} className={i < rv.rating ? "fill-[var(--color-accent)] text-[var(--color-accent)]" : "fill-transparent text-gray-300"} />
                           ))}
                         </div>
                       </div>
@@ -620,10 +620,10 @@ export default function ProductPage() {
                 <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Add to cart</p>
                 <p className="truncate text-sm font-bold text-black">{p.name}</p>
               </div>
-              <span className="shrink-0 font-bold text-[#D9385E]">{fmtEGP(displayPrice)}</span>
+              <span className="shrink-0 font-bold text-[var(--color-accent)]">{fmtEGP(displayPrice)}</span>
               <button
                 onClick={handleAdd}
-                className="shrink-0 rounded-full bg-[#D9385E] px-6 py-2.5 text-xs font-bold text-white transition-colors hover:bg-[#B82A4B]"
+                className="shrink-0 rounded-full bg-[var(--color-accent)] px-6 py-2.5 text-xs font-bold text-white transition-colors hover:bg-[var(--color-accent-hover)]"
               >
                 Add
               </button>

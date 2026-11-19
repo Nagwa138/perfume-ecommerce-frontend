@@ -1,201 +1,281 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getProducts, type Product } from "./api";
+import { Star } from "lucide-react";
+import { getProducts, getTopReviews, fmtEGP, type Product, type TopReview } from "./api";
 import ProductCard from "./ProductCard";
-import RecentlyViewed from "./RecentlyViewed";
+import StreetHero from "./hero/StreetHero";
+import RitualFinder from "./features/ritual-finder";
 
-const HERO_IMAGE = "https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=1600&auto=format&fit=crop";
+// ── Section 4: Category gateway ───────────────────────────────────────────────
+
+const CATEGORIES = [
+  { label: "Fragrance",   sub: "The scent library",    href: "/shop?product_type=perfume",   img: "https://images.unsplash.com/photo-1541643600914-78b084683702?q=80&w=600&auto=format&fit=crop" },
+  { label: "Skincare",    sub: "Daily care",            href: "/shop?product_type=skincare",   img: "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?q=80&w=600&auto=format&fit=crop" },
+  { label: "Makeup",      sub: "Color, kept",           href: "/shop?product_type=makeup",     img: "https://images.unsplash.com/photo-1512207736890-6ffed8a84e8d?q=80&w=600&auto=format&fit=crop" },
+  { label: "Hair",        sub: "Crowns",                href: "/shop?product_type=haircare",   img: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=600&auto=format&fit=crop" },
+  { label: "Body & Bath", sub: "The hammam at home",   href: "/shop?product_type=body",       img: "https://images.unsplash.com/photo-1570194065650-d99fb4bedf0a?q=80&w=600&auto=format&fit=crop" },
+  { label: "Gifts",       sub: "The art of giving",    href: "/shop?product_type=gift",       img: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=600&auto=format&fit=crop" },
+  { label: "Pharmacy",    sub: "The counter",          href: "/shop?product_type=pharmacy",   img: "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?q=80&w=600&auto=format&fit=crop" },
+];
+
+// ── Section 7: Reviews wall ───────────────────────────────────────────────────
+
+function StarRow({ rating }: { rating: number }) {
+  return (
+    <div className="flex gap-0.5">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <Star
+          key={i}
+          size={12}
+          className={i <= rating ? "fill-[var(--color-highlight)] text-[var(--color-highlight)]" : "text-[var(--color-line)]"}
+        />
+      ))}
+    </div>
+  );
+}
+
+// ── Main component ────────────────────────────────────────────────────────────
 
 export default function Home() {
-  const [_featured, setFeatured] = useState<Product[]>([]);
-  const [newArrivals, setNewArrivals] = useState<Product[]>([]);
+  const [bestsellers,   setBestsellers]   = useState<Product[]>([]);
+  const [pharmProducts, setPharmProducts] = useState<Product[]>([]);
+  const [reviews,       setReviews]       = useState<TopReview[]>([]);
 
   useEffect(() => {
-    getProducts({ sort: "popular", page_size: 8 }).then((d) => setFeatured(d.items));
-    getProducts({ sort: "newest", page_size: 8 }).then((d) => setNewArrivals(d.items));
+    getProducts({ sort: "popular", page_size: 6 }).then((d) => setBestsellers(d.items));
+    getProducts({ product_type: "pharmacy", page_size: 6 }).then((d) => setPharmProducts(d.items));
+    getTopReviews(9).then(setReviews);
   }, []);
 
   return (
-    <div className="bg-[#FAFAFA] min-h-screen text-[#111] overflow-x-hidden">
-      
-      {/* 1. Promotional Hero Banner */}
-      <section className="relative w-full bg-[#F9D8E0]">
-        <div className="mx-auto max-w-[1400px] flex flex-col md:flex-row items-center min-h-[400px] md:min-h-[500px]">
-          {/* Text Side */}
-          <div className="w-full md:w-1/2 p-8 md:p-16 flex flex-col justify-center z-10 bg-[#F9D8E0]">
-            <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-[#D9385E] mb-2">Taya's Picks</p>
-            <h1 className="text-3xl md:text-5xl font-extrabold leading-tight mb-4 text-black">
-              Taya's Must-Have Beauty Favorites.
-            </h1>
-            <p className="text-sm md:text-base text-gray-700 mb-6 md:mb-8 max-w-md">
-              From everyday essentials to standout finds, explore the products she loves and thinks you will too!
-            </p>
-            <Link to="/shop" className="bg-black text-white px-6 md:px-8 py-3 rounded-full font-bold text-sm md:text-base w-fit hover:bg-gray-800 transition-colors">
-              Shop Taya's Picks
-            </Link>
-          </div>
-          
-          {/* Image Side */}
-          <div className="w-full md:w-1/2 h-[300px] md:h-[500px] relative">
-            <img src={HERO_IMAGE} alt="Beauty Model" className="w-full h-full object-cover" />
-          </div>
-        </div>
-        
-        {/* Carousel Dots */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-          <div className="h-2 w-2 rounded-full bg-gray-300"></div>
-          <div className="h-2 w-2 rounded-full bg-gray-300"></div>
-          <div className="h-2 w-2 rounded-full bg-black"></div>
-          <div className="h-2 w-2 rounded-full bg-gray-300"></div>
+    <div className="bg-[var(--color-bg)] min-h-screen text-[var(--color-ink)] overflow-x-hidden">
+
+      {/* 1 — 3D Street Hero */}
+      <StreetHero />
+
+      {/* 2 — Tagline strip */}
+      <section id="first-section" className="w-full bg-[var(--color-surface)] flex items-center justify-center py-12">
+        <div className="text-center px-4">
+          <p className="font-display italic text-2xl md:text-3xl text-[var(--color-ink)]">
+            "A new house. An old ritual."
+          </p>
+          <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.25em] text-[var(--color-ink-muted)]">
+            EST. 2026 · ROOTED IN THE REGION
+          </p>
         </div>
       </section>
 
-      {/* 2. Deals Selling Fast (Product Rail) */}
-      <section className="mx-auto max-w-[1400px] px-4 md:px-8 py-12 md:py-16">
-        <div className="flex items-end justify-between mb-6 md:mb-8">
-          <div>
-            <h2 className="text-xl md:text-2xl font-extrabold text-black">Deals selling fast</h2>
-            <p className="text-xs md:text-sm text-gray-500 mt-1">Our bestsellers, now on sale</p>
-          </div>
-          <Link to="/shop?on_sale=true" className="text-xs md:text-sm font-bold underline decoration-2 underline-offset-4 hover:text-[#D9385E]">
-            View All
-          </Link>
-        </div>
-        
-        {/* Horizontal Scroll Rail - Fixed width for mobile, wider for desktop */}
-        <div className="flex gap-3 md:gap-4 overflow-x-auto pb-6 hide-scrollbar snap-x">
-          {newArrivals.slice(0, 6).map((p, i) => (
-            <div key={p.id} className="w-[160px] md:w-[240px] shrink-0 snap-start">
-              <ProductCard product={p} index={i} />
-            </div>
-          ))}
-        </div>
+      {/* 3 — Ritual Finder */}
+      <section className="mx-auto max-w-[1400px] px-4 md:px-8 py-20 md:py-28">
+        <p className="text-xs font-bold uppercase tracking-[0.25em] text-[var(--color-ink-muted)] mb-3">
+          THE RITUAL FINDER
+        </p>
+        <h2 className="font-display text-3xl md:text-5xl text-[var(--color-ink)] mb-3">
+          Tell us how you take care.
+        </h2>
+        <p className="text-sm text-[var(--color-ink-soft)] mb-12 max-w-sm">
+          Four questions. One curated ritual.
+        </p>
+        <RitualFinder />
       </section>
 
-      {/* 3. Shop the Sale (Pink Promo Grid) */}
-      <section className="mx-auto max-w-[1400px] px-4 md:px-8 py-12 md:py-16 bg-white">
-        <h2 className="text-xl md:text-2xl font-extrabold text-black mb-6 md:mb-8">Shop the sale</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          
-          {/* Card 1 */}
-          <Link to="/shop?product_type=skincare" className="promo-card p-6 md:p-8 flex flex-col justify-between h-[360px] md:h-[400px] relative overflow-hidden group">
-            <div className="z-10 relative">
-              <h3 className="text-xl md:text-2xl font-extrabold text-black mb-1 md:mb-2">THE SKINCARE GIRL</h3>
-              <p className="text-xs md:text-sm text-gray-700 italic font-serif mb-3 md:mb-4">Beauty Kit</p>
-              <ul className="text-xs md:text-sm font-medium text-gray-800 space-y-1 mb-4 md:mb-6">
-                <li>+ Hydrate</li>
-                <li>+ Repair</li>
-                <li>+ Healthy Glow</li>
-              </ul>
-              <div className="bg-black text-white text-[9px] md:text-xs font-bold px-3 md:px-4 py-1.5 md:py-2 rounded-full w-fit">Black Friday UP TO 70% OFF</div>
-            </div>
-            <div className="absolute bottom-0 right-0 w-2/3 h-2/3 bg-[url('https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=600&auto=format&fit=crop')] bg-cover bg-center rounded-tl-full opacity-80 group-hover:scale-105 transition-transform duration-500"></div>
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20">
-               <span className="bg-black text-white text-[10px] md:text-xs font-bold px-4 md:px-6 py-1.5 md:py-2 rounded-full whitespace-nowrap">SHOP SKINCARE</span>
-            </div>
-          </Link>
+      {/* 4 — Category gateway */}
+      <section className="bg-[var(--color-surface-2)] py-20 md:py-28">
+        <div className="mx-auto max-w-[1400px] px-4 md:px-8">
+          <p className="text-xs font-bold uppercase tracking-[0.25em] text-[var(--color-ink-muted)] mb-3">
+            THE HOUSE
+          </p>
+          <h2 className="font-display text-3xl md:text-5xl text-[var(--color-ink)] mb-12">
+            Seven ways in.
+          </h2>
 
-          {/* Card 2 */}
-          <Link to="/shop?product_type=makeup" className="promo-card p-6 md:p-8 flex flex-col justify-between h-[360px] md:h-[400px] relative overflow-hidden group">
-             <div className="z-10 relative">
-              <h3 className="text-xl md:text-2xl font-extrabold text-black mb-1 md:mb-2">THE NIGHT OUT GIRL</h3>
-              <p className="text-xs md:text-sm text-gray-700 italic font-serif mb-3 md:mb-4">Beauty Kit</p>
-              <ul className="text-xs md:text-sm font-medium text-gray-800 space-y-1 mb-4 md:mb-6">
-                <li>+ Effortless</li>
-                <li>+ Polished</li>
-                <li>+ Always on the go</li>
-              </ul>
-              <div className="bg-black text-white text-[9px] md:text-xs font-bold px-3 md:px-4 py-1.5 md:py-2 rounded-full w-fit">Black Friday UP TO 70% OFF</div>
-            </div>
-            <div className="absolute bottom-0 right-0 w-2/3 h-2/3 bg-[url('https://images.unsplash.com/photo-1596462502278-27bfdc403348?q=80&w=600&auto=format&fit=crop')] bg-cover bg-center rounded-tl-full opacity-80 group-hover:scale-105 transition-transform duration-500"></div>
-             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20">
-               <span className="bg-black text-white text-[10px] md:text-xs font-bold px-4 md:px-6 py-1.5 md:py-2 rounded-full whitespace-nowrap">SHOP MAKEUP</span>
-            </div>
-          </Link>
-
-          {/* Card 3 */}
-          <Link to="/shop?product_type=haircare" className="promo-card p-6 md:p-8 flex flex-col justify-between h-[360px] md:h-[400px] relative overflow-hidden group md:col-span-2 lg:col-span-1">
-             <div className="z-10 relative">
-              <h3 className="text-xl md:text-2xl font-extrabold text-black mb-1 md:mb-2">THE HEALTHY HAIR GIRL</h3>
-              <p className="text-xs md:text-sm text-gray-700 italic font-serif mb-3 md:mb-4">Beauty Kit</p>
-              <ul className="text-xs md:text-sm font-medium text-gray-800 space-y-1 mb-4 md:mb-6">
-                <li>+ Hydrated</li>
-                <li>+ Fresh</li>
-                <li>+ Natural glow</li>
-              </ul>
-              <div className="bg-black text-white text-[9px] md:text-xs font-bold px-3 md:px-4 py-1.5 md:py-2 rounded-full w-fit">Black Friday UP TO 70% OFF</div>
-            </div>
-            <div className="absolute bottom-0 right-0 w-2/3 h-2/3 bg-[url('https://images.unsplash.com/photo-1522337660859-02fbefca4702?q=80&w=600&auto=format&fit=crop')] bg-cover bg-center rounded-tl-full opacity-80 group-hover:scale-105 transition-transform duration-500"></div>
-             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20">
-               <span className="bg-black text-white text-[10px] md:text-xs font-bold px-4 md:px-6 py-1.5 md:py-2 rounded-full whitespace-nowrap">SHOP HAIRCARE</span>
-            </div>
-          </Link>
-        </div>
-      </section>
-
-      {/* 4. Shop by Budget */}
-      <section className="mx-auto max-w-[1400px] px-4 md:px-8 py-12 md:py-16">
-        <h2 className="text-xl md:text-2xl font-extrabold text-black mb-6 md:mb-8">Shop by budget</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          {[500, 1000, 1500].map((price, i) => (
-            <div key={i} className="bg-[#F9D8E0] rounded-2xl p-6 md:p-10 flex flex-col items-center text-center">
-              <p className="font-serif italic text-lg md:text-xl text-[#D9385E] mb-2">
-                {i === 0 ? "Little Beauty Finds" : i === 1 ? "Everyday Favorites" : "Treat Yourself"}
-              </p>
-              <h3 className="text-2xl md:text-4xl font-extrabold text-black mb-3 md:mb-4">UNDER {price} <span className="text-base md:text-xl">EGP</span></h3>
-              <p className="text-[10px] md:text-xs font-semibold uppercase tracking-widest text-gray-700 mb-6 md:mb-8">
-                {i === 0 ? "Small prices. Big finds." : i === 1 ? "Everyday favorites, within reach." : "More beauty. More savings."}
-              </p>
-              <Link to={`/shop?max_price=${price}`} className="mt-auto bg-black text-white px-6 md:px-8 py-2.5 md:py-3 rounded-full text-xs md:text-sm font-bold hover:bg-gray-800 transition-colors">
-                Shop the sale
+          {/* 4 + 3 grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-4">
+            {CATEGORIES.slice(0, 4).map((cat) => (
+              <Link
+                key={cat.label}
+                to={cat.href}
+                className="group relative overflow-hidden rounded-xl aspect-[3/4] block"
+              >
+                <img
+                  src={cat.img}
+                  alt={cat.label}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                />
+                <div className="absolute inset-0 bg-[var(--color-ink)]/30 group-hover:bg-[var(--color-ink)]/40 transition-colors" />
+                <div className="absolute bottom-0 left-0 p-4">
+                  <p className="font-display text-lg text-white leading-tight">{cat.label}</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/70 mt-0.5">
+                    {cat.sub}
+                  </p>
+                  <span className="mt-2 block w-6 h-0.5 bg-[var(--color-highlight)] transition-all duration-300 group-hover:w-10" />
+                </div>
               </Link>
-            </div>
-          ))}
+            ))}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+            {CATEGORIES.slice(4).map((cat) => (
+              <Link
+                key={cat.label}
+                to={cat.href}
+                className="group relative overflow-hidden rounded-xl aspect-[4/3] md:aspect-[3/2] block"
+              >
+                <img
+                  src={cat.img}
+                  alt={cat.label}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                />
+                <div className="absolute inset-0 bg-[var(--color-ink)]/30 group-hover:bg-[var(--color-ink)]/40 transition-colors" />
+                <div className="absolute bottom-0 left-0 p-4">
+                  <p className="font-display text-lg text-white leading-tight">{cat.label}</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/70 mt-0.5">
+                    {cat.sub}
+                  </p>
+                  <span className="mt-2 block w-6 h-0.5 bg-[var(--color-highlight)] transition-all duration-300 group-hover:w-10" />
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* 5. Shop by Concern (Grid) */}
-      <section className="mx-auto max-w-[1400px] px-4 md:px-8 py-12 md:py-16 bg-white">
-        <h2 className="text-xl md:text-2xl font-extrabold text-black mb-6 md:mb-8">Shop by concern</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
-          {[
-            { title: "HAIR LOSS", desc: "Fuller hair starts here." },
-            { title: "DARK SPOTS & BLEMISHES", desc: "Your brighter-skin edit." },
-            { title: "ACNE & PORES", desc: "Keep pores in check." },
-            { title: "FINE LINES & FIRMING", desc: "Smooth. Firm. Glow." },
-            { title: "DRY & SENSITIVE", desc: "Calm. Comfort. Hydrate." },
-            { title: "LASHES & BROWS", desc: "Your lash & brow boost." },
-          ].map((concern, i) => (
-            <Link key={i} to="/shop" className="bg-[#F9D8E0] rounded-xl p-5 md:p-6 flex flex-col justify-center min-h-[140px] md:min-h-[200px] relative overflow-hidden group">
-              <div className="z-10 max-w-[70%] md:max-w-[60%]">
-                <h3 className="text-base md:text-xl font-extrabold text-black mb-1">{concern.title}</h3>
-                <p className="text-[10px] md:text-xs font-semibold text-gray-700 uppercase mb-3 md:mb-4">{concern.desc}</p>
-                <span className="bg-black text-white text-[9px] md:text-[10px] font-bold px-3 md:px-4 py-1.5 rounded-full inline-block">Shop the sale</span>
+      {/* 5 — Pharmacist's counter */}
+      {pharmProducts.length > 0 && (
+        <section className="mx-auto max-w-[1400px] px-4 md:px-8 py-20 md:py-28">
+          <p className="text-xs font-bold uppercase tracking-[0.25em] text-[var(--color-ink-muted)] mb-3">
+            THE PHARMACIST'S COUNTER
+          </p>
+          <h2 className="font-display text-3xl md:text-5xl text-[var(--color-ink)] mb-3">
+            Beauty, with a clinical spine.
+          </h2>
+          <p className="text-sm text-[var(--color-ink-soft)] mb-12 max-w-lg">
+            A short shelf of functional products, chosen with pharmacists. Retinol, SPF, actives — the unglamorous essentials that make the rest work.
+          </p>
+          <div className="flex gap-4 overflow-x-auto pb-4 hide-scrollbar">
+            {pharmProducts.map((p, i) => (
+              <div key={p.id} className="w-[180px] md:w-[220px] shrink-0">
+                <ProductCard product={p} index={i} />
               </div>
-              {/* Decorative imagery */}
-              <div className="absolute right-0 bottom-0 w-2/5 md:w-1/2 h-full opacity-80 group-hover:scale-105 transition-transform duration-500 bg-contain bg-no-repeat bg-right-bottom" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=400&auto=format&fit=crop')` }}></div>
+            ))}
+          </div>
+          <div className="mt-8">
+            <Link
+              to="/shop?product_type=pharmacy"
+              className="inline-flex items-center text-sm font-semibold text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] transition-colors gap-1"
+            >
+              Visit the counter →
             </Link>
-          ))}
+          </div>
+        </section>
+      )}
+
+      {/* 6 — Bestsellers */}
+      {bestsellers.length > 0 && (
+        <section className="bg-[var(--color-surface)] py-20 md:py-28">
+          <div className="mx-auto max-w-[1400px] px-4 md:px-8">
+            <p className="text-xs font-bold uppercase tracking-[0.25em] text-[var(--color-ink-muted)] mb-3">
+              WHAT THE HOUSE IS WEARING
+            </p>
+            <h2 className="font-display text-3xl md:text-5xl text-[var(--color-ink)] mb-12">
+              This month's shelf.
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              {bestsellers.map((p, i) => (
+                <ProductCard key={p.id} product={p} index={i} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 7 — Reviews wall */}
+      {reviews.length > 0 && (
+        <section className="mx-auto max-w-[1400px] px-4 md:px-8 py-20 md:py-28">
+          <p className="text-xs font-bold uppercase tracking-[0.25em] text-[var(--color-ink-muted)] mb-3">
+            WHAT THEY'RE SAYING
+          </p>
+          <h2 className="font-display text-3xl md:text-5xl text-[var(--color-ink)] mb-12">
+            Rituals, reviewed.
+          </h2>
+          <div className="columns-1 md:columns-2 lg:columns-3 gap-4">
+            {reviews.map((rv) => (
+              <div
+                key={rv.id}
+                className="break-inside-avoid mb-4 rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface)] p-6"
+              >
+                <StarRow rating={rv.rating} />
+                {rv.title && (
+                  <p className="mt-3 text-sm font-semibold text-[var(--color-ink)]">{rv.title}</p>
+                )}
+                <p className="mt-2 font-display italic text-base text-[var(--color-ink-soft)] leading-relaxed">
+                  "{rv.body}"
+                </p>
+                <div className="mt-4 flex items-center justify-between">
+                  <p className="text-xs text-[var(--color-ink-muted)]">{rv.author.split(" ")[0]} {rv.author.split(" ")[1]?.[0] ?? ""}.</p>
+                  <Link
+                    to={`/product/${rv.product_slug}`}
+                    className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--color-accent)] hover:underline"
+                  >
+                    {rv.product_name}
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 8 — Gift sets / sampler CTA */}
+      <section className="bg-[var(--color-surface-2)] py-20 md:py-28">
+        <div className="mx-auto max-w-[1400px] px-4 md:px-8">
+          <p className="text-xs font-bold uppercase tracking-[0.25em] text-[var(--color-ink-muted)] mb-3">
+            THE ART OF GIVING
+          </p>
+          <h2 className="font-display text-3xl md:text-5xl text-[var(--color-ink)] mb-12">
+            For someone who takes care.
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Link
+              to="/shop?product_type=gift"
+              className="group relative overflow-hidden rounded-2xl bg-[var(--color-surface)] border border-[var(--color-line)] p-10 flex flex-col justify-between min-h-[280px] hover:border-[var(--color-accent)] transition-colors"
+            >
+              <div>
+                <p className="font-display text-2xl md:text-3xl text-[var(--color-ink)] mb-2">Discovery set</p>
+                <p className="text-sm text-[var(--color-ink-soft)]">Five samples. One decision.</p>
+              </div>
+              <span className="inline-flex items-center text-sm font-semibold text-[var(--color-accent)] mt-6">
+                Explore sets →
+              </span>
+            </Link>
+            <Link
+              to="/shop?product_type=gift"
+              className="group relative overflow-hidden rounded-2xl bg-[var(--color-accent)] p-10 flex flex-col justify-between min-h-[280px]"
+            >
+              <div>
+                <p className="font-display text-2xl md:text-3xl text-[var(--color-accent-contrast)] mb-2">The gift box</p>
+                <p className="text-sm text-[var(--color-accent-contrast)]/80">Curated by us, wrapped in linen.</p>
+              </div>
+              <span className="inline-flex items-center text-sm font-semibold text-[var(--color-accent-contrast)] mt-6">
+                Shop gift boxes →
+              </span>
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* 6. Brands on Sale */}
-      <section className="mx-auto max-w-[1400px] px-4 md:px-8 py-12 md:py-16">
-        <div className="flex items-center justify-between mb-6 md:mb-8">
-          <h2 className="text-xl md:text-2xl font-extrabold text-black">Brands on sale</h2>
-          <Link to="/brands" className="text-xs md:text-sm font-bold underline decoration-2 underline-offset-4 hover:text-[#D9385E]">All Brands</Link>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 border-t border-l border-gray-200">
-          {["QUEEN BY LORD", "BLUMIN' KAKTUS", "CAPIXY", "SHEGLAM", "VACATION", "LOCKEN", "THE BATH LAND", "SESH", "HELMADERM", "PLUMPY CURLS", "NFRY", "DERMACY LABS"].map((brand) => (
-            <Link key={brand} to="/shop" className="border-r border-b border-gray-200 p-4 md:p-8 flex items-center justify-center text-center hover:bg-gray-50 transition-colors">
-              <span className="text-[10px] md:text-sm font-bold tracking-[0.2em] text-gray-800 uppercase">{brand}</span>
-            </Link>
-          ))}
-        </div>
+      {/* 9 — Editorial note */}
+      <section className="mx-auto max-w-[680px] px-4 md:px-8 py-24 md:py-32 text-center">
+        <p className="text-xs font-bold uppercase tracking-[0.25em] text-[var(--color-ink-muted)] mb-8">
+          A NOTE FROM THE HOUSE
+        </p>
+        <p className="font-display italic text-lg md:text-xl text-[var(--color-ink)] leading-relaxed mb-6">
+          We built Hossam because the beauty we grew up with — the oud on a grandmother's wrist, the rose water on a hot afternoon, the kohl line that never smudged — deserved its own house. Not a translation. Not a tribute. A house.
+        </p>
+        <p className="font-display italic text-lg md:text-xl text-[var(--color-ink-soft)] leading-relaxed">
+          Everything you'll find here is chosen the way we'd choose for ourselves. Quietly, carefully, and with a bias toward things that actually work.
+        </p>
       </section>
 
-      <RecentlyViewed />
-      
     </div>
   );
 }

@@ -38,7 +38,7 @@ export default function Layout() {
       <MobileMenu />
       <Cart />
       <CursorSpotlight />
-      <ThemeSwitcher />
+      {import.meta.env.DEV && <ThemeSwitcher />}
     </div>
   );
 }

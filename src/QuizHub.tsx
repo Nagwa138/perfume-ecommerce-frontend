@@ -11,29 +11,29 @@ import { BRAND } from "./brand";
 
 const QUIZZES = [
   {
-    to:    "/quiz/fragrance",
-    icon:  <FlaskConical size={28} />,
-    label: "Find Your Fragrance",
-    sub:   "5 questions · Personalised scent match",
-    color: "#C8A951",
-    desc:  "Discover your perfect perfume based on your mood, style and occasions. We'll match you to a family and curate your top picks.",
+    to:         "/quiz/fragrance",
+    icon:       <FlaskConical size={28} />,
+    label:      "Find Your Fragrance",
+    sub:        "5 questions · Personalised scent match",
+    iconClass:  "bg-[var(--color-highlight)]/10 text-[var(--color-highlight)]",
+    desc:       "Discover your perfect perfume based on your mood, style and occasions. We'll match you to a family and curate your top picks.",
   },
   {
-    to:    "/quiz/skincare",
-    icon:  <Sparkles size={28} />,
-    label: "Build Your Routine",
-    sub:   "4 questions · Personalised skincare plan",
-    color: "#a0c4b8",
-    desc:  "Tell us your skin type and concerns and we'll build a morning and evening ritual from real products in our catalogue.",
+    to:         "/quiz/skincare",
+    icon:       <Sparkles size={28} />,
+    label:      "Build Your Routine",
+    sub:        "4 questions · Personalised skincare plan",
+    iconClass:  "bg-[var(--color-accent)]/10 text-[var(--color-accent)]",
+    desc:       "Tell us your skin type and concerns and we'll build a morning and evening ritual from real products in our catalogue.",
   },
   {
-    to:    "/quiz/shade-finder",
-    icon:  <Palette size={28} />,
-    label: "Shade Finder",
-    sub:   "Coming soon",
-    color: "#d4a0a0",
-    desc:  "Find your perfect foundation match, lip shade and blush colour. Advanced undertone matching — launching soon.",
-    soon:  true,
+    to:         "/quiz/shade-finder",
+    icon:       <Palette size={28} />,
+    label:      "Shade Finder",
+    sub:        "Coming soon",
+    iconClass:  "bg-[var(--color-ink-muted)]/10 text-[var(--color-ink-muted)]",
+    desc:       "Find your perfect foundation match, lip shade and blush colour. Advanced undertone matching — launching soon.",
+    soon:       true,
   },
 ];
 
@@ -67,7 +67,7 @@ export default function QuizHub() {
                 </span>
                 <div
                   className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl"
-                  style={{ background: `${q.color}22`, color: q.color }}
+                  className={q.iconClass}
                 >
                   {q.icon}
                 </div>
@@ -82,7 +82,7 @@ export default function QuizHub() {
               >
                 <div
                   className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl transition-transform group-hover:scale-105"
-                  style={{ background: `${q.color}22`, color: q.color }}
+                  className={q.iconClass}
                 >
                   {q.icon}
                 </div>

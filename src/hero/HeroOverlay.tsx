@@ -86,7 +86,7 @@ export default function HeroOverlay({ reducedMotion }: { reducedMotion: boolean 
               <motion.div className="pointer-events-auto mx-auto mt-6 inline-block"
                 initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.15 }}>
                 <a href="#first-section"
-                  className="rounded-full bg-accent px-8 py-3 text-sm font-bold tracking-wider text-[color:var(--h-text-inv)] transition-all hover:bg-accent-2">
+                  className="rounded-full bg-[var(--color-accent)] px-8 py-3 text-sm font-bold tracking-wider text-[var(--color-accent-contrast)] transition-all hover:bg-[var(--color-accent-hover)]">
                   Enter the store →
                 </a>
               </motion.div>

@@ -4,13 +4,30 @@ import HeroScene from "./HeroScene";
 import HeroOverlay from "./HeroOverlay";
 import StaticStreetHero from "./StaticStreetHero";
 
+function detectWebGL(): boolean {
+  try {
+    const canvas = document.createElement("canvas");
+    return !!(
+      canvas.getContext("webgl") ||
+      canvas.getContext("experimental-webgl")
+    );
+  } catch {
+    return false;
+  }
+}
+
 export default function StreetHero() {
-  const heroRef = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(true);
-  
-  // FORCE 3D TO RENDER (Comment out the safety checks temporarily)
-  const webGLFailed = false; 
-  const reducedMotion = false; 
+  const heroRef        = useRef<HTMLDivElement>(null);
+  const [inView,       setInView]       = useState(true);
+  const [webGLFailed,  setWebGLFailed]  = useState(false);
+  const [reducedMotion] = useState(
+    () => typeof window !== "undefined" &&
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
+
+  useEffect(() => {
+    if (!detectWebGL()) setWebGLFailed(true);
+  }, []);
 
   useEffect(() => {
     const el = heroRef.current;

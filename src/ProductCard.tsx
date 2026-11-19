@@ -31,11 +31,10 @@ export default function ProductCard({ product: p, index: _index }: Props) {
     <div className="group flex flex-col bg-white">
       
       {/* Image Area */}
-      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-[#FAFAFA]">
-        
-        {/* Discount Badge - Scales down on mobile */}
+      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-[var(--color-surface)]">
+
         {hasDiscount && (
-          <div className="absolute left-2 top-2 z-10 bg-[#D9385E] text-white text-[9px] md:text-[10px] font-bold px-1.5 md:px-2 py-0.5 md:py-1 rounded">
+          <div className="absolute left-2 top-2 z-10 bg-[var(--color-accent)] text-[var(--color-accent-contrast)] text-[9px] md:text-[10px] font-bold px-1.5 md:px-2 py-0.5 md:py-1 rounded">
             Save {discountPercent}%
           </div>
         )}
@@ -59,7 +58,7 @@ export default function ProductCard({ product: p, index: _index }: Props) {
           onClick={(e) => { e.preventDefault(); toggleWish(p.id); }}
           className="absolute right-2 top-2 z-10 flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-full bg-white/80 backdrop-blur-sm transition-all hover:bg-white text-gray-600 shadow-sm"
         >
-          <Heart size={14} className={`md:w-4 md:h-4 ${wished ? "fill-[#D9385E] text-[#D9385E]" : ""}`} />
+          <Heart size={14} className={`md:w-4 md:h-4 ${wished ? "fill-[var(--color-accent)] text-[var(--color-accent)]" : ""}`} />
         </button>
 
         {/* Link Overlay */}
@@ -82,7 +81,7 @@ export default function ProductCard({ product: p, index: _index }: Props) {
         </Link>
         
         <div className="mt-1.5 md:mt-2 flex items-baseline flex-wrap gap-1.5 md:gap-2">
-          <span className={`text-xs md:text-sm font-bold ${hasDiscount ? "text-[#D9385E]" : "text-black"}`}>
+          <span className={`text-xs md:text-sm font-bold ${hasDiscount ? "text-[var(--color-accent)]" : "text-[var(--color-ink)]"}`}>
             {fmtEGP(displayPrice)}
           </span>
           {hasDiscount && (

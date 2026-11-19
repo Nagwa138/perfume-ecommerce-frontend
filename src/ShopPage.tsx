@@ -7,6 +7,9 @@ import { BRAND } from "./brand";
 import ProductCard from "./ProductCard";
 import QuickView from "./QuickView";
 import { useTitle } from "./hooks/useTitle";
+import { loadRitual } from "./features/ritual-finder/storage";
+import { RITUAL_QUESTIONS } from "./features/ritual-finder/questions";
+import type { RitualAnswers } from "./features/ritual-finder/questions";
 
 const PAGE_SIZE = 20;
 
@@ -23,8 +26,9 @@ const PRODUCT_TYPE_LABELS: Record<string, string> = {
   skincare: "Skincare",
   makeup:   "Makeup",
   haircare: "Hair",
-  body:     "Body",
-  "pharmacy-wellness": "Pharmacy & Wellness",
+  body:     "Body & Bath",
+  pharmacy: "Pharmacy",
+  gift:     "Gifts",
 };
 
 function SkeletonCard() {
@@ -159,6 +163,13 @@ export default function ShopPage() {
   const [qv,       setQv]       = useState<Product | null>(null);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 999]);
   const priceInitRef = useRef(false);
+  const [ritualAnswers, setRitualAnswers] = useState<RitualAnswers | null>(null);
+  const [ritualDismissed, setRitualDismissed] = useState(false);
+
+  useEffect(() => {
+    const stored = loadRitual();
+    if (stored) setRitualAnswers(stored.answers);
+  }, []);
 
   const setParam = useCallback((key: string, value: string | null) => {
     setSp((prev) => {
@@ -409,6 +420,31 @@ export default function ShopPage() {
           </div>
 
           <ActiveFilters chips={chips} onRemove={(k) => setParam(k, null)} onClear={clearAll} />
+
+          {/* Ritual banner */}
+          {ritualAnswers && !ritualDismissed && (
+            <div className="mb-6 flex items-center justify-between gap-3 rounded-xl border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/8 px-4 py-3">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--color-accent)]">Your Ritual</span>
+                {(["time","concern","mood","intent"] as const).map((key) => {
+                  const q = RITUAL_QUESTIONS.find((q) => q.id === key);
+                  const opt = q?.options.find((o) => o.value === ritualAnswers[key]);
+                  return opt ? (
+                    <span key={key} className="text-xs text-[var(--color-ink-soft)]">
+                      · {opt.label}
+                    </span>
+                  ) : null;
+                })}
+              </div>
+              <button
+                onClick={() => setRitualDismissed(true)}
+                className="shrink-0 text-[var(--color-ink-muted)] hover:text-[var(--color-ink)] transition-colors"
+                aria-label="Dismiss ritual banner"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-x-6 md:gap-y-12">
             {loading && items.length === 0

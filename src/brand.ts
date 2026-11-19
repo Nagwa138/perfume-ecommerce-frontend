@@ -1,8 +1,8 @@
 export const BRAND = {
   name:       "Hossam",
   nameUpper:  "HOSSAM",
-  tagline:    "Luxury Beauty, Curated",
-  taglineAr:  "الجمال الفاخر، باختيار مميز",
+  tagline:    "Beauty, rooted in ritual.",
+  taglineAr:  "الجمال، متجذّر في الطقوس.",
   domain:     "hossam.beauty",
   email:      "hello@hossam.beauty",
   instagram:  "https://instagram.com/hossambeauty",

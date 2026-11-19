@@ -4,7 +4,7 @@ export const ADMIN_API = `${API}/admin`;
 export const EGP_RATE = 50;
 export const fmtEGP = (usd: number): string =>
   `EGP ${Math.round(usd * EGP_RATE).toLocaleString("en-EG")}`;
-export const FREE_SHIPPING_USD = 50;
+export const FREE_SHIPPING_USD = 30;
 export const SHIPPING_USD = 1.5;
 
 // ── Beauty product types ───────────────────────────────────────────────────────
@@ -214,6 +214,22 @@ export const getRelated = (slug: string): Promise<Product[]> =>
 
 export const getProductVariants = (slug: string): Promise<ProductVariant[]> =>
   fetch(`${API}/products/${slug}/variants`)
+    .then((r) => (r.ok ? r.json() : []))
+    .catch(() => []);
+
+export type TopReview = {
+  id: number;
+  author: string;
+  rating: number;
+  title: string;
+  body: string;
+  date: string;
+  product_name: string;
+  product_slug: string;
+};
+
+export const getTopReviews = (limit = 9): Promise<TopReview[]> =>
+  fetch(`${API}/reviews/top?limit=${limit}`)
     .then((r) => (r.ok ? r.json() : []))
     .catch(() => []);
 
