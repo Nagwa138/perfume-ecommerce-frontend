@@ -30,14 +30,14 @@ export default function Header() {
 
       {/* Main header */}
       <div className="mx-auto w-full max-w-[1600px] px-4 md:px-8">
-        <div className="flex h-16 md:h-20 items-center justify-between gap-4">
+        <div className="flex h-20 md:h-28 items-center justify-between gap-4">
 
-          {/* Logo */}
-          <Link to="/" className="flex shrink-0 items-center h-full py-2">
+          {/* Logo — mix-blend-mode drops the white JPG background onto the ivory page bg */}
+          <Link to="/" className="flex shrink-0 items-center h-full py-1">
             <img
               src={logoImg}
               alt={BRAND.name}
-              className="h-10 md:h-14 lg:h-16 w-auto object-contain"
+              className="h-16 md:h-24 lg:h-28 w-auto object-contain mix-blend-multiply"
             />
           </Link>
 

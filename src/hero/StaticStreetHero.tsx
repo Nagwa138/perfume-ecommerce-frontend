@@ -9,7 +9,6 @@ import { BRAND } from "../brand";
 
 const BRANCHES = ["Zamalek", "Heliopolis", "New Cairo", "Alexandria"] as const;
 const CATEGORIES = ["Fragrance", "Makeup", "Skincare", "Pharmacy"] as const;
-const WORDMARK = "HOSSAM";
 
 /* ────────────────────────────────────────────────────────────────── */
 /*  Decorative pieces                                                  */
@@ -247,40 +246,29 @@ export default function StaticStreetHero() {
           dir="rtl"
           style={{ fontFamily: '"Cairo", sans-serif' }}
         >
-          بيت مصري للعطور ومستحضرات التجميل
+          متجر مصري للعطور ومستحضرات التجميل
         </motion.p>
 
-        {/* MASSIVE wordmark — alabaster-to-gold gradient, letter stagger */}
-        <h1
-          className="font-display font-black leading-[0.85] tracking-[-0.04em] select-none"
+        {/* Arabic wordmark — حُسَام (with tashkeel), centerpiece */}
+        <motion.h1
+          initial={{ opacity: 0, y: 40, filter: "blur(12px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ duration: 1.1, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          dir="rtl"
+          lang="ar"
+          className="font-arabic text-center bg-clip-text text-transparent select-none"
           style={{
-            fontSize: "clamp(4.5rem, 16vw, 13rem)",
+            fontFamily: '"Cairo", sans-serif',
+            fontWeight: 700,
+            fontSize: "clamp(5rem, 18vw, 15rem)",
+            lineHeight: 0.95,
+            letterSpacing: "0.02em",
+            backgroundImage:
+              "linear-gradient(180deg, #F8F2E4 0%, #EAD9B4 40%, #D9B979 72%, #8B6A2C 100%)",
           }}
         >
-          <span
-            className="bg-clip-text text-transparent"
-            style={{
-              backgroundImage:
-                "linear-gradient(180deg, #F8F2E4 0%, #EAD9B4 40%, #D9B979 72%, #8B6A2C 100%)",
-            }}
-          >
-            {WORDMARK.split("").map((letter, i) => (
-              <motion.span
-                key={i}
-                initial={{ opacity: 0, y: 80, filter: "blur(10px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                transition={{
-                  duration: 1,
-                  delay: 0.45 + i * 0.09,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-                className="inline-block"
-              >
-                {letter}
-              </motion.span>
-            ))}
-          </span>
-        </h1>
+          حُسَام
+        </motion.h1>
 
         {/* Shimmer rule */}
         <motion.div
