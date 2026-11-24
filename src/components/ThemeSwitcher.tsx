@@ -10,17 +10,17 @@ type ThemeId = typeof THEMES[number]["id"];
 
 export function applyTheme(id: string) {
   document.documentElement.setAttribute("data-theme", id);
-  localStorage.setItem("hossam-theme", id);
+  localStorage.setItem("h-store-theme", id);
 }
 
 export function initTheme() {
-  const saved = localStorage.getItem("hossam-theme") ?? "emerald";
+  const saved = localStorage.getItem("h-store-theme") ?? "emerald";
   document.documentElement.setAttribute("data-theme", saved);
 }
 
 export default function ThemeSwitcher() {
   const [theme, setTheme] = useState<ThemeId>(() =>
-    (localStorage.getItem("hossam-theme") as ThemeId) ?? "emerald"
+    (localStorage.getItem("h-store-theme") as ThemeId) ?? "emerald"
   );
   const [open, setOpen] = useState(false);
 

@@ -4,7 +4,7 @@ import type { Product } from "../../../api";
 
 function makeProduct(overrides: Partial<Product>): Product {
   return {
-    id: 1, slug: "test", name: "Test Product", brand: "HOSSAM",
+    id: 1, slug: "test", name: "Test Product", brand: "H STORE",
     gender: "Unisex", family: "", concentration: "", description: "",
     top_notes: null, heart_notes: null, base_notes: null,
     sizes: [{ ml: 50, price: 30, stock: 10 }],
@@ -26,7 +26,7 @@ describe("deriveTags — time group", () => {
   });
 
   it("gives morning to SPF product name", () => {
-    const tags = deriveTags(makeProduct({ product_type: "pharmacy", name: "Daily SPF 50 Sunscreen" }));
+    const tags = deriveTags(makeProduct({ product_type: "skincare", name: "Daily SPF 50 Sunscreen" }));
     expect(tags.time).toContain("morning");
   });
 
@@ -61,10 +61,6 @@ describe("deriveTags — concern group", () => {
 
   it("maps body → body", () => {
     expect(deriveTags(makeProduct({ product_type: "body" })).concern).toContain("body");
-  });
-
-  it("maps pharmacy → skin", () => {
-    expect(deriveTags(makeProduct({ product_type: "pharmacy" })).concern).toContain("skin");
   });
 
   it("maps gift with no subcategory → universal", () => {
@@ -113,10 +109,6 @@ describe("deriveTags — intent group", () => {
 
   it("gives giftable to gift product type", () => {
     expect(deriveTags(makeProduct({ product_type: "gift" })).intent).toContain("giftable");
-  });
-
-  it("gives everyday to pharmacy", () => {
-    expect(deriveTags(makeProduct({ product_type: "pharmacy" })).intent).toContain("everyday");
   });
 
   it("gives statement to high-price product", () => {

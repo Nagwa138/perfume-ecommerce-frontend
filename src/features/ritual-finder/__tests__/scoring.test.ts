@@ -6,7 +6,7 @@ import type { RitualAnswers } from "../questions";
 function makeProduct(overrides: Partial<Product>): Product {
   return {
     id: overrides.id ?? 1, slug: `prod-${overrides.id ?? 1}`,
-    name: "Test Product", brand: "HOSSAM",
+    name: "Test Product", brand: "H STORE",
     gender: "Unisex", family: "", concentration: "", description: "",
     top_notes: null, heart_notes: null, base_notes: null,
     sizes: [{ ml: 50, price: 30, stock: 10 }],
@@ -74,7 +74,6 @@ describe("selectRitual", () => {
     makeProduct({ id: 4,  product_type: "makeup",    review_count: 15 }),
     makeProduct({ id: 5,  product_type: "haircare",  review_count: 12 }),
     makeProduct({ id: 6,  product_type: "body",      review_count: 8 }),
-    makeProduct({ id: 7,  product_type: "pharmacy",  review_count: 5 }),
     makeProduct({ id: 8,  product_type: "gift",      review_count: 25 }),
     makeProduct({ id: 9,  product_type: "perfume",   family: "Floral",    review_count: 40 }),
     makeProduct({ id: 10, product_type: "perfume",   family: "Woody",     base_notes: ["Oud"], review_count: 35 }),

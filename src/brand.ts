@@ -1,13 +1,9 @@
 export const BRAND = {
-  name:       "Hossam",
-  nameUpper:  "HOSSAM",
-  tagline:    "Beauty, rooted in ritual.",
-  taglineAr:  "الجمال، متجذّر في الطقوس.",
-  domain:     "hossam.beauty",
-  email:      "hello@hossam.beauty",
-  instagram:  "https://instagram.com/hossambeauty",
-  twitter:    "https://x.com/hossambeauty",
-  pinterest:  "https://pinterest.com/hossambeauty",
+  name:      "H STORE",
+  nameUpper: "H STORE",
+  tagline:   "Niche & designer fragrances, beauty, and gifts in Cairo.",
+  taglineAr: "عطور نيش وديزاينر، تجميل وهدايا — القاهرة.",
+  domain:    "hstoresegy.com",
 } as const;
 
 export type BrandName = typeof BRAND.name;

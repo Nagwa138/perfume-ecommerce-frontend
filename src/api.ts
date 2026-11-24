@@ -1,4 +1,4 @@
-export const API = (import.meta.env.VITE_API_URL as string | undefined) ?? "http://localhost:8000/api";
+export const API = (import.meta.env.VITE_API_URL as string | undefined) ?? "http://localhost:8002/api";
 export const ADMIN_API = `${API}/admin`;
 
 export const EGP_RATE = 50;
@@ -269,7 +269,7 @@ export const validateCoupon = (code: string): Promise<{ code: string; percent: n
 
 // ── Admin auth helpers ────────────────────────────────────────────────────────
 
-const TOKEN_KEY = "aura_admin_token";
+const TOKEN_KEY = "h_store_admin_token";
 export const saveToken  = (t: string) => sessionStorage.setItem(TOKEN_KEY, t);
 export const loadToken  = () => sessionStorage.getItem(TOKEN_KEY);
 export const clearToken = () => sessionStorage.removeItem(TOKEN_KEY);

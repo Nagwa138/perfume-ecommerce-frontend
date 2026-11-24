@@ -6,7 +6,7 @@ import "./index.css";
 import App from "./App";
 
 // Apply saved theme before first paint to prevent flash
-const _savedTheme = localStorage.getItem("hossam-theme") ?? "emerald";
+const _savedTheme = localStorage.getItem("h-store-theme") ?? "emerald";
 document.documentElement.setAttribute("data-theme", _savedTheme);
 
 function LenisInit() {

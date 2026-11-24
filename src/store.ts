@@ -16,7 +16,7 @@ export const useRecentlyViewed = create<RecentState>()(
           products: [p, ...s.products.filter((x) => x.id !== p.id)].slice(0, 8),
         })),
     }),
-    { name: "aura-recent", partialize: (s) => ({ products: s.products }) }
+    { name: "h-store-recent", partialize: (s) => ({ products: s.products }) }
   )
 );
 
@@ -75,7 +75,7 @@ export const useCart = create<CartState>()(
       toggle: () => set((s) => ({ open: !s.open })),
       clear: () => set({ lines: [], open: false }),
     }),
-    { name: "aura-cart", partialize: (s) => ({ lines: s.lines }) }
+    { name: "h-store-cart", partialize: (s) => ({ lines: s.lines }) }
   )
 );
 
@@ -95,6 +95,6 @@ export const useWishlist = create<WishlistState>()(
         })),
       has: (id) => get().ids.includes(id),
     }),
-    { name: "aura-wishlist" }
+    { name: "h-store-wishlist" }
   )
 );

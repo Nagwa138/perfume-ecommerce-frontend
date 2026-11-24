@@ -10,7 +10,6 @@ const SHOP_LINKS = [
   { label: "Hair",               href: "/shop?category=hair" },
   { label: "Body & Bath",        href: "/shop?category=body-bath" },
   { label: "Gift Sets",          href: "/shop?category=gift-sets" },
-  { label: "Pharmacy",           href: "/shop?category=pharmacy-wellness" },
 ];
 
 const HOUSE_LINKS = [
@@ -47,7 +46,7 @@ export default function Footer() {
           </div>
           <div className="flex flex-col items-center">
             <Package size={28} className="text-[var(--color-accent)] mb-3" strokeWidth={1.5} />
-            <h4 className="font-bold text-[var(--color-ink)] mb-1">Free delivery across the GCC</h4>
+            <h4 className="font-bold text-[var(--color-ink)] mb-1">Free delivery across Egypt</h4>
             <p className="text-sm text-[var(--color-ink-muted)]">On orders over EGP 1,500</p>
           </div>
           <div className="flex flex-col items-center">

@@ -1,6 +1,6 @@
 import type { RitualAnswers } from "./questions";
 
-const KEY = "hossam.ritual.v1";
+const KEY = "h-store.ritual.v1";
 const TTL_DAYS = 30;
 
 export type StoredRitual = {

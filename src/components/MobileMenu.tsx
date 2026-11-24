@@ -12,7 +12,6 @@ const CATEGORIES: Record<string, string[]> = {
   Hair:       ["Shampoo", "Conditioner", "Hair Oil", "Treatments"],
   Body:       ["Body Lotion", "Body Wash", "Scrub", "Body Mist"],
   "Gift Sets":["Birthday", "Wedding", "Mother's Day", "Luxury Hampers"],
-  Pharmacy:   ["Vitamins", "Skincare Rx", "Wellness", "Supplements"],
 };
 
 const CAT_TO_TYPE: Record<string, string> = {
@@ -22,7 +21,6 @@ const CAT_TO_TYPE: Record<string, string> = {
   Hair:        "haircare",
   Body:        "body",
   "Gift Sets": "gift_set",
-  Pharmacy:    "pharmacy",
 };
 
 const QUICK_NAV = [

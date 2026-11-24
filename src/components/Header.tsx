@@ -12,7 +12,6 @@ const NAV = [
   { label: "Hair",               href: "/shop?category=hair" },
   { label: "Body & Bath",        href: "/shop?category=body-bath" },
   { label: "Gifts",              href: "/shop?category=gift-sets" },
-  { label: "Pharmacy",           href: "/shop?category=pharmacy-wellness" },
 ];
 
 export default function Header() {

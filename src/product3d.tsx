@@ -494,7 +494,7 @@ export default function Product3D({
   capStyle     = "round",
   liquidColor  = GOLD,
   shadeHex     = "",
-  name         = "HOSSAM",
+  name         = "H STORE",
 }: {
   productType?: string;
   subcategory?: string;

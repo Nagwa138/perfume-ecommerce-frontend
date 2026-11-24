@@ -27,7 +27,6 @@ const PRODUCT_TYPE_LABELS: Record<string, string> = {
   makeup:   "Makeup",
   haircare: "Hair",
   body:     "Body & Bath",
-  pharmacy: "Pharmacy",
   gift:     "Gifts",
 };
 

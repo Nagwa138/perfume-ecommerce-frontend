@@ -3,8 +3,8 @@ import { X } from "lucide-react";
 
 const MESSAGES = [
   "FREE SHIPPING on orders over EGP 2,500",
-  "Use code HOSSAM20 for 20% off",
   "New arrivals every Friday",
+  "Niche & designer fragrances — Heliopolis, Cairo",
 ];
 
 export default function AnnouncementBar() {

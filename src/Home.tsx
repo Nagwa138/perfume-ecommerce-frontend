@@ -3,8 +3,40 @@ import { Link } from "react-router-dom";
 import { Star } from "lucide-react";
 import { getProducts, getTopReviews, type Product, type TopReview } from "./api";
 import ProductCard from "./ProductCard";
-import StreetHero from "./hero/StreetHero";
 import RitualFinder from "./features/ritual-finder";
+import { BRAND } from "./brand";
+
+// ── Temporary hero (Phase 2 will replace with branded hero) ───────────────────
+
+function TempHero() {
+  return (
+    <section className="relative flex min-h-[90vh] w-full flex-col items-center justify-center overflow-hidden bg-[var(--color-ink)] px-6 text-center">
+      <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.4em] text-[var(--color-ink-muted)]">
+        Est. 2026 · Heliopolis, Cairo
+      </p>
+      <h1 className="font-display text-[clamp(3.5rem,14vw,10rem)] font-extrabold leading-none tracking-tight text-white">
+        {BRAND.nameUpper}
+      </h1>
+      <p className="mt-6 font-display italic text-xl text-white/70 md:text-2xl">
+        {BRAND.tagline}
+      </p>
+      <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+        <Link
+          to="/shop"
+          className="rounded-full bg-white px-10 py-4 text-sm font-bold uppercase tracking-[0.2em] text-[var(--color-ink)] transition-opacity hover:opacity-90"
+        >
+          Shop now
+        </Link>
+        <a
+          href="#first-section"
+          className="rounded-full border border-white/30 px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-white/80 transition-colors hover:border-white hover:text-white"
+        >
+          Discover
+        </a>
+      </div>
+    </section>
+  );
+}
 
 // ── Section 4: Category gateway ───────────────────────────────────────────────
 
@@ -15,7 +47,6 @@ const CATEGORIES = [
   { label: "Hair",        sub: "Crowns",                href: "/shop?product_type=haircare",   img: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=600&auto=format&fit=crop" },
   { label: "Body & Bath", sub: "The hammam at home",   href: "/shop?product_type=body",       img: "https://images.unsplash.com/photo-1570194065650-d99fb4bedf0a?q=80&w=600&auto=format&fit=crop" },
   { label: "Gifts",       sub: "The art of giving",    href: "/shop?product_type=gift",       img: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=600&auto=format&fit=crop" },
-  { label: "Pharmacy",    sub: "The counter",          href: "/shop?product_type=pharmacy",   img: "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?q=80&w=600&auto=format&fit=crop" },
 ];
 
 // ── Section 7: Reviews wall ───────────────────────────────────────────────────
@@ -37,30 +68,28 @@ function StarRow({ rating }: { rating: number }) {
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function Home() {
-  const [bestsellers,   setBestsellers]   = useState<Product[]>([]);
-  const [pharmProducts, setPharmProducts] = useState<Product[]>([]);
-  const [reviews,       setReviews]       = useState<TopReview[]>([]);
+  const [bestsellers, setBestsellers] = useState<Product[]>([]);
+  const [reviews,     setReviews]     = useState<TopReview[]>([]);
 
   useEffect(() => {
     getProducts({ sort: "popular", page_size: 6 }).then((d) => setBestsellers(d.items));
-    getProducts({ product_type: "pharmacy", page_size: 6 }).then((d) => setPharmProducts(d.items));
     getTopReviews(9).then(setReviews);
   }, []);
 
   return (
     <div className="bg-[var(--color-bg)] min-h-screen text-[var(--color-ink)] overflow-x-hidden">
 
-      {/* 1 — 3D Street Hero */}
-      <StreetHero />
+      {/* 1 — Hero */}
+      <TempHero />
 
       {/* 2 — Tagline strip */}
       <section id="first-section" className="w-full bg-[var(--color-surface)] flex items-center justify-center py-12">
         <div className="text-center px-4">
           <p className="font-display italic text-2xl md:text-3xl text-[var(--color-ink)]">
-            "A new house. An old ritual."
+            Cairo's destination for niche and designer fragrance.
           </p>
           <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.25em] text-[var(--color-ink-muted)]">
-            EST. 2026 · ROOTED IN THE REGION
+            HELIOPOLIS · CAIRO
           </p>
         </div>
       </section>
@@ -83,15 +112,15 @@ export default function Home() {
       <section className="bg-[var(--color-surface-2)] py-20 md:py-28">
         <div className="mx-auto max-w-[1400px] px-4 md:px-8">
           <p className="text-xs font-bold uppercase tracking-[0.25em] text-[var(--color-ink-muted)] mb-3">
-            THE HOUSE
+            THE STORE
           </p>
           <h2 className="font-display text-3xl md:text-5xl text-[var(--color-ink)] mb-12">
-            Seven ways in.
+            Shop the collection.
           </h2>
 
-          {/* 4 + 3 grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-4">
-            {CATEGORIES.slice(0, 4).map((cat) => (
+          {/* 3 + 3 grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-4">
+            {CATEGORIES.slice(0, 3).map((cat) => (
               <Link
                 key={cat.label}
                 to={cat.href}
@@ -114,7 +143,7 @@ export default function Home() {
             ))}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
-            {CATEGORIES.slice(4).map((cat) => (
+            {CATEGORIES.slice(3).map((cat) => (
               <Link
                 key={cat.label}
                 to={cat.href}
@@ -139,42 +168,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5 — Pharmacist's counter */}
-      {pharmProducts.length > 0 && (
-        <section className="mx-auto max-w-[1400px] px-4 md:px-8 py-20 md:py-28">
-          <p className="text-xs font-bold uppercase tracking-[0.25em] text-[var(--color-ink-muted)] mb-3">
-            THE PHARMACIST'S COUNTER
-          </p>
-          <h2 className="font-display text-3xl md:text-5xl text-[var(--color-ink)] mb-3">
-            Beauty, with a clinical spine.
-          </h2>
-          <p className="text-sm text-[var(--color-ink-soft)] mb-12 max-w-lg">
-            A short shelf of functional products, chosen with pharmacists. Retinol, SPF, actives — the unglamorous essentials that make the rest work.
-          </p>
-          <div className="flex gap-4 overflow-x-auto pb-4 hide-scrollbar">
-            {pharmProducts.map((p, i) => (
-              <div key={p.id} className="w-[180px] md:w-[220px] shrink-0">
-                <ProductCard product={p} index={i} />
-              </div>
-            ))}
-          </div>
-          <div className="mt-8">
-            <Link
-              to="/shop?product_type=pharmacy"
-              className="inline-flex items-center text-sm font-semibold text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] transition-colors gap-1"
-            >
-              Visit the counter →
-            </Link>
-          </div>
-        </section>
-      )}
-
-      {/* 6 — Bestsellers */}
+      {/* 5 — Bestsellers */}
       {bestsellers.length > 0 && (
         <section className="bg-[var(--color-surface)] py-20 md:py-28">
           <div className="mx-auto max-w-[1400px] px-4 md:px-8">
             <p className="text-xs font-bold uppercase tracking-[0.25em] text-[var(--color-ink-muted)] mb-3">
-              WHAT THE HOUSE IS WEARING
+              WHAT THE STORE IS WEARING
             </p>
             <h2 className="font-display text-3xl md:text-5xl text-[var(--color-ink)] mb-12">
               This month's shelf.
@@ -188,7 +187,7 @@ export default function Home() {
         </section>
       )}
 
-      {/* 7 — Reviews wall */}
+      {/* 6 — Reviews wall */}
       {reviews.length > 0 && (
         <section className="mx-auto max-w-[1400px] px-4 md:px-8 py-20 md:py-28">
           <p className="text-xs font-bold uppercase tracking-[0.25em] text-[var(--color-ink-muted)] mb-3">
@@ -225,7 +224,7 @@ export default function Home() {
         </section>
       )}
 
-      {/* 8 — Gift sets / sampler CTA */}
+      {/* 7 — Gift sets / sampler CTA */}
       <section className="bg-[var(--color-surface-2)] py-20 md:py-28">
         <div className="mx-auto max-w-[1400px] px-4 md:px-8">
           <p className="text-xs font-bold uppercase tracking-[0.25em] text-[var(--color-ink-muted)] mb-3">
@@ -261,19 +260,6 @@ export default function Home() {
             </Link>
           </div>
         </div>
-      </section>
-
-      {/* 9 — Editorial note */}
-      <section className="mx-auto max-w-[680px] px-4 md:px-8 py-24 md:py-32 text-center">
-        <p className="text-xs font-bold uppercase tracking-[0.25em] text-[var(--color-ink-muted)] mb-8">
-          A NOTE FROM THE HOUSE
-        </p>
-        <p className="font-display italic text-lg md:text-xl text-[var(--color-ink)] leading-relaxed mb-6">
-          We built Hossam because the beauty we grew up with — the oud on a grandmother's wrist, the rose water on a hot afternoon, the kohl line that never smudged — deserved its own house. Not a translation. Not a tribute. A house.
-        </p>
-        <p className="font-display italic text-lg md:text-xl text-[var(--color-ink-soft)] leading-relaxed">
-          Everything you'll find here is chosen the way we'd choose for ourselves. Quietly, carefully, and with a bias toward things that actually work.
-        </p>
       </section>
 
     </div>

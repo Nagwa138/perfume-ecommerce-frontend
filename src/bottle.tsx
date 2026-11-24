@@ -163,7 +163,7 @@ function canWebGL(): boolean {
 export default function Bottle3D({
   capStyle = "round",
   liquidColor = "#C8A951",
-  name = "HOSSAM",
+  name = "H STORE",
 }: {
   capStyle?: string;
   liquidColor?: string;

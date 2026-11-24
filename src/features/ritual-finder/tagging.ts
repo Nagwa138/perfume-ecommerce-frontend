@@ -71,7 +71,6 @@ function deriveTime(product: Product): TimeTag[] {
   if (pt === "haircare") tags.add("anytime");
   if (pt === "body") tags.add("anytime");
   if (pt === "gift") { tags.add("special"); tags.add("anytime"); }
-  if (pt === "pharmacy") { tags.add("morning"); }
 
   // fallback
   if (tags.size === 0) tags.add("anytime");
@@ -87,7 +86,6 @@ function deriveConcern(product: Product): ConcernTag[] {
   if (pt === "makeup") return ["skin"];
   if (pt === "haircare") return ["hair"];
   if (pt === "body") return ["body"];
-  if (pt === "pharmacy") return ["skin"];
   if (pt === "gift") {
     // peek at subcategory to guess contents
     if (anyOf(sub, ["fragrance", "perfume", "scent"])) return ["fragrance", "giftable" as unknown as ConcernTag];
@@ -169,7 +167,7 @@ function deriveIntent(product: Product): IntentTag[] {
   if (product.is_featured) tags.add("statement");
 
   // affordable everyday
-  if (pt === "pharmacy" || pt === "haircare") tags.add("everyday");
+  if (pt === "haircare") tags.add("everyday");
   if (pt === "makeup") tags.add("everyday");
 
   // all products get curious (spec: "curious matches every product")
