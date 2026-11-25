@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { BRAND } from "../brand";
 import { Sparkles, ShieldCheck, Package } from "lucide-react";
+import Logo from "./Logo";
 
 const SHOP_LINKS = [
   { label: "Fragrance",          href: "/shop?category=fragrance" },
@@ -63,9 +64,9 @@ export default function Footer() {
 
           {/* Newsletter */}
           <div className="lg:col-span-1">
-            <span className="text-xl font-extrabold tracking-[0.12em] text-[var(--color-ink)] block mb-4 uppercase">
-              {BRAND.nameUpper}
-            </span>
+            <div className="mb-4">
+              <Logo className="text-xl" />
+            </div>
             <p className="text-xs text-[var(--color-ink-muted)] mb-5 leading-relaxed">
               New arrivals, ritual edits, and notes from the house — a few times a month.
             </p>

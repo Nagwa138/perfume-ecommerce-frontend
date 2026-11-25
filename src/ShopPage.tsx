@@ -377,7 +377,7 @@ export default function ShopPage() {
         <div className="absolute inset-0 mesh-bg opacity-50" />
         <div className="relative z-10 px-4">
           <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent">
-            {ptType ? `${BRAND.name} Beauty` : "Shop"}
+            {ptType ? BRAND.name : "Shop"}
           </p>
           <h1 className="mt-2 font-display text-4xl font-medium tracking-wide sm:text-5xl md:text-6xl text-text">
             {heading}

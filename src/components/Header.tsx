@@ -2,8 +2,7 @@ import { Link } from "react-router-dom";
 import { Search, ShoppingBag, Menu, Heart } from "lucide-react";
 import { useCart } from "../store";
 import { useUI } from "../ui";
-import logoImg from "../assets/logo.jpg";
-import { BRAND } from "../brand";
+import Logo from "./Logo";
 
 const NAV = [
   { label: "Fragrance",          href: "/shop?category=fragrance" },
@@ -31,13 +30,8 @@ export default function Header() {
       <div className="mx-auto w-full max-w-[1600px] px-4 md:px-8">
         <div className="flex h-20 md:h-28 items-center justify-between gap-4">
 
-          {/* Logo — mix-blend-mode drops the white JPG background onto the ivory page bg */}
-          <Link to="/" className="flex shrink-0 items-center h-full py-1">
-            <img
-              src={logoImg}
-              alt={BRAND.name}
-              className="h-16 md:h-24 lg:h-28 w-auto object-contain mix-blend-multiply"
-            />
+          <Link to="/" className="flex shrink-0 items-center h-full py-1" aria-label="H STORE home">
+            <Logo className="text-2xl md:text-3xl lg:text-[2rem]" />
           </Link>
 
           {/* Search (desktop) */}

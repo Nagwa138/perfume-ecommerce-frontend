@@ -5,34 +5,83 @@ import { getProducts, getTopReviews, type Product, type TopReview } from "./api"
 import ProductCard from "./ProductCard";
 import RitualFinder from "./features/ritual-finder";
 import { BRAND } from "./brand";
+import Logo from "./components/Logo";
 
-// ── Temporary hero (Phase 2 will replace with branded hero) ───────────────────
+// ── Hero ──────────────────────────────────────────────────────────────────────
 
-function TempHero() {
+function Hero() {
   return (
-    <section className="relative flex min-h-[90vh] w-full flex-col items-center justify-center overflow-hidden bg-[var(--color-ink)] px-6 text-center">
-      <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.4em] text-[var(--color-ink-muted)]">
-        Est. 2026 · Heliopolis, Cairo
-      </p>
-      <h1 className="font-display text-[clamp(3.5rem,14vw,10rem)] font-extrabold leading-none tracking-tight text-white">
-        {BRAND.nameUpper}
+    <section className="relative flex min-h-[92vh] w-full flex-col items-center justify-center overflow-hidden px-6 text-center"
+      style={{ background: "linear-gradient(160deg, #0F2A24 0%, #0a1f1a 50%, #060f0d 100%)" }}
+    >
+      {/* Subtle grain */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.055]"
+        style={{
+          backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' stitchTiles='stitch'/></filter><rect width='180' height='180' filter='url(%23n)'/></svg>\")",
+        }}
+        aria-hidden
+      />
+
+      {/* Radial glow behind wordmark */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{ background: "radial-gradient(ellipse 60% 40% at 50% 42%, rgba(185,142,60,0.12) 0%, transparent 70%)" }}
+        aria-hidden
+      />
+
+      {/* Top rule */}
+      <div className="mb-10 flex items-center gap-4" aria-hidden>
+        <span className="h-px w-16 md:w-28 bg-gradient-to-r from-transparent to-[var(--color-highlight)]/60" />
+        <span className="text-[9px] font-bold uppercase tracking-[0.45em] text-[var(--color-highlight)]/70">
+          Est. 2026 · Heliopolis
+        </span>
+        <span className="h-px w-16 md:w-28 bg-gradient-to-l from-transparent to-[var(--color-highlight)]/60" />
+      </div>
+
+      {/* Wordmark */}
+      <h1 className="leading-none">
+        <Logo variant="light" className="text-[clamp(4rem,18vw,12rem)]" />
       </h1>
-      <p className="mt-6 font-display italic text-xl text-white/70 md:text-2xl">
+
+      {/* Shimmer line */}
+      <div
+        className="mt-6 h-px w-48 md:w-80"
+        style={{ background: "linear-gradient(90deg, transparent, var(--color-highlight), transparent)" }}
+        aria-hidden
+      />
+
+      {/* Tagline */}
+      <p className="mt-6 font-display italic text-lg md:text-xl text-white/65 max-w-sm">
         {BRAND.tagline}
       </p>
+
+      {/* Arabic tagline */}
+      <p className="mt-2 font-arabic text-sm text-white/40" dir="rtl">
+        {BRAND.taglineAr}
+      </p>
+
+      {/* CTAs */}
       <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
         <Link
           to="/shop"
-          className="rounded-full bg-white px-10 py-4 text-sm font-bold uppercase tracking-[0.2em] text-[var(--color-ink)] transition-opacity hover:opacity-90"
+          className="rounded-full px-10 py-3.5 text-sm font-bold uppercase tracking-[0.22em] text-[var(--color-ink)] transition-all hover:opacity-90 hover:-translate-y-px"
+          style={{ background: "linear-gradient(135deg, #e8d5a0 0%, #c9a24a 50%, #a07830 100%)" }}
         >
-          Shop now
+          Enter the store
         </Link>
         <a
           href="#first-section"
-          className="rounded-full border border-white/30 px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-white/80 transition-colors hover:border-white hover:text-white"
+          className="rounded-full border border-white/20 px-8 py-3.5 text-sm font-semibold uppercase tracking-[0.22em] text-white/70 transition-colors hover:border-[var(--color-highlight)]/60 hover:text-white"
         >
           Discover
         </a>
+      </div>
+
+      {/* Scroll cue */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/30" aria-hidden>
+        <span className="text-[9px] uppercase tracking-[0.4em]">Scroll</span>
+        <span className="h-8 w-px bg-gradient-to-b from-white/30 to-transparent" />
       </div>
     </section>
   );
@@ -80,7 +129,7 @@ export default function Home() {
     <div className="bg-[var(--color-bg)] min-h-screen text-[var(--color-ink)] overflow-x-hidden">
 
       {/* 1 — Hero */}
-      <TempHero />
+      <Hero />
 
       {/* 2 — Tagline strip */}
       <section id="first-section" className="w-full bg-[var(--color-surface)] flex items-center justify-center py-12">
